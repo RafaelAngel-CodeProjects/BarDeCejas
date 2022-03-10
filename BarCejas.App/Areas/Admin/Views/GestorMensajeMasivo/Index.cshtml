@@ -1,0 +1,155 @@
+﻿@model IEnumerable<BarCejas.Entities.MensajeMasivo>
+@using BarCejas.Entities;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans">
+                        <a href="javascript:history.back()">
+                            <i class="fas fa-solid fa-angle-left"></i>
+                        </a>
+                    </li>
+                    <li class="spa-bag"><a href="@Url.Action("Index")">Home</a></li>
+                    <li class="spa-bag">-</li>
+                    <li class="active spa-bag">Mensajes masivos</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+
+
+    <div class="container title-secon-header">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon">GESTIONAR MENSAJES MASIVOS</h4>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="about-shot-info section-sm">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <p>
+                    El objetivo es gestionar la comunicación de los clientes de manera masiva. Los mensajes se envian
+                    como notificación push. Se pueden programar para enviar de inmediato o definir que día sera
+                    enviado.
+                </p>
+            </div>
+            <div class="col-md-4">
+                <a class="btn btn-main-accion float-right" href="@Url.Action("Create_Edit")">CREAR MENSAJE</a>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<section class="company-mission section" style="padding-top: 2%;">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12" id="divListado">
+
+                <partial name="_Listado" model="Model" />
+
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts{
+
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            var table = $('#example').DataTable(
+                {
+                    dom: 'Bfrtip',
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print'
+                    ],
+                    language: {
+                        "decimal": "",
+                        "emptyTable": "No hay datos",
+                        "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                        "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+                        "infoFiltered": "(Filtro de _MAX_ total registros)",
+                        "infoPostFix": "",
+                        "thousands": ",",
+                        "lengthMenu": "Mostrar _MENU_ registros",
+                        "loadingRecords": "Cargando...",
+                        "processing": "Procesando...",
+                        "search": "Buscar:",
+                        "zeroRecords": "No se encontraron coincidencias",
+                        "paginate": {
+                            "first": "Primero",
+                            "last": "Ultimo",
+                            "next": "Próximo",
+                            "previous": "Anterior"
+                        },
+                        "aria": {
+                            "sortAscending": ": Activar orden de columna ascendente",
+                            "sortDescending": ": Activar orden de columna desendente"
+                        }
+                    },
+                    responsive: true
+
+                }
+            );
+
+            new $.fn.dataTable.FixedHeader(table);
+        });
+
+        function ModalEliminarElemento(url, obj, msj = "¿Está seguro que desea eliminar el item seleccionado?", NombreItem = "Título del banner") {
+
+            $(".swal2-title").removeClass("swal2-title");
+            swal.fire({
+                title: msj,
+                text: NombreItem,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: "Si",
+                cancelButtonText: "Cancelar",
+                customClass: {
+                    title: 'swal2-title-Warning'
+                }
+
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    EliminarItemList(url, obj);
+                }
+                return false;
+            });
+        }
+
+        function EliminarItemList(url, obj) {
+            $.post(url, obj, function (Data) {
+                var urlRedirect = '';
+                if (Data.success) {
+                    urlRedirect = '@Url.Action("Index", "GestorMensajeMasivo")';
+                } else {
+                    console.log('Disculpe, ha ocurrido un error.');
+                    console.log(Data);
+                }
+                ModalGeneral(urlRedirect, Data.mensaje, Data.success);
+            }).fail(function (error) {
+                console.log(error);
+            });
+        }
+
+    </script>
+
+}

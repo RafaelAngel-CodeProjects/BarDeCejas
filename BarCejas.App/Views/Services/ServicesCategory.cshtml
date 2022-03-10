@@ -1,0 +1,170 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@model BarCejas.Entities.Categoria
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = ViewBag.Title;
+}
+
+<section class="single-page-header single-page-header-site">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb  header-bradcrumb header-bradcrumb-site">
+                    <li class="btn-trans"><a style="color: #000!important;" href="javascript:history.back()"><i class="fas fa-solid fa-angle-left"></i></a></li>
+                    <li class="spa-bag"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="spa-bag">-</li>
+                    <li class="active spa-bag">@ViewBag.Title</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+</section>
+
+
+<!-- Start Services Section
+    ==================================== -->
+<!-- Start Team Skills
+    =========================================== -->
+
+<section class="team-skills section-sm" id="skills">
+    <div class="container">
+        <div class="row">
+            <!-- section title -->
+            <div class="col-12">
+                <div class="title text-center">
+                    <h2>@Model.Nombre</h2>
+                </div>
+            </div>
+            <!-- /section title -->
+
+            <div class="col-md-12">
+                <div class="team-skills-content">
+
+                    <p>Somos especialistas en Diseño de cejas y Microblading, microshading, combinando diversas técnicas para que tengas el resultado perfecto, logrando frescura y calidez en la mirada. Brindamos asesoramiento personalizado sobre todas nuestros servicios ,diagnosticando cada tipo de cejas busacando el mejor resultado, y ademas asi tener un seguimiento de cada clienta.</p>
+
+                </div>
+            </div>
+        </div> <!-- End row -->
+    </div>
+</section> <!-- End section -->
+
+
+@{
+    if (Model.Servicio is null || Model.Servicio.Count() == 0)
+    {
+        <div class="col-md-12">
+            <div class="team-skills-content text-center">
+                <p>No existen servicios disponibles para esta categoría.</p>
+            </div>
+        </div>
+    }
+    else
+    {
+        <section class="services row-section" id="servicespESTA">
+            <div class="container" style="padding-right: 0px!important;">
+                <div class="row no-gutters">
+
+
+                    <div class="col-md-12 col-sm-12 row-block">
+                        <div class="popular_courses">
+                            <div class="row">
+
+                                @foreach (var service in Model.Servicio)
+                                {
+                                    <div class="item col-md-4 pb-4">
+                                        <div class="single_course">
+                                            <div class="course_head course_head_service">
+                                                @{
+                                                    if (service.RutaImagenTarjeta != null && !(service.RutaImagenTarjeta.Contains("images/")))
+                                                    {
+                                                        service.RutaImagenTarjeta = null;
+                                                    }
+                                                }
+                                                <img class="img-fluid course_img_center" src="@(!String.IsNullOrEmpty(service.RutaImagenTarjeta)?  Url.Content(service.RutaImagenTarjeta):@Url.Content("~/images/sinImagen.png"))" asp-append-version="true" alt="" />
+                                            </div>
+                                            <div class="title_course">
+                                                <span class="tag">@service.Duracion min</span>
+                                            </div>
+                                            <div class="course_content" style="height: 143px;">
+                                                <span class="price" style="top: -225px!important;">$@service.PrecioPromocioal</span>
+
+                                                <h4 class="mb-3">
+                                                    <a asp-controller="Services" asp-action="Service" asp-route-id="@service.Id">@service.Nombre</a>
+                                                </h4>
+                                                <p class="text-troncate">
+                                                    @service.DescripcionCorta
+                                                </p>
+
+                                            </div>
+                                            <div class="course_meta justify-content-lg-between align-items-lg-center flex-lg-row flex-column " style="background-color: #fadce6;">
+                                                <div class="row-section pt-4 pb-4">
+                                                    <div class="col-md-12">
+                                                        <span class="float-right" style="color: #000;"> $@service.PrecioPromocioal</span>
+                                                        <span class="float-right" style="color: #958389;text-decoration:line-through;">$@service.PrecioLista</span>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <a asp-controller="Services" asp-action="Service" asp-route-id="@service.Id" class="btn btn-main mt-20 btn-block">RESERVAR TURNO</a>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div> <!-- End row -->
+            </div> <!-- End container -->
+        </section> <!-- End section -->
+
+
+    }
+}
+
+@section scripts {
+    <script type="text/javascript">
+
+
+        $('.owl-carousel').owlCarousel({
+            loop: true,
+            margin: 20,
+            items: 3,
+            nav: true,
+            autoplaySpeed: false,
+            startPosition: 1,
+            autoplay: 2500,
+            smartSpeed: 1500,
+            dots: false,
+            responsiveClass: true,
+            thumbs: true,
+            thumbsPrerendered: true,
+            navText: ["<img src='@Url.Content("~/images/prev.png")'>", "<img src='@Url.Content("~/images/next.png")'>"],
+            responsive: {
+                0: {
+                    items: 1,
+                    margin: 0
+                },
+                991: {
+                    items: 2,
+                    margin: 5
+                },
+                1200: {
+                    items: 3,
+                    margin: 5
+                }
+
+
+            }
+        })
+    </script>
+}

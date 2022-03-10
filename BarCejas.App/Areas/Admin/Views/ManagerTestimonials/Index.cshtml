@@ -1,0 +1,364 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@{
+    // Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Gestionar Home";
+}
+
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans">
+                        <a href="javascript:history.back()">
+                            <i class="fas fa-solid fa-angle-left"></i>
+                        </a>
+                    </li>
+                    <li class="spa-bag"><a href="@Url.Action("Index")">Gestor</a></li>
+                    <li class="spa-bag">-</li>
+                    <li class="active spa-bag">Gestionar Home</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+
+    <div class="container title-secon-header">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon">GESTIONAR HOME</h4>
+
+            </div>
+        </div>
+    </div>
+</section>
+<section class="about-shot-info section-sm">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <p>Crea, edita o elimina los banners y testimoniales que aparecen en la página principal.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section pt-3 pb-0">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-6">
+                <div class="title" style="padding-bottom:26px!important">
+                    <h6>Banners</h6>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="title text-right" style="padding-bottom:26px!important">
+                    <div class="custom-control custom-radio ad">
+                        <input type="radio" id="customBanner" @(ViewBag.IndActivoBanner ? "checked" : "") onclick="ObtenerActivosBanner('@(!ViewBag.IndActivoBanner)')" value="@ViewBag.IndActivoBanner" name="customBanner" class="custom-control-input">
+                        <label class="custom-control-label" for="customBanner">Mostrar sólo banners activos</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12" id="ListaBanners">
+                <partial name="_ListBanner" model="Model.lBanner" />
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="form-group col-md-12 mb-12">
+                <a class="btn btn-main-accion float-right" asp-controller="GestorBanner" asp-action="Create_edit">AGREGAR BANNER</a>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+<section class="section pt-3 pb-0">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-6">
+                <div class="title" style="padding-bottom:26px!important">
+                    <h6>Testimonios</h6>
+
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="title text-right" style="padding-bottom:26px!important">
+                    <div class="custom-control custom-radio ad">
+                        <input type="radio" id="customTestimonios" @(ViewBag.IndActivo ? "checked" : "") onclick="ObtenerActivos('@(!ViewBag.IndActivo)')" value="@ViewBag.IndActivo" name="customTestimonios" class="custom-control-input">
+                        <label class="custom-control-label" for="customTestimonios">Mostrar sólo testimoniales activos</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12" id="ListaTestimonios">
+                <partial name="_List" model="Model.lTestimonios" />
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="form-group col-md-12 mb-12">
+
+                <a class="btn btn-main-accion float-right" asp-controller="ManagerTestimonials" asp-action="Create_edit">AGREGAR TESTIMONIO</a>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+@section scripts{
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script type="text/javascript">
+        //#region Banner
+
+        function CambiarEstatusBanner(Id, IndEstatus) {
+            $.post('@Url.Action("UpdateStatus", "GestorBanner")', { Id: Id, EsActivo: IndEstatus }, function (Data)
+            {
+                if(!Data.success) {
+                    if (IndEstatus == "true") {
+                        $('#b_' + Id).attr("checked", false).attr('onclick', 'CambiarEstatusBanner(' + Id+',false)');
+                    } else {
+                        $('#b_' + Id).attr("checked", true).attr('onclick', 'CambiarEstatusBanner(' + Id + ',true)');
+                    }
+                }
+
+            }).done(function (Data) {
+                ModalGeneral("", Data.mensaje, Data.success);
+
+            }).fail(function (jqxhr, settings, ex) {
+                alert('Error ' + ex);
+                if (IndEstatus == "true") {
+                    $('#b_' + Id).attr('onclick', 'CambiarEstatusBanner(' + Id + ',true)');
+                    $('#b_' + Id).prop('checked', false);
+                } else {
+                    $('#b_' + Id).attr('onclick', 'CambiarEstatusBanner(' + Id + ',false)');
+                    $('#b_' + Id).prop('checked', true);
+                }
+            });
+        }
+
+        function ObtenerActivosBanner(IndActivo) {
+            $.post('@Url.Action("ListBanner", "ManagerTestimonials")', { IndActivoBanner: IndActivo }, function (Data) {
+            }).done(function (Data) {
+                 if (IndActivo == "true") {
+                     $('#customBanner').attr("checked", true).attr('onclick', 'ObtenerActivosBanner(' + '"false"' + ')');
+                     $('#customBanner').prop('checked', true);
+                 }else {
+                     $('#customBanner').attr("checked", false).attr('onclick', 'ObtenerActivosBanner('+'"true"'+')');
+                     $('#customBanner').prop('checked', false);
+                 }
+                $("#ListaBanners").html(Data);
+                $('#sortableBanner').sortable();
+
+            }).fail(function (jqxhr, settings, ex) {
+                alert('Error ' + ex);
+                if (IndActivo == "true") {
+                    $('#customBanner').attr('onclick', 'ObtenerActivosBanner(' + '"true"' + ')');
+                    $('#customBanner' ).prop('checked', false);
+                } else {
+                    $('#customBanner').attr('onclick', 'ObtenerActivosBanner(' + '"false"' + ')');
+                    $('#customBanner').prop('checked', true);
+                }
+            });
+        }
+
+        $('#sortableBanner').sortable({
+            update: function (event, ui) {
+                setTimeout(function () {
+                    $('#formBannerOrden').submit();
+                }, 500);
+            }
+        });
+
+        function ModalEliminarElementoBanner(url, obj, msj = "¿Está seguro que desea eliminar el item seleccionado?", NombreItem = "Título del banner") {
+
+            $(".swal2-title").removeClass("swal2-title");
+            swal.fire({
+                title: msj,
+                text: NombreItem,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: "Si",
+                cancelButtonText: "Cancelar",
+                customClass: {
+                    title: 'swal2-title-Warning'
+                }
+
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    EliminarItemListBanner(url, obj);
+                }
+                return false;
+            });
+        }
+
+        function EliminarItemListBanner(url, obj) {
+            $.post(url, obj, function (Data) {
+                var urlRedirect = '';
+                if (Data.success) {
+                    urlRedirect = '@Url.Action("Index", "ManagerTestimonials")';
+                } else {
+                    console.log('Disculpe, ha ocurrido un error.');
+                    console.log(Data);
+                }
+                ModalGeneral(urlRedirect, Data.mensaje, Data.success);
+            }).fail(function (error) {
+                console.log(error);
+            });
+        }
+
+        // #endregion
+        //#region Testimonials
+
+        function ModalEliminarTestimonio(url, obj, msj = "¿Está seguro que desea eliminar el item seleccionado?", NombreItem = "") {
+            $(".swal2-title").removeClass("swal2-title");
+            swal.fire({
+                title: msj,
+                text: NombreItem,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: "Si",
+                cancelButtonText: "Cancelar",
+                customClass: {
+                    title: 'swal2-title-Warning'
+                }
+
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    EliminarItemTestimonio(url, obj);
+                }
+                return false;
+            });
+        }
+
+        function CambiarEstatusTestimonio(Id, IndEstatus) {
+            $.post('@Url.Action("CambiarEstatusTestimonio", "ManagerTestimonials")', { Id: Id, IndActivo: IndEstatus }, function (Data) {
+            if(!Data.success) {
+            if (IndEstatus == "True") {
+                $('#te_' + Id).attr("checked", false).attr('onclick', 'CambiarEstatusTestimonio(' + Id+',False)');
+            } else {
+                $('#te_' + Id).attr("checked", true).attr('onclick', 'CambiarEstatusTestimonio(' + Id + ',True)');
+                }
+             }
+
+            }).done(function (Data) {
+                ModalGeneral("", Data.mensaje, true);
+
+            }).fail(function (jqxhr, settings, ex) {
+                alert('Error ' + ex);
+                if (IndEstatus == "True") {
+                    $('#te_' + Id).attr('onclick', 'CambiarEstatusTestimonio(' + Id + ',True)');
+                    $('#te_' + Id).prop('checked', false);
+                } else {
+                    $('#te_' + Id).attr('onclick', 'CambiarEstatusTestimonio(' + Id + ',False)');
+                    $('#te_' + Id).prop('checked', true);
+                }
+            });
+
+        }
+
+        $(document).ready(function () {
+            $('#sortableTestimonios').sortable({
+                update: function (event, ui) {
+                    $(this).children().each(function (index) {
+                        if ($(this).attr('data-orden') != (index + 1)) {
+                            $(this).attr('data-orden', (index + 1)).addClass('updated');
+                        }
+                    });
+
+                    guardandoPosiciones();
+                }
+            });
+        });
+
+        function guardandoPosiciones() {
+
+            var positions = [];
+            $('.updated').each(function () {
+               // var order = $('#sortable li').sortable('serialize');
+                var p = { Id: parseInt($(this).attr('data-index')), Orden: parseInt($(this).attr('data-order')) };
+                positions.push(p);
+                //var vv = $(this).sortable("toArray").toString();
+                $(this).removeClass('updated');
+
+            });
+
+            $.ajax({
+                url: '@Url.Action("updatePositions", "ManagerTestimonials")',
+                method: 'POST',
+                ContentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: { ptestimonios: positions },
+
+                success: function (response) {
+                    //alert(response.mensaje);
+                    ModalGeneral("", response.mensaje, true);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                     alert("Error: " + errorThrown);
+                }
+            });
+        }
+
+         function EliminarItemTestimonio(url, obj) {
+            $.post(url, obj, function (Data) {
+                var urlRedirect = '';
+                if (Data.success) {
+                    urlRedirect = '@Url.Action("Index", "ManagerTestimonials")';
+                } else {
+                    ModalGeneral("", Data.mensaje, Data.success);
+                    
+                }
+                ModalGeneral(urlRedirect, Data.mensaje, Data.success);
+            }).fail(function (error) {
+                console.log(error);
+            });
+        }
+
+        function OnfailedDelete(xhr) {
+            ModalGeneral('', xhr.responseText, false);
+        }
+
+
+        function ObtenerActivos(IndActivo) {
+             $.post('@Url.Action("ListTestimonials", "ManagerTestimonials")', { IndActivo: IndActivo }, function (Data) {
+             }).done(function (Data) {
+                 if (IndActivo == "True") {
+                     $('#customTestimonios').attr("checked", true).attr('onclick', 'ObtenerActivos(' + '"False"' + ')');
+                     $('#customTestimonios').prop('checked', true);
+                 }else {
+                     $('#customTestimonios').attr("checked", false).attr('onclick', 'ObtenerActivos('+'"True"'+')');
+                     $('#customTestimonios').prop('checked', false);
+                 }
+                // alert('ok ');
+                 $("#ListaTestimonios").html(Data);
+                 $('#sortableTestimonios').sortable();
+
+        }).fail(function (jqxhr, settings, ex) {
+            alert('Error ' + ex);
+            if (IndActivo == "True") {
+                $('#customTestimonios').attr('onclick', 'ObtenerActivos(' + '"True"' + ')');
+                $('#customTestimonios' ).prop('checked', false);
+            } else {
+                $('#customTestimonios').attr('onclick', 'ObtenerActivos(' + '"False"' + ')');
+                $('#customTestimonios').prop('checked', true);
+            }
+        });
+        }
+
+       // #endregion
+
+
+
+    </script>
+
+}

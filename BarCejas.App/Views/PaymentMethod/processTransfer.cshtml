@@ -1,0 +1,124 @@
+﻿@model PaymentMethodViewModel
+@using BarCejas.App.Utils
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@{
+    ViewData["Title"] = "Pago online";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans"><a href="javascript:history.back()"><i class="fas fa-solid fa-angle-left"></i></a></li>
+                    <li class="spa-bag d-none d-md-block d-lg-block d-sm-none"><a href="/BarDeCejasFront/Presentation/Views/index.html">Home</a></li>
+                    <li class="spa-bag d-none d-md-block d-lg-block d-sm-none">-</a></li>
+                    <li class="active spa-bag d-none d-md-block d-lg-block d-sm-none">Servicios - Pago Transferencia</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon mayuscula">DATOS DE TRANSFERENCIA</h4>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="company-mission section" style="padding-top: 68px!important;">
+    <div class="container">
+
+        <form enctype="multipart/form-data" id="TransferForm" asp-controller="PaymentMethod" asp-action="ProcessTransferPost" method="post">
+            <div class="hide">
+                <input type="hidden" asp-for="PackageId" />
+                <input type="hidden" asp-for="ServiceId" />
+                <input type="hidden" asp-for="BranchOfficeId" />
+                <input type="hidden" asp-for="ProfessionalId" />
+                <input type="hidden" asp-for="ServiceDate" />
+                <input type="hidden" asp-for="HourService" />
+                <input type="hidden" asp-for="OrderId" />
+                <input type="hidden" asp-for="PaymentMode" />
+                <input type="hidden" asp-for="PaymentVoucherFile" />
+                <input type="hidden" asp-for="PromotionalPrice" />
+                <input type="hidden" asp-for="TotalPrice" />
+            </div>
+            <div class="row centrar">
+                <div class="col-md-6  shadow">
+                    <div class="row p-4">
+                        <div class="col-md-12 ">
+                            <div class="row ml-0 mr-0">
+                                <div class="col-md-12 pt-4">
+                                    <p class="text-center">Realice la transferencia bancaria para procesar su pedido, utilizando los datos a continuación:</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="row ml-0 mr-0">
+                                <div class="form-group col-md-12 mb-4">
+                                    <label>BANCO</label>
+                                    </br>
+                                    <h7>CUENTA CORRIENTE</h7>
+                                </div>
+                                <div class="form-group col-md-12 mb-4">
+                                    <label>TITULAR</label>
+                                    </br>
+                                    <h7>JUAN GARCÍA</h7>
+                                </div>
+                                <div class="form-group col-md-12 mb-4">
+                                    <label>CBU</label>
+                                    </br>
+                                    <h7>09876543210987654321</h7>
+                                </div>
+                                <div class="form-group col-md-12 mb-4">
+                                    <label>NRO. DE CUENTA</label>
+                                    </br>
+                                    <h7>09876543098765432</h7>
+                                </div>
+                                <div class="col-md-12">
+
+                                    </br>
+                                    <h7 style="font-size: 13px;">Una vez realizada la transferencia, debés cargar el comprobante para que tu pago sea acreditado:</h7>
+                                </div>
+                                <div class="col-md-12 pt-4">
+                                    <div class="row">
+                                        <div class="form-group col-md-6 mb-4">
+                                            <label for="file-upload" class="btn btn-main float-right">
+                                                SUBIR COMPROBANTE
+                                            </label>
+                                            <input required id="file-upload" asp-for="PaymentVoucherFile" type="file" style="display:none;" />
+                                            <label id="FileUploaded"></label>
+                                            @if (Model.PaymentVoucherFilePath == "Required")
+                                            {
+                                                <label id="requiredFile">El Archivo es Requerido</label>
+                                            }
+                                        </div>
+                                        <div class="form-group col-md-6 mb-4">
+                                            <button class="btn btn-main-accion" type="submit">ENVIAR</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+</section>
+

@@ -1,0 +1,16 @@
+﻿@model IEnumerable<BarCejas.Entities.ContactoLocal>
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+<div class="row">
+    <div class="col-12">
+        <ul id="sortable" class="list-group">
+            @foreach (var item in Model)
+            {
+                <partial name="_ItemListado" model="item" />
+            }
+        </ul>
+    </div>
+</div>
+

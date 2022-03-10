@@ -1,0 +1,197 @@
+﻿@model IEnumerable<BarCejas.Entities.ContactoLocal>
+@using BarCejas.Entities;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    MediosContactoEmpresa mediosContactoEmpresa = (MediosContactoEmpresa)ViewBag.MediosContactoEmpresa;
+
+}
+
+<section class="single-page-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans">
+                        <a href="javascript:history.back()">
+                            <i class="fas fa-solid fa-angle-left"></i>
+                        </a>
+                    </li>
+                    <li class="spa-bag"><a href="@Url.Action("Index")">Gestor</a></li>
+                    <li class="spa-bag">-</li>
+                    <li class="active spa-bag">Gestor de contactos</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <div class="container title-secon-header">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon">GESTIONAR CONTACTOS</h4>
+
+            </div>
+        </div>
+    </div>
+</section>
+<section class="about-shot-info section-sm">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <p>Edita los datos de contactos y la informacion de locales.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<form asp-action="Create_MediosContactoEmpresa" method="post" data-ajax="true" data-ajax-failure="fnOnFailed" data-ajax-success="fnOnSuccess">
+
+    <section class="section pt-3 pb-0">
+        <div class="container">
+            <div class="row mb-5">
+                <input type="hidden" id="Id" name="Id" value="@mediosContactoEmpresa.Id" />
+
+                <div class="form-group col-md-4">
+                    <label for="inputEmail4">Links de Facebook</label>
+                    <input type="text" class="form-control" id="LinkFacebook" name="LinkFacebook" value="@mediosContactoEmpresa.LinkFacebook" placeholder="https://">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="inputEmail4">Links de Instagram</label>
+                    <input type="text" class="form-control" id="LinkInstagram" name="LinkInstagram" value="@mediosContactoEmpresa.LinkInstagram" placeholder="https://">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="inputEmail4">Número de Whatsapp</label>
+                    <input type="text" class="form-control" id="Whatsapp" name="Whatsapp" value="@mediosContactoEmpresa.Whatsapp" placeholder="+5491112311234">
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="title" style="padding-bottom:26px!important">
+                        <h6>Locales</h6>
+                    </div>
+                </div>
+            </div>
+
+            <partial name="_Listado" model="Model" />
+
+            <div class="row mt-5">
+                <div class="form-group col-md-12 mb-12">
+                    <a class="btn btn-main float-right" href="@Url.Action("Create_Edit")">AGREGAR LOCAL</a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+    <section class="section pt-3">
+        <div class="container">
+            <div class="row">
+                <div class="form-group col-md-6 mb-4">
+                    <a href="@Url.Action("Index")" class="btn btn-main float-right">DESCARTAR</a>
+                </div>
+                <div class="form-group col-md-6 mb-4">
+                    <button type="submit" class="btn btn-main-accion">GUARDAR CAMBIOS</button>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+</form>
+
+@section scripts{
+
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+
+        function fnOnSuccess(Data) {
+            if (Data.success) {
+
+                //ModalGeneral(Data.mensaje, '<i class="icon-document-edit"></i> Contacto');
+            } else {
+                alert('Disculpe, ha ocurrido un error.');
+                setTimeout(function () {
+                    window.location.href = '@Url.Action("Index")';
+                }, 6000);
+            }
+            ModalGeneral('', Data.mensaje, Data.success);
+        }
+
+        function fnOnFailed(Data) {
+            alert('Disculpe, ha ocurrido un error.');
+            console.log(Data);
+        }
+
+        function CambiarEstatusContacto(Id, IndEstatus) {
+            console.log('IndEstatus: ' + IndEstatus);
+
+            $.post('@Url.Action("UpdateStatus", "GestorLocalContact")', { Id: Id, EsActivo: IndEstatus }, function (Data)
+            {
+                if(Data.success) {
+                    if (IndEstatus == "true") {
+                        $('#c_' + Id).attr("checked", false).attr('onclick', 'CambiarEstatusContacto(' + Id+',false)');
+                    } else {
+                        $('#c_' + Id).attr("checked", true).attr('onclick', 'CambiarEstatusContacto(' + Id + ',true)');
+                    }
+                }
+
+            }).done(function (Data) {
+                ModalGeneral(Data.mensaje, '<i class="icon-document-edit"></i> Contacto');
+
+            }).fail(function (jqxhr, settings, ex) {
+                alert('Error ' + ex);
+                if (IndEstatus == "true") {
+                    $('#c_' + Id).attr('onclick', 'CambiarEstatusContacto(' + Id + ',true)');
+                    $('#c_' + Id).prop('checked', false);
+                } else {
+                    $('#c_' + Id).attr('onclick', 'CambiarEstatusContacto(' + Id + ',false)');
+                    $('#c_' + Id).prop('checked', true);
+                }
+            });
+        }
+
+        function ModalEliminarElemento(url, obj, msj = "¿Está seguro que desea eliminar el item seleccionado?", NombreItem = "Título del banner") {
+
+            $(".swal2-title").removeClass("swal2-title");
+            swal.fire({
+                title: msj,
+                text: NombreItem,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: "Si",
+                cancelButtonText: "Cancelar",
+                customClass: {
+                    title: 'swal2-title-Warning'
+                }
+
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    EliminarItemList(url, obj);
+                }
+                return false;
+            });
+        }
+
+        function EliminarItemList(url, obj) {
+            $.post(url, obj, function (Data) {
+                var urlRedirect = '';
+                if (Data.success) {
+                    urlRedirect = '@Url.Action("Index", "GestorLocalContact")';
+                } else {
+                    console.log('Disculpe, ha ocurrido un error.');
+                    console.log(Data);
+                }
+                ModalGeneral(urlRedirect, Data.mensaje, Data.success);
+            }).fail(function (error) {
+                console.log(error);
+            });
+        }
+
+    </script>
+
+}

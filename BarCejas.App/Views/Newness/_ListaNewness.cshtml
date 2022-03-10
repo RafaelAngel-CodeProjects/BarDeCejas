@@ -1,0 +1,53 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model IEnumerable<BarCejas.Entities.Novedades>
+@foreach (var item in Model)
+{
+    <div class="item col-md-6 pb-4" style="width: 360px; ">
+        <div class="single_course">
+            <div class="course_head course_head_Novedades">
+                @{
+                    if (item.RutaImagen != null && !(item.RutaImagen.Contains("images/")))
+                    {
+                        item.RutaImagen = null;
+                    }
+                }
+                <img class="img-fluid course_img_center" src="@(!String.IsNullOrEmpty(item.RutaImagen) ? Url.Content(item.RutaImagen):Url.Content("~/images/sinImagen.png"))" asp-append-version="true" alt="" />
+            </div>
+            <div class="title_course text-left">
+                <span class="tag">@(item.Fecha.ToString("dd")+" "+ item.Fecha.ToString("MMMM") +" "+  item.Fecha.ToString("yyyy")) </span>
+            </div>
+
+            <div class="course_content">
+                <h4 class="mb-3">
+
+                <a href="@Url.Action("ProfileNewness", "Newness", new { Id =item.Id })" class="mayuscula">@item.Titulo</a>
+            </h4>
+            <p class="text-troncate">
+
+                    @(item.Copete != null && !string.IsNullOrWhiteSpace(item.Copete) ? item.Copete : string.Empty)
+                </p>
+
+            </div>
+            <div class="course_meta justify-content-lg-between align-items-lg-center flex-lg-row flex-column " style="background-color: #fadce6;">
+                <div class="row-section pt-4 pb-4">
+
+                    <div class="col-md-12">
+                        <a href="@Url.Action("ProfileNewness", "Newness", new { Id =item.Id })" class="btn btn-main mt-20 btn-block">LEER MÁS</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+<!--<div class="ow-pagination">
+    <nav>
+        <ul class="pager">
+            <li id="page-prv"><a href="javascript:void(0)" class="Cargando" title="ANTERIOR" onclick="javascript:MostrarPagina(-1)"><i class="fa fa-long-arrow-left" aria-hidden="true"></i>ANTERIOR</a></li>-->
+@*<li><a href="#"><i class="fa fa-th" aria-hidden="true"></i></a></li>*@
+<!--<li class="page-next"><a href="javascript:void(0)" class="Cargando" title="SIGUIENTE" onclick="javascript:MostrarPagina(1)">Siguiente<i class="fa fa-long-arrow-right" aria-hidden="true"></i></a></li>
+        </ul>
+    </nav>
+</div>-->

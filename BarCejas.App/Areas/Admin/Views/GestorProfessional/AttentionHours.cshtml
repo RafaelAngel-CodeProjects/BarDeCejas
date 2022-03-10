@@ -1,0 +1,166 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@model BarCejas.App.Areas.Admin.Models.ProfesionalViewModel
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = ViewBag.Title;
+}
+
+
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans"><a href="javascript:history.back()"><i class="fas fa-solid fa-angle-left"></i></a></li>
+                    <li class="spa-bag"><a asp-controller="GestorProfessional" asp-action="Index">Gestor</a></li>
+                    <li class="spa-bag">-</li>
+                    <li class="active spa-bag">Gestor de profesionales asignar horario</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+
+
+    <div class="container title-secon-header">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon">@(ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit ? "EDITAR" : "ASIGNAR") HORARIO A PROFESIONAL</h4>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="company-mission section" style="padding-top: 68px!important;">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="title text-center" style="padding-bottom:26px!important">
+                    <h4 class="title-secon">ASIGNAR HORARIO</h4>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="title" style="padding-bottom:26px!important">
+                    <h6>Días y horarios</h6>
+
+                </div>
+            </div>
+        </div>
+
+
+        <form asp-controller="GestorProfessional" asp-action="AttentionHoursPost" method="POST" data-ajax="true" data-ajax-method="POST" data-ajax-failure="OnFailureAddOrEdit" data-ajax-success="OnSuccessAddOrEdit">
+            <div class="hide">
+                <input type="hidden" asp-for="Id" />
+            </div>
+
+            @{
+                for (int i = 0; i < ViewBag.Dias.Count; i++)
+                {
+                    <div class="row align-items-center">
+                        <div class="hide">
+                            <input type="hidden" name="HorarioAtencionProfesional[@i].IdDia" value="@ViewBag.Dias[i].Id" />
+                            <input type="hidden" name="HorarioAtencionProfesional[@i].IdProfesional" value="@Model.Id" />
+                        </div>
+                        <div class="form-group col-md-4 mb-4">
+                            <div class="custom-control custom-radio">
+                                @if (Model.HorarioAtencionProfesional.Any(x => x.IdDia == ViewBag.Dias[i].Id && (x.EsActivo != null && (bool)x.EsActivo)))
+                                {
+                                    @*<input type="hidden" name="HorarioAtencionProfesional[@i].EsActivo" value="true">*@
+                                    <input type="checkbox" class="custom-control-input" id="chkD_@ViewBag.Dias[i].Id" name="HorarioAtencionProfesional[@i].EsActivo" value="true" checked onchange="OnChangeDay(this)">
+                                }
+                                else
+                                {
+                                    @*<input type="hidden" name="HorarioAtencionProfesional[@i].EsActivo" value="false">*@
+                                    <input type="checkbox" class="custom-control-input" id="chkD_@ViewBag.Dias[i].Id" name="HorarioAtencionProfesional[@i].EsActivo" value="false" onchange="OnChangeDay(this)">
+                                }
+                                @*<input type="checkbox" class="custom-control-input" id="chkD_@ViewBag.Dias[i].Id" name="HorarioAtencionProfesional[@i].EsActivo" value="false" @(((bool)Model.HorarioAtencionProfesional.Any(x => x.IdDia == ViewBag.Dias[i].Id && (x.EsActivo != null && (bool)x.EsActivo)) ? "checked" : string.Empty)) onchange="OnChangeDay(this)">*@
+                                <label class="custom-control-label" for="chkD_@ViewBag.Dias[i].Id">@ViewBag.Dias[i].Nombre</label>
+                            </div>
+                        </div>
+
+                        @if (Model.HorarioAtencionProfesional.Any(x => x.IdDia == ViewBag.Dias[i].Id && (x.EsActivo != null && (bool)x.EsActivo)))
+                        {
+                            <div class="form-group col-md-4 mb-4">
+                                <label for="HorarioAtencionProfesional_@(i)_HoraInicio">Hora inicio</label>
+                                <input type="text" id="HorarioAtencionProfesional_@(i)_HoraInicio" name="HorarioAtencionProfesional[@i].HoraInicio" value="@Model.HorarioAtencionProfesional.FirstOrDefault(x => x.IdDia == ViewBag.Dias[i].Id).HoraInicio" class="form-control changeDay" placeholder="ej. 09:00">
+                                <input type="hidden" name="HorarioAtencionProfesional[@(i)].Id" value="@Model.HorarioAtencionProfesional.FirstOrDefault(x => x.IdDia == ViewBag.Dias[i].Id).Id">
+                                @*@if ((bool)Model.HorarioAtencionProfesional.FirstOrDefault(x => x.IdDia == ViewBag.Dias[i].Id).EsActivo)
+                                {
+                                    <input type="hidden" name="HorarioAtencionProfesional[@i].EsActivo" value="true">
+                                }
+                                else
+                                {
+                                    <input type="hidden" name="HorarioAtencionProfesional[@i].EsActivo" value="false">
+                                }*@
+                            </div>
+                            <div class="form-group col-md-4 mb-4">
+                                <label id="HorarioAtencionProfesional_@(i)_HoraFin">Hora final</label>
+                                <input type="text" id="HorarioAtencionProfesional_@(i)_HoraFin" name="HorarioAtencionProfesional[@i].HoraFin" value="@Model.HorarioAtencionProfesional.FirstOrDefault(x => x.IdDia == ViewBag.Dias[i].Id).HoraFin" class="form-control changeDay" placeholder="ej. 09:00">
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="form-group col-md-4 mb-4">
+                                <label for="HorarioAtencionProfesional_@(i)_HoraInicio">Hora inicio</label>
+                                <input type="text" id="HorarioAtencionProfesional_@(i)_HoraInicio" name="HorarioAtencionProfesional[@i].HoraInicio" class="form-control changeDay" placeholder="ej. 09:00" disabled>
+                            </div>
+                            <div class="form-group col-md-4 mb-4">
+                                <label for="HorarioAtencionProfesional_@(i)_HoraFin">Hora final</label>
+                                <input type="text" id="HorarioAtencionProfesional_@(i)_HoraFin" name="HorarioAtencionProfesional[@i].HoraFin" class="form-control changeDay" placeholder="ej. 09:00" disabled>
+                            </div>
+                        }
+                    </div>
+                }
+            }
+
+            @if (Model.HorarioAtencionProfesional.Any(x => x.EsActivo != null && (bool)x.EsActivo))
+            {
+                <div class="row">
+                    <div class="col-12">
+                        <div class="title" style="padding-bottom:26px!important">
+                            <h6>Bloquear horarios especificos</h6>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-4 mb-4">
+                        <a asp-controller="GestorProfessional" asp-action="BlockSchedule" asp-route-id="@Model.Id" class="btn btn-main-accion float-right" style="width: 100%;">BLOQUEAR HORARIOS</a>
+                       
+                    </div>
+                </div>
+            }
+
+            <div class="row">
+                <div class="form-group col-md-6 mb-4">
+                    <a asp-controller="GestorProfessional" asp-action="Index" class="btn btn-main float-right">DESCARTAR</a>
+                </div>
+                <div class="form-group col-md-6 mb-4">
+                    <button class="btn btn-main-accion" type="submit">@(ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit ? "EDITAR" : "ASIGNAR") HORARIOS</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</section>
+
+@section scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+        function OnChangeDay(e) {
+            console.log(e.checked);
+            e.value = e.checked;
+            var elements = e.closest(".row").querySelectorAll(".changeDay");
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].disabled = !e.checked;
+                if (!e.checked)
+                    elements[i].value = '';
+            }
+        }
+    </script>
+}

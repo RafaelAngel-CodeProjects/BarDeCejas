@@ -1,0 +1,434 @@
+﻿using BarCejas.App.Models;
+using BarCejas.App.Utils;
+using BarCejas.Data.Interfaces;
+using BarCejas.Entities;
+using BarCejas.Entities.Enumerations;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Authentication;
+using BarCejas.App.Areas.Admin.Models;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.Facebook;
+using System.Linq;
+using AutoMapper;
+using Newtonsoft.Json.Linq;
+using BarCejas.App.Areas.Admin.Controllers;
+
+namespace BarCejas.App.Controllers
+{
+    [Authorize]
+    public class UserController : BaseController
+    {
+        private readonly IConfiguration _configuration;
+        private readonly IUsuarioService _usuarioService;
+        private readonly IPasswordHasher _passwordHasher;
+        private readonly ITokenService _tokenService;
+        private readonly IMapper _mapper;
+
+        public UserController(IConfiguration configuration, ITokenService tokenService, IUsuarioService usuarioService, IPasswordHasher passwordHasher, IMapper mapper)
+        {
+            _configuration = configuration;
+            _tokenService = tokenService;
+            _usuarioService = usuarioService;
+            _passwordHasher = passwordHasher;
+            _mapper = mapper;
+        }
+
+        [AllowAnonymous]
+        public PartialViewResult ModalRegisterLogin(RegistreViewModel obj = null, bool pLogin = false)
+        {
+            ViewBag.Generes = Util.GetItemsByEnumGenere();
+            if (obj != null && obj.Email != null)
+            {
+                ViewBag.IsLogin = pLogin;
+                ViewBag.User = obj;
+            }
+            return PartialView("_ModalRegisterLogin");
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Registre(RegistreViewModel model)
+        {
+            try
+            {
+                if (ModelState.IsValid || model.Registro != RegistreType.Email.ToString())
+                {
+                    Usuario entity = new Usuario()
+                    {
+                        Email = model.Email,
+                        Genero = model.Genero,
+                        Telefono = model.Telefono,
+                        Registro = model.Registro,
+                        IdTipoGenero = model.IdTipoGenero,
+                        IdTipoUsuario = (int)RoleType.Cliente,
+                        Password = model.Password != null ? _passwordHasher.Hash(model.Password) : string.Empty,
+                        EsActivo = true,
+                        Nombre = model.Nombre,
+                        Apellido = model.Apellido
+                    };
+
+                    await _usuarioService.InsertUsuario(entity);
+
+                    string token = _tokenService.BuildToken(_configuration["Authenticarion:SecretKey"].ToString(), _configuration["Authenticarion:Issuer"].ToString(), entity);
+
+                    if (token != null)
+                    {
+                        HttpContext.Session.SetString("Token", token);
+                        return Ok(true);
+                    }
+                }
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        /// <summary>
+        /// lOGIN with google
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> Registre(Usuario model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    Usuario entity = new Usuario()
+                    {
+                        Email = model.Email,
+                        Genero = model.Genero,
+                        Telefono = model.Telefono,
+                        Registro = model.Registro,
+                        IdTipoGenero = model.IdTipoGenero,
+                        IdTipoUsuario = (int)RoleType.Cliente,
+                        Password = _passwordHasher.Hash(model.Password),
+                        EsActivo = true
+                    };
+
+                    await _usuarioService.InsertUsuario(entity);
+
+                    string token = _tokenService.BuildToken(_configuration["Authenticarion:SecretKey"].ToString(), _configuration["Authenticarion:Issuer"].ToString(), entity);
+
+                    if (token != null)
+                    {
+                        HttpContext.Session.SetString("Token", token);
+                        var result = await LoginUser(model);
+                        if (result)
+                            RedirectToAction("Index", "Home");
+                        else
+                            return BadRequest();
+                    }
+                }
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [Authorize(Roles = "Administrador, Secretario, Profesional, Cliente")]
+        //[HttpGet("{id}")]
+        public async Task<IActionResult> Edit()
+        {
+            Usuario model = GetUserIdentity();
+
+            if (model != null)
+            {
+                return View(model);
+            }
+            return NotFound();
+        }
+
+
+        [HttpPut]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> Edit(Usuario model)
+        {
+            try
+            {
+                await _usuarioService.UpdateUsuario(model);
+                return Ok(true);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> Authentication(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var validation = await IsValidUser(model);
+                if (validation.Item1)
+                {
+                    this.LoginUser(validation.Item2);
+                    //string token = _tokenService.BuildToken(_configuration["Authenticarion:SecretKey"].ToString(), _configuration["Authenticarion:Issuer"].ToString(), validation.Item2);
+                    //if (token != null)
+                    //{
+                    //    HttpContext.Session.SetString("Token", token);
+                    //    return Ok(true);
+                    //}
+                    return Ok(true);
+                }
+                else
+                {
+                    throw new Exception("Usuario no encontrado.");
+                }
+                return NotFound();
+            }
+            return BadRequest();
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult CheckToken()
+        {
+            string token = HttpContext.Session.GetString("Token");
+
+            if (token == null)
+            {
+                return (RedirectToAction("Index", "Home"));
+            }
+
+            if (!_tokenService.IsTokenValid(_configuration["Authenticarion:SecretKey"].ToString(), _configuration["Authenticarion:Issuer"].ToString(), token))
+            {
+                return (RedirectToAction("Index", "Home"));
+            }
+
+            return (RedirectToAction("Index", "Home"));
+        }
+
+        [Authorize]
+        public IActionResult Perfil()
+        {
+            return View();
+        }
+
+        #region LogGoogle
+        [AllowAnonymous]
+        public async Task GoogleLogin(bool pLogin = false)
+        {
+
+            await HttpContext.ChallengeAsync(GoogleDefaults.AuthenticationScheme, new AuthenticationProperties()
+            {
+
+                RedirectUri = Url.Action("GoogleResponse")
+            });
+        }
+        [AllowAnonymous]
+        public async Task<IActionResult> GoogleResponse(bool pLogin = false)
+        {
+            var user = new RegistreViewModel();
+            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            //var jj = result.Principal.Identities.FirstOrDefault().ToString(); //Prueba
+            var claims = result.Principal.Identities.FirstOrDefault().Claims.Select(claim => new
+            {
+                claim.Issuer,
+                claim.OriginalIssuer,
+                claim.Type,
+                claim.Value
+            });
+            if (result.Succeeded && result.Principal.Claims.Count() > 0)
+            {
+                user.Nombre = result.Principal.FindFirst(ClaimTypes.GivenName).Value;
+                user.Apellido = result.Principal.FindFirst(ClaimTypes.Surname).Value;
+                user.Email = result.Principal.FindFirst(ClaimTypes.Email).Value;
+                user.Registro = RegistreType.Gmail.ToString();
+                //user.Avatar = result.Principal.Claims.LastOrDefault().Value;
+                user.IdTipoUsuario = (int)RoleType.Cliente;
+                var userFind = await _usuarioService.GetUsuarioByEmail(user.Email);
+                if (userFind != null) //El usuario existe en BD
+                {
+                    //Generar token
+                    string token = _tokenService.BuildToken(_configuration["Authenticarion:SecretKey"].ToString(), _configuration["Authenticarion:Issuer"].ToString(), _mapper.Map<Usuario>(user));
+                    if (token != null)
+                    {
+                        if (string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                        {
+                            HttpContext.Session.SetString("Token", token);
+                        }
+
+                        var UserClaims = await LoginUser(_mapper.Map<Usuario>(user));
+                        if (UserClaims)
+                            return RedirectToAction("CheckToken");
+                    }
+                    return BadRequest();
+
+                }//Se debe registrar
+                else
+                {
+                    var jsonUser = JsonConvert.SerializeObject(user);
+
+                    TempData["User"] = jsonUser;
+                    TempData["IsLogin"] = pLogin;
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+            // return BadRequest();
+            //return Url.Action("Registre", user);
+
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("Index", "Home");
+
+        }
+
+        public async Task<IActionResult> _RegistreForm(RegistreViewModel obj)
+        {
+
+            return PartialView(obj);
+        }
+        #endregion
+
+        #region LogFacebook
+
+        [AllowAnonymous]
+        [Route("facebook-login")]
+        public async Task FacebookLogin(bool pLogin = false)
+        {
+
+            await HttpContext.ChallengeAsync(FacebookDefaults.AuthenticationScheme, new AuthenticationProperties()
+            {
+
+                RedirectUri = Url.Action("FacebookResponse", new { pLogin = pLogin })
+            });
+
+            //var properties = new AuthenticationProperties
+            //{
+            //    RedirectUri = Url.Action("FacebookResponse")
+            //};
+
+            //return Challenge(properties, FacebookDefaults.AuthenticationScheme);
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> FacebookResponse(bool pLogin = false)
+        {
+            var user = new RegistreViewModel();
+            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            //var jj = result.Principal.Identities.FirstOrDefault().ToString(); //Prueba
+            var claims = result.Principal.Identities.FirstOrDefault().Claims.Select(claim => new
+            {
+                claim.Issuer,
+                claim.OriginalIssuer,
+                claim.Type,
+                claim.Value
+            });
+            if (result.Succeeded && result.Principal.Claims.Count() > 0)
+            {
+                user.Nombre = result.Principal.FindFirst(ClaimTypes.GivenName).Value;
+                user.Apellido = result.Principal.FindFirst(ClaimTypes.Surname).Value;
+                user.Email = result.Principal.FindFirst(ClaimTypes.Email).Value;
+                //user.Avatar = result.Principal.Claims.LastOrDefault().Value;
+                user.Registro = RegistreType.Facebook.ToString();
+                user.IdTipoUsuario = (int)RoleType.Cliente;
+
+                var userFind = await _usuarioService.GetUsuarioByEmail(user.Email);
+                if (userFind != null) //El usuario existe en BD
+                {
+                    //Generar token
+                    string token = _tokenService.BuildToken(_configuration["Authenticarion:SecretKey"].ToString(), _configuration["Authenticarion:Issuer"].ToString(), _mapper.Map<Usuario>(user));
+                    if (token != null)
+                    {
+                        if (string.IsNullOrEmpty(HttpContext.Session.GetString("Token")))
+                        {
+                            HttpContext.Session.SetString("Token", token);
+                        }
+
+                        var UserClaims = await LoginUser(_mapper.Map<Usuario>(user));
+                        if (UserClaims)
+                            return RedirectToAction("Index", "Home");
+                    }
+                    return BadRequest();
+
+                }//Se debe registrar
+                else
+                {
+                    var jsonUser = JsonConvert.SerializeObject(user);
+
+                    TempData["User"] = jsonUser;
+                    TempData["IsLogin"] = pLogin;
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        #endregion
+
+        #region Validación y autenticación de usuario
+        private async Task<(bool, Usuario)> IsValidUser(LoginViewModel model)
+        {
+            try
+            {
+                var user = await _usuarioService.GetUsuarioByEmail(model.Email);
+                if (user != null)
+                    return (_passwordHasher.Check(user.Password, model.Password), user);
+                else
+                    throw new Exception("Usuario no encontrado.");
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        //---------------------------------------------------------------------------------------------
+
+        private async Task<bool> LoginUser(Usuario obj)
+        {
+            string RolTipoUsuario = Enum.GetName(typeof(RoleType), obj.IdTipoUsuario);
+            try
+            {
+                var identity = new ClaimsIdentity(new[] {
+                    new Claim(ClaimTypes.Email, obj.Email),
+                    new Claim(ClaimTypes.Name, JsonConvert.SerializeObject(obj)),
+                    new Claim(ClaimTypes.Role,  RolTipoUsuario),
+                }, CookieAuthenticationDefaults.AuthenticationScheme, ClaimTypes.Email, ClaimTypes.Role);
+
+                var principal = new ClaimsPrincipal(identity);
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+        }
+
+
+        #endregion
+    }
+}

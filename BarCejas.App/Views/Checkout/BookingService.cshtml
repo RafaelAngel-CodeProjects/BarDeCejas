@@ -1,0 +1,178 @@
+﻿@model ProfessionalScheduleViewModel
+@using BarCejas.Entities;
+@using BarCejas.App.Utils;
+@using System.Text.Json;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+
+@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var controller = Model.PackageId == 0 ? "PaymentMethod" : "Packages";
+    var actionurl = Model.PackageId == 0 ? "Index" : "SelectedPackage";
+
+}
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/bootstrap/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css">
+
+
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans"><a href="javascript:history.back()"><i class="fas fa-solid fa-angle-left"></i></a></li>
+                    <li class="spa-bag d-none d-md-block d-lg-block d-sm-none"><a asp-area="">Home</a></li>
+                    <li class="spa-bag d-none d-md-block d-lg-block d-sm-none"><a asp-area="">-</a></li>
+                    <li class="active spa-bag d-none d-md-block d-lg-block d-sm-none">Servicios -  Reservar turno</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon">RESERVAR TURNO</h4>
+                <h7 class="title-secon" style="text-transform: uppercase; padding-top: 2px;font-size:13px">Diseño y perfilado de cejas</h7>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="company-mission section" style="padding-top: 68px!important;">
+    <div class="container">
+        <form asp-controller="Checkout" asp-action="BookingService" method="post">
+            <div class="row">
+                    <input type="hidden" asp-for="ServiceId" value="@Model.ServiceId" />
+                    <div class="form-group col-md-6 mb-4">
+                        <label class="mayusculas" for="inputPassword4">Filtrar por sucursal</label>
+                        <select class="form-control" asp-for="BranchOfficeId" asp-items="(Util.GetContactoLocalSelectListItems(Model.BranchOffices))" onchange="this.form.submit()">
+                            <option value="">Seleccione una opción</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6 mb-4">
+                        <label asp-for="ProfessionalId">Profesionales</label>
+                        <select class="form-control" asp-for="ProfessionalId" asp-items="(Util.GetProfesionalSelectListItems(Model.Professionals))" onchange="this.form.submit()">
+                            <option value="">Seleccione una opción</option>
+                        </select>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="centrar mb-4">
+
+                            <div class="md-form md-outline input-with-post-icon" style="z-index:5000">
+                                <input placeholder="DD/MM/AAAA" type="text" value="@Model.ServiceDate.ToString("dd/MM/yyyy")" asp-for="ServiceDate" onchange="this.form.submit()" class="form-control date calendar-btn">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </form>
+        <div class="popular_courses">
+
+            <div id="owl-turno" class="owl-carousel owl-theme w-100" style="width: 100%;">
+                @foreach (var Profesional in Model.ProfessionalSchedule)
+                {
+                    <div class="item carousel-inner w-100 " role="listbox">
+                        <ul>
+                            @foreach (var Horario in Profesional)
+                            {
+                                <li class="pt-3">
+                                    <a href="@Url.Action(actionurl, controller, new
+                                                    {
+                                                        PackageId = Model.PackageId,
+                                                        ServiceId = Model.ServiceId,
+                                                        BranchOfficeId = Model.BranchOfficeId,
+                                                        ProfessionalId = Horario.IdProfesional,
+                                                        ServiceDate = Model.ServiceDate,
+                                                        HourService = Horario.HoraInicial.Value.ToString(@"hh\:mm"),
+                                                        OrderId = Model.OrderId
+                                                    })">
+                                        <div class="media shadowmedia row ml-0 mr-0">
+                                            <div class="media-left align-self-center col-md-1">
+                                                <h4 style="color: #91733D; font-size: 24px!important;">
+                                                    @Horario.HoraInicial.Value.ToString(@"hh\:mm")
+                                                </h4>
+                                            </div>
+                                            <div class="media-left align-self-center col-md-1">
+                                                <h4 style="font-weight: 700!important;font-size: 16px!important;">@Horario.DuracionServicio min</h4>
+                                            </div>
+                                            <div class="media-right align-self-center col-md-6">
+                                                <h4 style="font-size: 16px!important;">@Horario.DireccionSucursal</h4>
+                                                <h6 style="font-size: 12px!important;">@Horario.NombreSucursal</h6>
+                                            </div>
+                                            <div class="media-right align-self-center col-md-4">
+                                                <h4 style="font-size: 16px!important;">Profesional: @Horario.NombreProfesional</h4>
+                                                <h6 style="font-size: 12px!important;">@Horario.DescripcionProfesional</h6>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--Data Table-->
+<script type="text/javascript" src=" https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src=" https://cdn.datatables.net/buttons/1.2.4/js/dataTables.buttons.min.js"></script>
+
+
+@*<script type="text/javascript" src="/BarDeCejasFront/wwwroot/plugins/bootstrap/js/dataTables.bootstrap4.min.js"></script>*@
+<!--Export table buttons-->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.24/build/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.24/build/vfs_fonts.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.print.min.js"></script>
+
+<script type="text/javascript" src=" https://cdn.datatables.net/fixedheader/3.2.0/js/dataTables.fixedHeader.min.js"></script>
+<script type="text/javascript" src=" https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+<script type="text/javascript" src=" https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap.min.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+
+        $('#owl-turno').owlCarousel({
+            loop: true,
+            margin: 1,
+            items: 1,
+            nav: true,
+            autoplaySpeed: false,
+            startPosition: 1,
+            autoplay: true,
+            smartSpeed: 1500,
+            dots: false,
+            responsiveClass: true,
+            thumbs: true,
+            thumbsPrerendered: true,
+               navText: [
+                "<img src='@Url.Content("~/images/prev.png")' />",
+                "<img src='@Url.Content("~/images/next.png")'>"],
+            responsive: {
+                0: {
+                    items: 1,
+                    margin: 0
+                },
+                991: {
+                    items: 1,
+                    margin: 5
+                },
+                1200: {
+                    items: 1,
+                    margin: 5
+                }
+
+            }
+        });
+    });
+
+
+</script>

@@ -1,0 +1,210 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@model IEnumerable<BarCejas.Entities.HistoricoOrdenesCliente>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = ViewBag.Title;
+}
+
+
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans"><a href="javascript:history.back()"><i class="fas fa-solid fa-angle-left"></i></a></li>
+                    <li class="spa-bag d-none d-md-block d-lg-block d-sm-none"><a href="/BarDeCejasFront/Presentation/Views/index.html">Home</a></li>
+                    <li class="spa-bag d-none d-md-block d-lg-block d-sm-none">-</a></li>
+                    <li class="active spa-bag d-none d-md-block d-lg-block d-sm-none">Mis turnos</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon mayuscula">Mis turnos</h4>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="row-section pt-2">
+    <div class="container">
+        <div class="row no-gutters">
+            <div class="col-md-12 row-block">
+                <div class="tabs">
+                    <div class="tab-2">
+                        <label for="tab2-1 mayuscula">Próximos</label>
+                        <input id="tab2-1" name="tabs-two" type="radio" checked="checked">
+                        <div>
+                            <ul>
+                                @{
+                                    foreach (var turno in Model.Where(x => x.IdEstatus == 10))
+                                    {
+                                        <li>
+                                            <div class="media row">
+                                                <div class="media-left align-self-center col-md-1">
+                                                    <img src="@(!String.IsNullOrEmpty(turno.RutaImagenPaagina)? Url.Content(turno.RutaImagenPaagina):Url.Content("~/images/sinImagen.png"))">
+                                                </div>
+                                                <div class="media-body col-md-5">
+                                                    <h4>Orden # @turno.IdOrdenItem</h4>
+                                                    <h4>@turno.Servicio</h4>
+                                                    <p>@turno.FechaDeCita.ToShortDateString(), @turno.Hora hs. <span style="color: #91733D;">| @turno.Duracion min.</span></p>
+                                                    <p>@turno.Direccion</p>
+                                                </div>
+                                                <div class="media-left align-self-center col-md-4">
+                                                    <img class="rounded-circle" style="width:2rem ;" src="@Url.Content("~/images/usuarios/U3.png")"> Profesional: @turno.Profesional;
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="row">
+                                                        <div class="media-right text-right col-md-12">
+                                                            <a class="btn-cancel-t" data-toggle="modal"
+                                                               data-target="#MyTurnModal"
+                                                               data-ajax="true"
+                                                               data-ajax-success="onSuccessModalCancelTurn"
+                                                               data-ajax-fail="onFailModalCancelTurn"
+                                                               data-ajax-method="GET"
+                                                               data-ajax-mode="replace"
+                                                               data-ajax-update="#cancelMyTurnModal"
+                                                               asp-controller="User"
+                                                               asp-action="CancelShift"
+                                                               asp-route-id="@turno.IdOrdenItem">Cancelar turno <i class="fas fa-times"></i></a>
+                                                        </div>
+                                                        <div class="media-right text-right col-md-12 pt-5">
+                                                            @{
+                                                                if (turno.IdEstatusPago == (int)BarCejas.Entities.Enumerations.EstatusPago.pendiente)
+                                                                {
+                                                                    <span class="pr-1" style="font-weight: bold; font-size:12px ;">
+                                                                        Pendiente
+                                                                    </span>
+                                                                }
+                                                                if (turno.IdEstatusPago == (int)BarCejas.Entities.Enumerations.EstatusPago.Pagado)
+                                                                {
+                                                                    <span class="pr-1" style="font-weight: bold; font-size:12px ;">
+                                                                        Abonado
+                                                                    </span>
+                                                                }
+                                                            }
+                                                            <span style="color: #91733D; font-size: 18px;">$@turno.Monto</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tab-2">
+                        <label for="tab2-2 mayuscula">Historial</label>
+                        <input id="tab2-2" name="tabs-two" type="radio">
+                        <div>
+                            <ul>
+                                @{
+                                    foreach (var turno in Model.Where(x => x.IdEstatus != 10))
+                                    {
+                                        <li>
+                                            <div class="media row">
+                                                <div class="media-left align-self-center col-md-1">
+                                                    <img src="@(!String.IsNullOrEmpty(turno.RutaImagenPaagina) ? Url.Content(turno.RutaImagenPaagina) : Url.Content("~/images/sinImagen.png"))">
+                                                </div>
+                                                <div class="media-body col-md-5">
+                                                    <h4>Orden # @turno.IdOrdenItem</h4>
+                                                    <h4>@turno.Servicio</h4>
+                                                    <p>@turno.FechaDeCita.ToShortDateString(), @turno.Hora hs. <span style="color: #91733D;">| @turno.Duracion min.</span></p>
+                                                    <p>@turno.Direccion</p>
+                                                </div>
+                                                <div class="media-left align-self-center col-md-4">
+                                                    <img class="rounded-circle" style="width:2rem ;" src="@Url.Content("~/images/usuarios/U4.png")"> Profesional: @turno.Profesional;
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="row">
+                                                        <div class="media-right text-right col-md-12">
+                                                            <a class="btn-cancel-t" data-toggle="modal"
+                                                               data-target="#cancelMyTurnModal"
+                                                               data-ajax="true"
+                                                               data-ajax-success="onSuccessModalCancelTurn"
+                                                               data-ajax-fail="onFailModalCancelTurn"
+                                                               data-ajax-method="GET"
+                                                               data-ajax-mode="replace"
+                                                               data-ajax-update="#cancelMyTurnModal"
+                                                               asp-controller="User"
+                                                               asp-action="CancelShift"
+                                                               asp-route-id="@turno.IdOrdenItem">Cancelar turno <i class="fas fa-times"></i></a>
+                                                        </div>
+                                                        <div class="media-right text-right col-md-12 pt-5">
+                                                            @{
+                                                                if (turno.IdEstatusPago == (int)BarCejas.Entities.Enumerations.EstatusPago.pendiente)
+                                                                {
+                                                                    <span class="pr-1" style="font-weight: bold; font-size:12px ;">
+                                                                        Pendiente
+                                                                    </span>
+                                                                }
+                                                                if (turno.IdEstatusPago == (int)BarCejas.Entities.Enumerations.EstatusPago.Pagado)
+                                                                {
+                                                                    <span class="pr-1" style="font-weight: bold; font-size:12px ;">
+                                                                        Abonado
+                                                                    </span>
+                                                                }
+                                                            }
+                                                            <span style="color: #91733D; font-size: 18px;">$@turno.Monto</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- End row -->
+    </div> <!-- End container -->
+</section> <!-- End section -->
+
+<div class="modal fade" id="MyTurnModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"></h5>
+                <a href="#" class="close" data-dismiss="modal" aria-label="close">&times;</a>
+                <div class="modal-body pl-5 pr-5" id="cancelMyTurnModal">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        function onSuccessModalCancelTurn(resp) {
+            if (resp.isCompleted !== undefined) {
+                if (resp.isCompleted) {
+                    ModalGeneral('@(Url.Action("MyTurns"))', resp.message, resp.isCompleted);
+                } else {
+                    ModalGeneral('', resp.message, false);
+                }
+            }
+        }
+
+        function onFailModalCancelTurn(error) {
+            if (error.responseJSON !== undefined)
+                ModalGeneral('', error.responseJSON.message, error.responseJSON.isCompleted);
+            else
+                ModalGeneral('', 'Ha ocurrido un error interno en el servidor', false);
+        }
+    </script>
+
+}

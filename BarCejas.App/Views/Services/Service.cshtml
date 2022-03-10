@@ -1,0 +1,139 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+@model BarCejas.Entities.Servicio
+@using System.Security.Claims;
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = ViewBag.Title;
+    string strUser = User.FindFirstValue(ClaimTypes.Name);
+    bool isNotLogged = string.IsNullOrEmpty(strUser);
+}
+
+
+<section class="team-skills section-sm" id="skills">
+    <div class="container">
+        <div class="row">
+            <!-- section title -->
+            <div class="col-12">
+                <div class="title text-center">
+                    <h4 style="text-transform: uppercase;">@Model.Nombre</h4>
+
+                </div>
+            </div>
+            <!-- /section title -->
+
+            <div class="col-md-6 pr-6">
+                <iframe width="100%" height="100%" src="https://www.youtube.com/embed/WmSqmNrou0Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div class="col-md-6 pl-5">
+                <div class="team-skills-content">
+                    <p class="text-troncate">
+                        @Model.DescripcionLarga
+                    </p>
+                </div>
+            </div>
+
+        </div> <!-- End row -->
+
+    </div>
+</section> <!-- End section -->
+
+<section class="services row-section pt-5">
+    <div class="container">
+        <div class="row no-gutters">
+            <!-- section title -->
+            <div class="col-md-6">
+                <div class="title text-left pb-1">
+                    <h4>PROFESIONALES</h4>
+                </div>
+                <div class="popular_courses">
+
+                    <div id="owl-user" class="owl-carousel owl-theme w-100" style="width: 100%;">
+
+                        @if (Model.ServicioProfesional != null || Model.ServicioProfesional.Count > 0)
+                        {
+                            foreach (var item in Model.ServicioProfesional)
+                            {
+                                <div class="item carousel-inner w-100 shadow" role="listbox">
+                                    <ul>
+                                        <li>
+                                            <div class="media shadowmedia">
+                                                <div class="media-left align-self-center">
+                                                    <img class="rounded-circle" src="@Url.Content("~/images/usuarios/U2.png")">
+                                                </div>
+                                                <div class="media-body">
+                                                    <h4 style="font-weight: 700!important;">@($"{item.IdProfesionalNavigation?.IdUsuarioNavigation?.Nombre} {item.IdProfesionalNavigation?.IdUsuarioNavigation?.Apellido}")</h4>
+                                                    <p style="color: #91733D;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></p>
+                                                </div>
+                                                <div class="media-right align-self-center">
+                                                    <a style="color: #91733D; text-decoration: underline;" href="#" class="float-right">Ir al perfil</a>
+                                                </div>
+                                            </div>
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            }
+                        }
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 pl-5">
+                <div class="title text-left pb-1">
+                    <h4>RECOMENDACIONES</h4>
+                </div>
+                <div class="team-skills-content">
+                    <p>
+                        @Model.RecomendacionesReserva
+                    </p>
+                </div>
+                <div class="divisor"></div>
+                <div class="title text-left pb-1">
+                    <h4>MODALIDADES DE PAGO</h4>
+                </div>
+                <ul class="feature-list">
+                    @foreach (var item in Model.ModalidadPagoServicio)
+                    {
+                        <li> <i class="tf-ion-android-checkmark-circle"></i>@item.IdModalidadPagoNavigation.Nombre</li>
+                    }
+                </ul>
+            </div>
+            <!-- /section title -->
+        </div> <!-- End row -->
+    </div> <!-- End container -->
+</section> <!-- End section -->
+<!--
+    Start Counter Section
+    ==================================== -->
+
+<section class="counter-wrapper section-sm" style="background-color: #fadce6;">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12" style="background-color: #fadce6; padding-top: 3%; padding-bottom: 4%;">
+                <span style="float: right;color: #000;font-weight: 600;font-size: 24px;">  $@Model.PrecioPromocioal</span><span style="float: right;color: #958389;text-decoration:line-through;padding-top: 7px;padding-right: 2px;">$@Model.PrecioLista </span>
+                @if (isNotLogged)
+                {
+                    <a id="linkModalLogin"
+                       data-toggle="modal"
+                       data-target="#LoginModal"
+                       data-ajax="true"
+                       data-ajax-begin="onBeginModalLogin"
+                       data-ajax-success="onSuccessModalLogin"
+                       data-ajax-fail="onFailModalLogin"
+                       data-ajax-complete=""
+                       data-ajax-method="GET"
+                       data-ajax-mode="replace"
+                       data-ajax-update="#LoginModalCuerpo"
+                       asp-controller="User"
+                       asp-action="ModalRegisterLogin" class="btn btn-main mt-20" style="width: 100%!important;">Reservar Turno</a>
+                }
+                else
+                {
+                    <a href="@Url.Action("BookingService","Checkout", new { serviceId = Model.Id, packageId = 0 })" class="btn btn-main mt-20" style="width: 100%!important;">RESERVAR TURNO</a>
+                }
+            </div>
+        </div> 		<!-- end row -->
+    </div>   	<!-- end container -->
+</section>   <!-- end section -->

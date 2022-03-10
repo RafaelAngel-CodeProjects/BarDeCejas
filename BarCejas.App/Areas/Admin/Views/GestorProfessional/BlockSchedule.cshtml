@@ -1,0 +1,244 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@model BarCejas.App.Areas.Admin.Models.ProfesionalViewModel
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = ViewBag.Title;
+}
+
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans"><a href="javascript:history.back()"><i class="fas fa-solid fa-angle-left"></i></a></li>
+                    <li class="spa-bag"><a asp-controller="GestorProfessional" asp-action="Index">Gestor</a></li>
+                    <li class="spa-bag">-</li>
+                    <li class="active spa-bag">Gestor de profesionales bloquear horario</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+
+
+    <div class="container title-secon-header">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon">@(ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit ? "EDITAR" : "ASIGNAR") HORARIO A PROFESIONAL</h4>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="company-mission" style="padding-top: 68px!important;">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="title text-center" style="padding-bottom:26px!important">
+                    <h4 class="title-secon">BLOQUEAR HORARIO</h4>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<div class="hide">
+    <input type="hidden" asp-for="Id" />
+</div>
+<section class="company-mission section pt-0">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5  mb-4">
+                <div class="custom-control custom-radio " style="float: left;">
+                    <input type="radio" id="semana" checked name="customRadio" class="custom-control-input">
+                    <label class="custom-control-label" for="semana">Seleccionar semana</label>
+                </div>
+                <div class="custom-control custom-radio contrAlin" style="float: right;">
+                    <input type="radio" id="todassemana" name="customRadio" class="custom-control-input">
+                    <label class="custom-control-label" for="todassemana">Aplicar a todas las semanas</label>
+                </div>
+            </div>
+
+        </div>
+        <div id='calendar'></div>
+        <br />
+        <div id="validationEmptyDate" style="display: none" class="text-red text-center">* Seleccione un horario</div>
+        <br />
+        <div class="row">
+            <div class="form-group col-md-6 mb-4">
+                <a asp-controller="GestorProfessional" asp-action="AttentionHours" asp-route-id="@Model.Id" class="btn btn-main float-right">DESCARTAR</a>
+            </div>
+            <div class="form-group col-md-6 mb-4">
+                <button class="btn btn-main-accion" id="btnBlockSchedule">BLOQUEAR HORARIOS</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script type="text/javascript">
+        var startDate;
+    var endDate;
+    var blockScheduleList = []
+        $(document).ready(function () {
+            chargeHorariosBloqueados()
+        });
+
+            function chargeHorariosBloqueados() {
+                $.ajax({
+                        url: '@Url.Action("GetBlockSchedule", "GestorProfessional")',
+                        method: 'GET',
+                        ContentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: { id: parseInt(document.getElementById("Id").value) },
+                        success: function (response) {
+                            var blockSchedule = [];
+                            blockScheduleList = response
+                            for (var i = 0; i < response.length; i++) {
+                                var block = {
+                                    start: response[i].fechaInicio,
+                                    end: response[i].fechaFin,
+                                    //overlap: false,
+                                    display: 'background',
+                                    color: 'rgb(243 108 113)'
+                                }
+                                blockSchedule.push(block)
+                            }
+                            var calendarEl = document.getElementById('calendar');
+
+                            var calendar = new FullCalendar.Calendar(calendarEl, {
+                                initialView: 'timeGridWeek',
+                                headerToolbar: {
+                                    left: '',
+                                    center: 'title',
+                                    right: 'today prev,next'
+                                },
+                                locale: 'es',
+                                initialDate: new Date(),
+                                navLinks: true, // can click day/week names to navigate views
+                                businessHours: true, // display business hours
+                                editable: true,
+                                selectable: true,
+                                select: function (arg) {
+                                    startDate = arg.start.toISOString();
+                                    endDate = arg.end.toISOString();
+                                    validateDates(response, arg.startStr, arg.endStr)
+                                },
+                                eventClick: function (arg) {
+                                    if (confirm('Are you sure you want to delete this event?')) {
+                                        arg.event.remove()
+                                    }
+                                },
+                                //selectConstraint: blockSchedule,
+                                //validRange: blockSchedule,
+                                events: blockSchedule
+                            });
+
+                            calendar.render();
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                             alert("Error: " + errorThrown);
+                        }
+                    });
+            }
+
+        $("#btnBlockSchedule").click(function () {
+            ModalBloquearHorario()
+        });
+
+    function validateDates(blockSchedule, startDate, endDate) {
+        var validate = blockSchedule.findIndex(x => x.fechaInicio == startDate.substring(0, startDate.length - 6) && x.fechaFin == endDate.substring(0, endDate.length - 6));
+        if (validate > -1) {
+            $(".swal2-title").removeClass("swal2-title");
+            swal.fire({
+                title: "¿Desea desbloquear el horario seleccionado?",
+                text: "",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: "Si",
+                cancelButtonText: "Cancelar",
+                customClass: {
+                    title: 'swal2-title-Warning'
+                }
+
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var horario = blockSchedule.find(x => x.fechaInicio == startDate.substring(0, startDate.length - 6) && x.fechaFin == endDate.substring(0, endDate.length - 6))
+                    DesbloqeuarHorario(horario.id);
+                }
+                return false;
+            });
+        }
+    }
+
+    function DesbloqeuarHorario(idHorarioBloqueado) {
+        $.ajax({
+                url: '@Url.Action("UnBlockSchedule", "GestorProfessional")',
+                method: 'POST',
+                ContentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: { idBlockSchedule: idHorarioBloqueado },
+                success: function (response) {
+                    ModalGeneral("", response.message, true);
+                    chargeHorariosBloqueados()
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                     alert("Error: " + errorThrown);
+                }
+            });
+    }
+
+    function BloquearHorario() {
+        var indTodasSemanas = false;
+        if ($('#todassemana').is(':checked')) {
+            indTodasSemanas = true;
+        }
+            $.ajax({
+                url: '@Url.Action("BlockScheduleUpdate", "GestorProfessional")',
+                method: 'POST',
+                ContentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: { startDate: startDate, endDate: endDate, idProfessional: parseInt(document.getElementById("Id").value), indTodasSemanas: indTodasSemanas },
+                success: function (response) {
+                    ModalGeneral("", response.message, true);
+                    chargeHorariosBloqueados()
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                     alert("Error: " + errorThrown);
+                }
+            });
+        };
+
+    function ModalBloquearHorario() {
+            if (startDate != undefined && endDate != undefined) {
+                $("#validationEmptyDate").css("display", "none");
+                $(".swal2-title").removeClass("swal2-title");
+                swal.fire({
+                    title: "¿Está seguro que desea bloquear el horario seleccionado?",
+                    text: "",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: "Si",
+                    cancelButtonText: "Cancelar",
+                    customClass: {
+                        title: 'swal2-title-Warning'
+                    }
+
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        BloquearHorario();
+                    }
+                    return false;
+                });
+            } else {
+                $("#validationEmptyDate").css("display","block");
+            }
+
+        }
+</script>
+}

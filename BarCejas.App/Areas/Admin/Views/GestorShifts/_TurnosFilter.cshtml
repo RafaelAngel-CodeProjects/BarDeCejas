@@ -1,0 +1,64 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+<form asp-controller="GestorShifts" asp-action="SearchTurns" data-ajax="true" data-ajax-method="POST" data-ajax-failure="OnFailureAddOrEditTurno" data-ajax-success="OnSuccessFilterTurno" data-ajax-mode="replace" data-ajax-update="#ListTurnos">
+    <div class="row">
+        <div class="col-md-4 offset-md-8 mb-4">
+            <a class="btn btn-main-accion float-right ml-3" data-toggle="modal" data-target="#TurnoModal" data-ajax="true" data-ajax-begin="onBeginTurno" data-ajax-failure="onFailureModalTurno" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#TurnoModalBody" asp-controller="GestorShifts" asp-action="New">NUEVO TURNO</a>
+            <a class="btn btn-main float-right" asp-controller="GestorTurns" asp-action="Index">VER AGENDA</a>
+        </div>
+        <div class="col-md-12 ">
+            <div class="row">
+
+                <div class="form-group col-md-4 mb-4">
+                    <label for="IdServicio">Servicio</label>
+                    <select name="IdServicio" class="form-control" asp-items="(ViewBag.Servicios!=null?ViewBag.Servicios:null)">
+                        <option value="0">Seleccione una opción</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-2 mb-2">
+                    <label for="FechaInicio">Fecha desde</label>
+                    <div class="md-form md-outline input-with-post-icon">
+                        <input placeholder="Fecha desde" type="text" name="FechaInicio" id="FechaInicio" class="form-control date">
+                    </div>
+                </div>
+                <div class="form-group col-md-2 mb-2">
+                    <label for="FechaFin">Fecha hasta</label>
+                    <div class="md-form md-outline input-with-post-icon">
+                        <input placeholder="Fecha hasta" type="text" name="FechaFin" id="FechaFin" class="form-control date">
+                    </div>
+                </div>
+                @if (ViewData["IsAdmin"] != null && (bool)ViewData["IsAdmin"])
+                {
+                <div class="form-group col-md-4 mb-4">
+                    <label for="IdProfesional">Profesional</label>
+                    <select name="IdProfesional" class="form-control" asp-items="(ViewBag.Profesionales!=null?ViewBag.Profesionales:null)">
+                        <option value="0">Seleccione una opción</option>
+                    </select>
+                </div>
+                }
+                <div class="form-group col-md-4 mb-4">
+                    <label for="IdModalidadPago">Modalidad de pago</label>
+                    <select name="IdModalidadPago" class="form-control" asp-items="(ViewBag.ModalidadesPago!=null?ViewBag.ModalidadesPago:null)">
+                        <option value="0">Seleccione una opción</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-4 mb-4">
+                    <label for="IdEstatusOrden">Estatus del turno</label>
+                    <select name="IdEstatusOrden" class="form-control" asp-items="(ViewBag.EstatusOrden!=null?ViewBag.EstatusOrden:null)">
+                        <option value="0">Seleccione una opción</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-4 mb-4">
+                    <label for="IdEstatusPago">Estatus del pago</label>
+                    <select name="IdEstatusPago" class="form-control" asp-items="(ViewBag.EstatusPago!=null?ViewBag.EstatusPago:null)">
+                        <option value="0">Seleccione una opción</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 offset-md-8 mb-4">
+            <button class="btn btn-main float-right" type="submit">BUSCAR</button>
+        </div>
+    </div>
+</form>

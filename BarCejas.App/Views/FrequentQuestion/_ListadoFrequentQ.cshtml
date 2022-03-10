@@ -1,0 +1,30 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@model IEnumerable<BarCejas.Entities.PreguntasFrecuentes>
+@foreach (var item in Model)
+{
+    <!-- Accordion card -->
+    <div class="card card-middle">
+
+        <!-- Card header -->
+        <div class="card-header" role="tab" id="heading_@item.Id">
+            <a class="collapsed" data-toggle="collapse" data-parent="#accordionEx1" data-target="#collapse_@item.Id" aria-expanded="false" aria-controls="collapse_@item.Id">
+                <h5 class="mb-0">
+                    @item.Pregunta<i class="fas fa-angle-down rotate-icon"></i>
+                </h5>
+            </a>
+        </div>
+
+        <!-- Card body -->
+        <div id="collapse_@item.Id" class="collapse" role="tabpanel" aria-labelledby="heading_@item.Id"
+             data-parent="#accordionEx1">
+            <div class="card-body">
+                <p style="text-align: justify;">@Html.Raw(item.Respuesta) </p>
+            </div>
+        </div>
+
+    </div>
+
+}<!-- Accordion card -->

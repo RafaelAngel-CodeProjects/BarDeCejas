@@ -1,0 +1,31 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+<div class="container">
+    <div class="row">
+        <form asp-controller="GestorShifts" asp-action="SearchClient" data-ajax="true" data-ajax-method="get" data-ajax-failure="onFailureTurno" data-ajax-mode="replace" data-ajax-update="#clientList">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="input-group col-md-3 mb-3">
+                        <input type="text" class="form-control" name="nombre" placeholder="Nombre del cliente">
+                    </div>
+                    <div class="form-group col-md-3 mb-3">
+                        <input type="text" class="form-control" name="apellido" placeholder="Apellido del cliente">
+                    </div>
+                    <div class="input-group col-md-3 mb-3">
+                        <input type="text" class="form-control" name="dni" placeholder="DNI del cliente">
+                    </div>
+                    <div class="input-group col-md-3 mb-3">
+                        <button type="submit" class="btn btn-main">Buscar</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12" id="clientList">
+            @await Html.PartialAsync("_ClientList", null)
+        </div>
+    </div>
+</div>

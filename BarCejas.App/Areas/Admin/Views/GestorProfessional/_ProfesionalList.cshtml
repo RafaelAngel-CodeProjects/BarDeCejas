@@ -1,0 +1,42 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@model IEnumerable<BarCejas.Entities.Profesional>
+
+<table id="example" class="table nowrap" style="width:100%">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Email</th>
+            <th>Local</th>
+            <th>Servicios</th>
+            <th>Editar</th>
+            <th>Editar horario</th>
+            <th>Desbloquear</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.IdUsuarioNavigation.Nombre</td>
+                <td>@item.IdUsuarioNavigation.Apellido</td>
+                <td>@item.IdUsuarioNavigation.Email</td>
+                <td>@item.IdContactoLocalNavigation.Nombre</td>
+                <td>@string.Join('/', item.ServicioProfesional.Where(x => (bool)x.EsActivo).Select(x => x.IdServicioNavigation?.Nombre))</td>
+                <td><a class="btn btn-cir" asp-controller="GestorProfessional" asp-action="Edit" asp-route-id="@item.Id"><i class="fas fa-light fa-pen"></i></a></td>
+                <td class="text-center"><a class="btn btn-cir" asp-controller="GestorProfessional" asp-action="AttentionHours" asp-route-id="@item.Id"><i class="fas fa-solid fa-calendar"></i></a></td>
+                <td class="text-center"><a class="btn btn-cir" asp-controller="GestorProfessional" asp-action="Edit" asp-route-id="@item.Id"><i class="fas fa-solid fa-key"></i></a></td>
+                <td>
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" @((bool)item.EsActivo ? "checked" : string.Empty) onclick="ChangeStatus(@item.Id, '@(!(bool)item.EsActivo)')" id="gpr_@item.Id" class="custom-control-input">
+                        <label class="custom-control-label" for="gpr_@item.Id" data-original-title="@((bool)item.EsActivo ? "Activo" : "Inactivo")"></label>
+                    </div>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>

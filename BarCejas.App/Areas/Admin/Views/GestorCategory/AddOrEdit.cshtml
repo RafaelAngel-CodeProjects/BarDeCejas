@@ -1,0 +1,108 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@model BarCejas.App.Areas.Admin.Models.CategoriaViewModel
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = ViewBag.Title;
+}
+
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans">
+                        <a href="javascript:history.back()">
+                            <i class="fas fa-solid fa-angle-left"></i>
+                        </a>
+                    </li>
+                    <li class="spa-bag"><a asp-controller="GestorCategory" asp-action="Index">Gestor</a></li>
+                    <li class="spa-bag">-</li>
+                    <li class="active spa-bag">Gestor de Categoría</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+
+
+    <div class="container title-secon-header">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon">@(ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit ? "EDITAR" : "CREAR") CATEGORÍAS</h4>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="company-mission section" style="padding-top: 68px!important;">
+    <div class="container">
+
+        <form enctype="multipart/form-data" id="CategoriasForm" method="post">
+            <div class="hide">
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="EsActivo" />
+                <input type="hidden" asp-for="RutaImagen" />
+            </div>
+            <div class="row">
+                <div class="form-group col-md-12 mb-12">
+                    <label asp-for="Nombre">Nombre de la categoría</label>                                                                                                                                                                                                                                                                                                                                                                                                             
+                    <input type="text" class="form-control" asp-for="Nombre" placeholder="Nombre">
+                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-12 mb-12">
+                    <label asp-for="ArchivoImagen">Imagen de la categoria</label>
+                    <input type="file" accept="image/jpg, image/png, image/jpeg" class="form-control-file customInputFile mx-auto p-5" asp-for="ArchivoImagen">
+                    <img src="@(Model!= null && Model.RutaImagen != null ? Model.RutaImagen : string.Empty)" asp-append-version="true" height="300" />
+                    @*<span asp-validation-for="ArchivoImagen" class="text-danger"></span>*@
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6 mb-4">
+                    <a asp-controller="GestorCategory" asp-action="Index" class="btn btn-main float-right">DESCARTAR</a>
+                </div>
+                <div class="form-group col-md-6 mb-4">
+                    <button class="btn btn-main-accion" type="submit">@(ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit ? "EDITAR" : "CREAR") CATEGORÍA</button>
+                    @*<a class="btn btn-main-accion" href="#">CREAR CATEGORÍAS</a>*@
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+@section scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+         $(function () {
+             $("#CategoriasForm").submit(function (e) {
+                e.preventDefault();
+                var form = $(this);
+                var formData = new FormData($('#CategoriasForm')[0]);
+
+                if (form.valid()) {
+                    $.ajax({
+                        type: 'post',
+                        url: '@Url.Action(ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit ? "Update" : "Registre", "GestorCategory")',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (resp) {
+                            OnSuccessAddOrEdit(resp);
+                        },
+                        error: function (error) {
+                            OnFailureAddOrEdit(error);
+                        }
+                    });
+                } else {
+                    return false;
+                }
+
+            });
+        })
+    </script>
+}

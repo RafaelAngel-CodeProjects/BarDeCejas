@@ -1,0 +1,733 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="description" content="Bar de Cejas">
+
+    <meta name="author" content="">
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BarCejas.App</title>
+
+    <!-- Mobile Specific Meta
+      ================================================== -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="~/images/favicon.png" />
+
+
+    <!-- CSS
+    ================================================== -->
+    <!-- Themefisher Icon font -->
+    <link rel="stylesheet" href="~/lib/themefisher-font/style.css">
+    <!-- bootstrap.min css -->
+    <!--Export table button CSS-->
+    <link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    @*<link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css">*@
+    <link rel="stylesheet" href="~/lib/bootstrap/css/dataTables.bootstrap4.min.css" />
+
+    <link href="~/lib/bootstrap/css/buttons.dataTables.min.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap/css/fixedHeader.bootstrap.min.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap/css/responsive.bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Lightbox.min css -->
+    <link rel="stylesheet" href="~/lib/lightbox2/dist/css/lightbox.min.css">
+    <!-- animation css -->
+    <link rel="stylesheet" href="~/lib/animate/animate.css">
+    <!-- Slick Carousel -->
+    <link rel="stylesheet" href="~/lib/slick/slick.css">
+    <!-- Main Stylesheet -->
+
+    <link href="~/css/style-service.css" rel="stylesheet" />
+    <link href="~/css/style.css" rel="stylesheet" />
+    <!-- carrucel -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" integrity="sha512-tS3S5qG0BlhnQROyJXvNjeEM4UpMXHrQfTGmbQ1gKmelCxlSEBUaxhRBj/EFTzpbP4RVSrpEikbmdJobCvhE3g==" crossorigin="anonymous" />
+
+    <!-- fuente icono -->
+    <link href="~/lib/fontawesome/css/all.css" rel="stylesheet"> <!--load all styles -->
+    <!-- carrucel -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" integrity="sha512-tS3S5qG0BlhnQROyJXvNjeEM4UpMXHrQfTGmbQ1gKmelCxlSEBUaxhRBj/EFTzpbP4RVSrpEikbmdJobCvhE3g==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ti-icons@0.1.2/css/themify-icons.css">
+    <link href="~/plugins/sweetalert/sweetalert2.min.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap-datepicker/css/bootstrap-datepicker3.css" rel="stylesheet" />
+
+    <link href="~/css/menuMobile.css" rel="stylesheet" />
+</head>
+<body id="body">
+
+    <!--
+     Start Preloader
+     ==================================== -->
+    <div id="preloader">
+        <div class='preloader'>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+    <!--
+    End Preloader
+    ==================================== -->
+    <!--
+    Fixed Navigation
+    ==================================== -->
+    @(await Component.InvokeAsync("ClientMenu"))
+    <!--
+    End Fixed Navigation
+    ==================================== -->
+
+    @RenderBody()
+
+
+    <!-- Section Modal Login -->
+    <!-- Modal -->
+    @*<div class="modal fade" id="LoginModal" tabindex="-1" role="dialog" aria-labelledby="LoginModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header CustomHeaderModal">
+                        <button type="button" class="close closeModalLogin" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="login">
+                        <div class="modal-body">
+                            <div class="container-fluid">
+                                <form>
+                                    <div class="row mb-4">
+                                        <div class="col">
+                                        </div>
+                                        <div class="col-6 enterLoginText FontText">
+                                            INGRESÁ
+                                        </div>
+                                        <div class="col">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col"></div>
+                                        <div class="col-8">
+                                            <div class="form-group">
+                                                <label for="exampleInputEmail1">Email</label>
+                                                <input type="email" class="form-control rounded-0"
+                                                       id="InputEmailLogin" aria-describedby="emailHelp"
+                                                       placeholder="Ingresá tu email">
+                                            </div>
+                                        </div>
+                                        <div class="col"></div>
+                                    </div>
+                                    <div class="row mb-4">
+                                        <div class="col"></div>
+                                        <div class="col-8">
+                                            <div class="form-group">
+                                                <label for="exampleInputPassword1">Password</label>
+                                                <input type="password" class="form-control rounded-0"
+                                                       id="InputPasswordLogin" placeholder="Ingresá tu contraseña">
+                                            </div>
+                                        </div>
+                                        <div class="col"></div>
+                                    </div>
+                                    <div class="row mb-4">
+                                        <div class="col"></div>
+                                        <div class="col-8">
+                                            <button type="button"
+                                                    class="btn btn-lg btn-block ButtonLogin rounded-0 FontText">
+                                                INGRESÁ
+                                            </button>
+                                        </div>
+                                        <div class="col"></div>
+                                    </div>
+                                    <div class="row mb-4">
+                                        <div class="col"></div>
+                                        <div class="col-8 justify-content-center centerText">
+                                            Olvidé mi contraseña, <u>recuperar</u>
+                                        </div>
+                                        <div class="col"></div>
+                                    </div>
+                                    <div class="row mb-4">
+                                        <div class="col"></div>
+                                        <div class="col-8 justify-content-center centerText">
+                                            <div class="Line"></div>
+                                        </div>
+                                        <div class="col"></div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col"></div>
+                                        <div class="col-8">
+                                            <button type="button"
+                                                    class="btn btn-lg btn-block ButtonSocial rounded-0 FontText">
+                                                <i class="mr-2 p-2 iconSocial rounded-circle tf-ion-social-facebook"></i>Ingresar
+                                                Con Facebook
+                                            </button>
+                                        </div>
+                                        <div class="col"></div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col"></div>
+                                        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+                                        <div class="col-8">
+
+                                            <button type="button"
+                                                    class="btn btn-lg btn-block ButtonSocial rounded-0 FontText g-signin2">
+                                                <i class="mr-2 p-2 iconSocial rounded-circle tf-ion-social-facebook"></i>Ingresar
+                                                Con Gmail
+                                            </button>
+                                        </div>
+                                        <div class="col"></div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col"></div>
+                                    <div class="col-8 justify-content-center centerText">
+                                        No tengo usuario, <u onclick="toggleLogin()">registrarme</u>
+                                    </div>
+                                    <div class="col"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="register" style="display: none;">
+                        <div class="modal-body">
+                            <div class="container-fluid">
+                                <form>
+                                    <div class="row mb-4">
+                                        <div class="col">
+                                        </div>
+                                        <div class="col-6 enterLoginText FontText">
+                                            REGISTRATE
+                                        </div>
+                                        <div class="col">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col"></div>
+                                        <div class="col-8">
+                                            <div class="form-group">
+                                                <label for="exampleInputEmail1">Email</label>
+                                                <input type="email" class="form-control rounded-0"
+                                                       id="InputEmailLogin" aria-describedby="emailHelp"
+                                                       placeholder="Ingresá tu email">
+                                            </div>
+                                        </div>
+                                        <div class="col"></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col"></div>
+                                        <div class="col-8">
+                                            <div class="form-group">
+                                                <label style="margin-bottom: 0px;" for="exampleInputPassword1">Modificar contraseña</label>
+                                                <small style="margin-top: 0px;" id="passwordlHelp" class="form-text text-muted">Mínimo 8 caracteres, debe incluir números y letras</small>
+                                                <input type="password" class="form-control rounded-0"
+                                                       id="InputPasswordLogin" placeholder="Ingresá tu contraseña">
+                                            </div>
+                                        </div>
+                                        <div class="col"></div>
+                                    </div>
+                                    <div class="row mb-4">
+                                        <div class="col"></div>
+                                        <div class="col-8">
+                                            <div class="form-group">
+                                                <label for="exampleInputPassword1">Confirmar contraseña</label>
+                                                <input type="password" class="form-control rounded-0"
+                                                       id="InputConfirmPasswordLogin" placeholder="Repetí tu contraseña">
+                                            </div>
+                                        </div>
+                                        <div class="col"></div>
+                                    </div>
+                                    <div class="row mb-5">
+                                        <div class="col"></div>
+                                        <div class="col-8">
+                                            <button type="button"
+                                                    class="btn btn-lg btn-block ButtonLogin rounded-0 FontText">
+                                                GUARDAR
+                                            </button>
+                                        </div>
+                                        <div class="col"></div>
+                                    </div>
+                                    <div class="row mb-4">
+                                        <div class="col"></div>
+                                        <div class="col-8 justify-content-center centerText">
+                                            <div class="Line"></div>
+                                        </div>
+                                        <div class="col"></div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col"></div>
+                                        <div class="col-8">
+                                            <button type="button"
+                                                    class="btn btn-lg btn-block ButtonSocial rounded-0 FontText">
+                                                <i class="mr-2 p-2 iconSocial rounded-circle tf-ion-social-facebook"></i>Ingresar
+                                                Con Facebook
+                                            </button>
+                                        </div>
+                                        <div class="col"></div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col"></div>
+                                        <div class="col-8">
+                                            <button type="button"
+                                                    class="btn btn-lg btn-block ButtonSocial rounded-0 FontText">
+                                                <i class="mr-2 p-2 iconSocial rounded-circle tf-ion-social-google"></i>Ingresar
+                                                Con Gmail
+                                            </button>
+                                        </div>
+                                        <div class="col"></div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col"></div>
+                                    <div class="col-8 justify-content-center centerText">
+                                        ya tengo usuario, <u onclick="toggleLogin()">ingresar</u>
+                                    </div>
+                                    <div class="col"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+    <!-- end Section Modal Login -->
+    <!-- Modal de registros-->
+    <div id="Notificacion" class="modal fade">
+        <div class="modal-dialog" style="max-width: 640px;">
+            <div class="modal-content">
+
+                <div class="modal-header CustomHeaderModal">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="button" class="close" data-dismiss="modal"><i class="icon-cross"></i></button>
+                                <h4 class="modal-title" id="Titulo"> </h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-body p-t-20">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p id="Mensaje"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+    <!-- end Modal registros-->
+
+
+    <footer id="footer" class="bg-one">
+        <div class="top-footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-3 col-md-3 col-lg-3">
+                        <h3>Nosotros</h3>
+                        <p>Especialista en cejas y pestañas. El cuidado de las cejas es un aspecto que, desde siempre, ha importado mucho tanto a las mujeres pero también a los hombres.</p>
+                    </div>
+                    <!-- End of .col-sm-3 -->
+
+                    <div class="col-sm-3 col-md-3 col-lg-3">
+                        <ul>
+                            <li><h3>Nuestros servicios</h3></li>
+                            <li><a href="#">Pestañas</a></li>
+                            <li><a href="#">Labios</a></li>
+                            <li><a href="#">Cejas</a></li>
+                            <li><a href="#">y más</a></li>
+                        </ul>
+                    </div>
+                    <!-- End of .col-sm-3 -->
+
+                    <div class="col-sm-3 col-md-3 col-lg-3">
+                        <ul>
+                            <li><h3>Enlaces rápidos</h3></li>
+                            <li><a asp-controller="Service" asp-action="Index">Servicios</a></li>
+                            <li><a asp-controller="Packages" asp-action="Index">Paquetes</a></li>
+                            <li><a asp-controller="Newness" asp-action="Index">Novedades</a></li>
+                            <li><a asp-controller="FrequentQuestion" asp-action="Index">Preguntas frecuentes</a></li>
+                        </ul>
+                    </div>
+                    <!-- End of .col-sm-3 -->
+
+                    <div class="col-sm-3 col-md-3 col-lg-3">
+                        <ul>
+                            <li><h3>Contáctanos</h3></li>
+                            <li><a asp-area="" asp-controller="Contacto" asp-action="Index">Nuestros locales</a></li>
+                            <li><a href="#">Twitter</a></li>
+                            <li><a href="#">Youtube</a></li>
+                            <li><a href="#">Pinterest</a></li>
+                        </ul>
+                    </div>
+                    <!-- End of .col-sm-3 -->
+
+                </div>
+            </div> <!-- end container -->
+        </div>
+        <div class="footer-bottom">
+            <h5>SIGUENOS EN</h5>
+            <h6><i style="font-size: 33px!important;" class="tf-ion-social-instagram"></i><i style="font-size: 33px!important;" class="tf-ion-social-facebook"></i></h6>
+            <h6>&copy;BAR DE CEJAS 2021</h6>
+        </div>
+    </footer> <!-- end footer -->
+    <!-- end Footer Area
+    <!-- end Footer Area
+    ========================================== -->
+    <!-- Section Modal Login -->
+    <!-- Modal -->
+    <div class="modal fade" id="LoginModal" tabindex="-1" role="dialog" aria-labelledby="LoginModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header CustomHeaderModal">
+                    <button type="button" onclick="OnCloseModal()" class="close closeModalLogin" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="LoginModalCuerpo">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end Section Modal Login -->
+    <!--
+     Essential Scripts
+    =====================================-->
+    <!-- Main jQuery -->
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <!-- Google Map -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBu5nZKbeK-WHQ70oqOWo-_4VmwOwKP9YQ"></script>
+    <script src="~/lib/google-map/gmap.js"></script>
+    <script src="https://cdn.ckeditor.com/4.17.1/standard/ckeditor.js"></script>
+
+    @*<script src="https://cdn.ckeditor.com/ckeditor5/31.1.0/classic/ckeditor.js"></script>*@
+    <!-- Form Validation -->
+    <script src="~/lib/form-validation/jquery.form.js"></script>
+    <script src="~/lib/form-validation/jquery.validate.min.js"></script>
+    <!-- Bootstrap4 -->
+    @*<script src="~/lib/bootstrap/js/bootstrap.min.js"></script>*@
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- Data table -->
+    <script src="~/lib/bootstrap/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/bootstrap/js/dataTables.bootstrap4.min.js"></script>
+
+    <!--Export table buttons-->
+    <script src="~/lib/bootstrap/js/dataTables.buttons.min.js"></script>
+    <script src="~/lib/bootstrap/js/jszip.min.js"></script>
+    <script src="~/lib/bootstrap/js/pdfmake.min.js"></script>
+    <script src="~/lib/bootstrap/js/vfs_fonts.js"></script>
+    <script src="~/lib/bootstrap/js/buttons.html5.min.js"></script>
+    <script src="~/lib/bootstrap/js/buttons.print.min.js"></script>
+    <script src="~/lib/bootstrap/js/dataTables.fixedHeader.min.js"></script>
+    <script src="~/lib/bootstrap/js/dataTables.responsive.min.js"></script>
+    <script src="~/lib/bootstrap/js/responsive.bootstrap.min.js"></script>
+    <!-- Parallax -->
+    <script src="~/lib/parallax/jquery.parallax-1.1.3.js"></script>
+    <!-- lightbox -->
+    <script src="~/lib/lightbox2/dist/js/lightbox.min.js"></script>
+    <!-- Owl Carousel -->
+    <script src="~/lib/slick/slick.min.js"></script>
+    <!-- filter -->
+    <script src="~/lib/filterizr/jquery.filterizr.min.js"></script>
+    <!-- Smooth Scroll js -->
+    <script src="~/lib/smooth-scroll/smooth-scroll.min.js"></script>
+    <!-- fuente icono -->
+    <script defer src="~/lib/fontawesome/js/all.js"></script> <!--load all styles -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js" integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw==" crossorigin="anonymous"></script>
+
+    <!-- Custom js -->
+    <script src="~/js/script.js" asp-append-version="true"></script>
+
+    <!-- Main jQuery -->
+    <!-- Esta es la libreria ajax que funciona, las otras de unobtrusive no funcionaron para mi. -->
+    <script src="~/lib/form-validation/jquery.validate.min.js"></script>
+
+    @*<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>*@
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/plugins/sweetalert/sweetalert2.min.js"></script>
+    <script src="~/lib/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+    <script src="~/lib/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js"></script>
+    @RenderSection("Scripts", required: false)
+
+    <script type="text/javascript">
+
+
+
+        function toggleLogin(stringName) {
+            var Login = document.getElementById("login");
+            var Register = document.getElementById("register");
+            if (Login.style.display === "none") {
+
+                Login.style.display = "block";
+                Register.style.display = "none";
+            } else {
+                Login.style.display = "none";
+                Register.style.display = "block";
+            }
+        }
+    $(document).ready(function () {
+            $('#file-upload').change(function () {
+                var file = $('#file-upload')[0].files[0].name;
+                $('#FileUploaded').text(file);
+                $('#requiredFile').text('');
+            });
+
+
+            $('.date').datepicker({
+                format: "dd/mm/yyyy",
+                language: "es",
+                orientation: "bottom auto",
+                calendarWeeks: true,
+                autoclose: true,
+                todayHighlight: true
+            });
+
+            jQuery('#navbarDropdownUser').click(function (e) {
+                jQuery('#sidenav').slideToggle('fast');
+                e.stopPropagation();
+            });
+            $(document).click(function (e) {
+                var $info = $('#sidenav');
+                if (!$info.is(e.target) && $info.has(e.target).length === 0 && e.target.id != 'dropdown-btn') {
+
+
+                    $("#sidenav").hide();
+                }
+            });
+
+
+            //* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
+            var dropdown = document.getElementsByClassName("dropdown-btn");
+            var i;
+
+            for (i = 0; i < dropdown.length; i++) {
+                dropdown[i].addEventListener("click", function () {
+                    this.classList.toggle("active");
+                    var dropdownContent = this.nextElementSibling;
+                    if (dropdownContent.style.display === "block") {
+                        dropdownContent.style.display = "none";
+                    } else {
+                        dropdownContent.style.display = "block";
+                    }
+                });
+            }
+
+            $('#owl-user').owlCarousel({
+                loop: true,
+                margin: 1,
+                items: 1,
+                nav: true,
+                autoplaySpeed: false,
+                startPosition: 1,
+                autoplay: 2500,
+                smartSpeed: 1500,
+                dots: false,
+                responsiveClass: true,
+                thumbs: true,
+                thumbsPrerendered: true,
+                navText: ["<img src='@Url.Content("~/images/prev.png")'>", "<img src='@Url.Content("~/images/next.png")'>"],
+                responsive: {
+                    0: {
+                        items: 1,
+                        margin: 0
+                    },
+                    991: {
+                        items: 1,
+                        margin: 5
+                    },
+                    1200: {
+                        items: 1,
+                        margin: 5
+                    }
+
+
+                }
+            })
+
+
+            $('.owl-user-Service').owlCarousel({
+                loop: true,
+                margin: 1,
+                items: 1,
+                nav: false,
+                autoplaySpeed: false,
+                startPosition: 1,
+                autoplay: 2500,
+                smartSpeed: 1500,
+                dots: false,
+                responsiveClass: true,
+                thumbs: true,
+                thumbsPrerendered: true,
+                @*navText: ["<img src='@Url.Content("~/images/prev.png")'>", "<img src='@Url.Content("~/images/next.png")'>"],*@
+                responsive: {
+                    0: {
+                        items: 1,
+                        margin: 0
+                    },
+                    991: {
+                        items: 1,
+                        margin: 5
+                    },
+                    1200: {
+                        items: 1,
+                        margin: 5
+                    }
+
+
+                }
+            })
+
+        });
+
+        //function ModalGeneral(Mensaje, Titulo) {
+        //    $('#Titulo').html(Titulo);
+        //    $('#Mensaje').html(Mensaje);
+        //    $('#Notificacion').modal('show');
+        //}
+
+        function ModalGeneral(url, Titulo, status) {
+            swal.fire({
+                title: Titulo,
+                confirmButtonText: 'Aceptar',
+                icon: status == true ? 'success' : 'error'
+            }).then((result) => {
+                if (result.value) {
+                    if (url != "") {
+                        window.location.href = url;
+                    }
+                }
+                return false;
+            })
+        }
+
+        function onCompleteModalLogin(resp) {
+            //$('#mymodal').html(resp);
+            //$('#LoginModal').html(resp);
+        }
+
+        function onSuccessModalLogin(resp) {
+            //$('#LoginModal').html(resp);
+            //$('#LoginModal').modal('show');
+        }
+
+        function onFailModalLogin(resp) {
+            console.log(resp);
+        }
+
+        var EsPrimeraVez = true;
+        function onBeginModalLogin() {
+            if (EsPrimeraVez == false) {
+                //$(".modal").addClass("show");
+                //$('body').append('<div class="modal-backdrop fade show"></div>');
+
+                //$('body').addClass('modal-open');
+                //$('body').css('padding-right', '16px');
+                //$(".modal").show();
+            }
+        }
+
+        function OnCloseModal() {
+            $("#LoginModal").hide();
+            $("#LoginModal").removeClass("show");
+            $(".modal").removeClass("show");
+            //$(".modal-backdrop").remove();
+            $('body').removeClass('modal-open');
+            //$('body').css('padding-right', '');
+            $(".modal").hide();
+            //EsPrimeraVez = false;
+        }
+
+        function OnFailureLoginRegistre(error) {
+            if (error.responseJSON !== undefined)
+                ModalGeneral('', error.responseJSON.message, error.responseJSON.isCompleted);
+            else
+                ModalGeneral('', 'Ha ocurrido un error interno en el servidor', false);
+        }
+
+        function OnFailure(error) {
+            if (error.responseJSON !== undefined)
+                ModalGeneral('', error.mensaje,false);
+            else
+                ModalGeneral('', 'Ha ocurrido un error interno en el servidor', false);
+        }
+
+        function OnSuccessRegistre(resp) {
+            if (resp.success) {
+                ModalGeneral('', resp.mensaje, resp.success);
+                OnCloseModal();
+            } else {
+                ModalGeneral('', resp.mensaje, resp.success);
+            }
+
+        }
+
+        function OnSuccessLogin(resp) {
+            if (resp) {
+                window.location.href = "@(Url.Action("Edit", "User"))";
+            }
+        }
+
+        function onChangeGenere(e) {
+            debugger
+            console.log(e.id);
+            if (e.value == @((int)BarCejas.Entities.Enumerations.Genere.Otro)) {
+                document.getElementById("GenereSection").style.display = "block";
+                document.getElementById(e.id == "IdUsuarioNavigation_IdTipoGenero" ?"IdUsuarioNavigation_Genero" :"Genero").value = '';
+            }
+            else {
+                //console.log(e.getElementById());
+                console.log(e.options[e.selectedIndex].text);
+                document.getElementById("GenereSection").style.display = "none";
+                document.getElementById("Genero").value = e.options[e.selectedIndex].text;
+            }
+        }
+        function OnFailureAddOrEdit(error) {
+            if (error.responseJSON !== undefined)
+                ModalGeneral('', error.responseJSON.message, error.responseJSON.isCompleted);
+            else
+                ModalGeneral('', 'Ha ocurrido un error interno en el servidor', false);
+        }
+
+        function OnSuccessAddOrEdit(resp) {
+            if (resp.isCompleted) {
+                ModalGeneral('', resp.message, resp.isCompleted);
+            } else {
+                ModalGeneral('', 'Ha ocurrido un error interno en el servidor', false);
+            }
+        }
+    function ModalGeneral(url, Titulo, status) {
+        swal.fire({
+            title: Titulo,
+            confirmButtonText: 'Aceptar',
+            icon: status == true ? 'success' : 'error'
+        }).then((result) => {
+            if (result.value) {
+                if (url != "") {
+                    window.location.href = url;
+                }
+            }
+            return false;
+        })
+    }
+
+
+    </script>
+</body>
+</html>

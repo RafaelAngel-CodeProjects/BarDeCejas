@@ -1,0 +1,26 @@
+﻿@model List<BarCejas.Entities.Reporte.ReporteProfesional>
+
+<table id="example" class="table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Profesional</th>
+            <th>Servicio</th>
+            <th>Precio</th>
+            <th>Fecha</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.IdOrden</td>
+                <td>@item.NombreProfesional</td>
+                <td>@item.NombreServicio</td>
+                <td>@(((decimal)item.Precio).ToString("#,###.00"))$</td>
+                <td>@item.Fecha.ToString("dd/MM/yyyy")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

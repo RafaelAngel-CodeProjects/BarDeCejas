@@ -1,0 +1,168 @@
+﻿@model List<SuccessOrderViewModel>
+@using System.Globalization;
+@using System.Text.Json;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers;
+@addTagHelper *, AuthoringTagHelpers;
+
+@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/bootstrap/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css">
+
+
+
+<div class="alert alert-ms-s bg-success mb-5 py-4" role="alert">
+    <div class="d-flex centrar">
+        <div class="row">
+            <div class="col-md-12 centrar pt-3">
+
+                <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            </div>
+            <div class="col-md-12 centrar pt-3">
+                <div class="px-3">
+                    <h4 class="alert-heading mayuscula">¡Reserva confirmada!</h4>
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<section class="single-page-header single-page-header-site" style="padding: 134px 0 163px!important;">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb  header-bradcrumb header-bradcrumb-site">
+                    <li class="btn-trans"><a style="color: #000!important;" href="javascript:history.back()"><i class="fas fa-solid fa-angle-left"></i></a></li>
+                    <li class="spa-bag"><a href="/BarDeCejasFront/Presentation/Views/index.html">Home</a></li>
+                    <li class="spa-bag">-</a></li>
+                    <li class="active spa-bag">Detalle de orden</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+</section>
+
+
+<!-- Start Services Section
+    ==================================== -->
+<!-- Start Team Skills
+    =========================================== -->
+
+<section class="team-skills section-sm" id="skills">
+    <div class="container">
+        <div class="row">
+
+            <!-- section title -->
+            <div class="col-12">
+                <div class="title text-center">
+                    <h2><b>Número de orden:</b> @Model.First().OrderId </h2>
+                    <h6>Detalle:</h6>
+
+                </div>
+            </div>
+            <!-- /section title -->
+
+        </div> <!-- End row -->
+
+    </div>
+    </div> <!-- End container -->
+</section> <!-- End section -->
+<section class=" row-section pt-2 pb-5">
+    <div class="container">
+        <div class="row no-gutters">
+            <div class="col-md-12 row-block">
+                <ul id="sortable">
+                    @foreach (var OrderItem in Model)
+                    {
+                        <li>
+                            <div class="media row">
+                                <div class="media-left align-self-center col-md-1">
+                                    <img src="@OrderItem.ServicePageImagePath">
+                                </div>
+                                <div class="media-body col-md-5">
+                                    <h4>@OrderItem.ServiceName</h4>
+                                    <p>@OrderItem.ServiceDate , @OrderItem.HourService <span style="color: #91733D;">| @OrderItem.DurationService min</span></p>
+                                    <p>@OrderItem.BranchOfficeAddress</p>
+                                </div>
+                                <div class="media-left align-self-center col-md-4">
+                                    <img class="rounded-circle" style="width:2rem ;" src="/BarDeCejasFront/wwwroot//usuarios/U4.png"> Profesional: @OrderItem.ProfessionalDescription
+                                </div>
+                                <div class="media-right align-self-center text-right  col-md-2">
+                                    <span>
+                                        @if (OrderItem.PromotionalPrice > 0)
+                                        {
+                                            @OrderItem.PromotionalPrice
+                                        }
+                                        else
+                                        {
+                                            @OrderItem.TotalPrice
+                                        }
+                                        $
+                                    </span>
+                                </div>
+                            </div>
+                        </li>
+                    }
+
+                </ul>
+            </div>
+
+        </div> <!-- End row -->
+    </div> <!-- End container -->
+</section> <!-- End section -->
+<!--
+    Start Counter Section
+    ==================================== -->
+
+<section class="counter-wrapper section-sm" style="background-color: #fadce6;">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12" style="background-color: #fadce6;padding-top:3%; padding-bottom:4%;">
+
+                @if (Model.Sum(x=>x.PromotionalPrice) > 0)
+                {
+                    <span style="float: right;color: #000;font-weight: 600;font-size: 24px;"> $@Model.Sum(x => x.PromotionalPrice)</span>
+                    <span style="float: right;color: #958389;text-decoration:line-through;padding-top: 7px;padding-right: 2px;">$@Model.Sum(x => x.TotalPrice) </span>
+                }
+                else
+                {
+                    <span class="float-right" style="color: #000;font-weight: 600;font-size: 24px;">
+                        @Model.Sum(x=>x.TotalPrice)
+                    </span>
+                }
+                <span class="float-right" style="color: #958389;padding-top: 7px;padding-right: 7px;">Total </span>
+            </div>
+        </div> 		<!-- end row -->
+    </div>   	<!-- end container -->
+</section>
+
+<section class="counter-wrapper section-sm ms-confir">
+    <div class="container">
+        <div class="row centrar">
+            <div class="col-md-6 centrar">
+                <span class="text-center" style="color: #000;">
+                    Esto no es un comprobante de pago,
+                    una vez que se registre tu pago recibirás una notificación vía email.
+                </span>
+            </div>
+            <div class="col-md-12  centrar pb-2">
+               
+                <a asp-area="" asp-controller="User" asp-action="MyTurns" class="btn btn-main mt-20" style="width: 20%!important;">ACEPTAR</a>
+            </div>
+
+
+
+        </div> 		<!-- end row -->
+    </div>   	<!-- end container -->
+</section>   <!-- end section -->

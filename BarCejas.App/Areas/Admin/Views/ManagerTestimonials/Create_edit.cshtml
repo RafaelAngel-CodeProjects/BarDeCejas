@@ -1,0 +1,158 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@model BarCejas.App.Areas.Admin.Models.TestimonioViewModel
+@{
+   // Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = ViewBag.Title;
+}
+
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans">
+                        <a href="javascript:history.back()">
+                            <i class="fas fa-solid fa-angle-left"></i>
+                        </a>
+                    </li>
+                    <li class="spa-bag"><a asp-controller="ManagerTestimonials" asp-action="Index">Gestor</a></li>
+                    <li class="spa-bag">-</li>
+                    <li class="active spa-bag">Gestor de testimonios</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+
+
+    <div class="container title-secon-header">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon">@ViewBag.Title</h4>
+
+            </div>
+        </div>
+    </div>
+</section>
+<section class="company-mission section" style="padding-top: 68px!important;">
+    <div class="container">
+
+        <form data-ajax="true" method="post" id="frmTestimonial"
+              enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            @if (Model != null && Model.Id > 0)
+            {
+                <input asp-for="Id" type="hidden" />
+                <input asp-for="IndActivo" type="hidden" />
+                <input asp-for="Orden" type="hidden" />
+                <input asp-for="RutaImagen" type="hidden" />
+                <input asp-for="EsEliminado" type="hidden" />
+            }
+            <div class="row">
+                <div class="form-group col-md-12 mb-12">
+                    <span asp-validation-for="Testimonio" class="text-danger"></span>
+                    <label asp-for="Testimonio">Texto del testimonio</label>
+                    <textarea class="form-control" asp-for="Testimonio" rows="5" placeholder="Texto del testimonio"></textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-12 mb-12">
+                    <div asp-validation-summary="ModelOnly"></div>
+                    <span asp-validation-for="Autor" class="text-danger"></span>
+                    <label asp-for="Autor">Nombre del autor</label>
+                    <input asp-for="Autor" class="form-control" placeholder="Nombre del autor">
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-12 mb-12">
+                    <div asp-validation-summary="ModelOnly"></div>
+                    <span asp-validation-for="Archivo" class="text-danger"></span>
+                    <label asp-for="Archivo">Foto del autor<span class="span-op">-opcional</span></label>
+                    <div id="imagenPrevisualizacion" class="form-control-file customInputFile mx-auto p-5" style="background-image: url(@Url.Content(Model!= null && Model.RutaImagen != null ? Model.RutaImagen : string.Empty));background-size: 26% 99%!important">
+                        <span> </span>
+                        <input type="file" accept="image/jpg, image/png, image/jpeg" asp-for="Archivo" id="seleccionArchivos">
+                    </div>
+
+
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6 mb-4">
+                    <a asp-controller="ManagerTestimonials" asp-action="Index" class="btn btn-main float-right">DESCARTAR</a>
+                </div>
+
+                <div class="form-group col-md-6 mb-4">
+                    @if (Model != null && Model.Id > 0)
+                    {
+                        <button type="submit" class="btn btn-main-accion">EDITAR TESTIMONIO</button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-main-accion">CREAR TESTIMONIO</button>
+                    }
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+@section scripts{
+    <script>
+      function fnonSuccess(Data) {
+
+          if (Data.success) {
+              ModalGeneral('@Url.Action("Index","ManagerTestimonials")', Data.mensaje, Data.success);
+
+            @*setTimeout(function () {
+                window.location.href = '@Url.Action("Index")';
+            }, 6000);*@
+        } else {
+            //alert('Disculpe, ' + Data.mensaje);
+            ModalGeneral('', 'Ha ocurrido un error.', false);
+        }
+    }
+
+    function fnonFailed(XMLHttpRequest, textStatus, errorThrown) {
+        ModalGeneral('', "Ha ocurrido un error.", false);
+        }
+
+        $(function () {
+            
+            $("#frmTestimonial").submit(function (e) {
+                
+                e.preventDefault();
+                var form = $(this);
+                 var formData = new FormData($('#frmTestimonial')[0]);
+                if (form.valid()) {
+                    $.ajax({
+                        type: 'post',
+                        url: '@Url.Action("OnPostTestimonial", "ManagerTestimonials")',
+                        data: formData,
+                        processData: false,
+                        contentType: false
+                    }).done(function (Data) {
+                        if (Data.success) {
+                            fnonSuccess(Data);
+                        }
+                        else {
+                           
+                            ModalGeneral('', Data.mensaje, false);
+                        }
+                    }).fail(function (XMLHttpRequest, textStatus, errorThrown)
+                    {
+                        ModalGeneral('', "Ha ocurrido un error.", false);
+                    });
+                } else {
+                    return false;
+                }
+
+            });
+        })
+
+    </script>
+}

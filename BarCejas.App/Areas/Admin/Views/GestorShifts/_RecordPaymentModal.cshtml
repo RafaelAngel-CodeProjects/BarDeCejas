@@ -1,0 +1,58 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@model BarCejas.Entities.Orden
+
+<form enctype="multipart/form-data" id="recordPaymentForm" method="post">
+    <div class="row centrar">
+        <h4 class="text-center">REGISTRAR PAGO</h4>
+        <div class="form-group col-md-12 mb-12">
+            <input asp-for="Id" type="hidden" />
+            <label asp-for="IdFormaPago">Modalidades de pago</label>
+            <select class="form-control" asp-for="IdFormaPago" asp-items="(ViewBag.FormasPago!=null?ViewBag.FormasPago:null)" onchange="onChangeFormaPagoComprobante(this)">
+                <option value="">Seleccione una opción</option>
+            </select>
+        </div>
+        <div class="form-group col-md-12 mb-12" id="seccionComprobante" style="display:none;">
+            <label for="ArchivoComprobante">Comprobante de pago</label>
+            <div id="imagenPrevisualizacionSecon" class="form-control-file customInputFile mx-auto p-5" style="background-image: url(@Url.Content(Model!= null && Model.ComprobantePago != null ? Model.ComprobantePago : string.Empty))">
+                <span> </span>
+                <input type="file" name="ArchivoComprobante" id="seleccionArchivosSecon" accept="image/*">
+            </div>
+        </div>
+    </div>
+
+    <div class="row centrar">
+        <div class="col-md-12 mb-4 centrar">
+            <button class="btn btn-main-accion" type="submit">Registrar pago</button>
+        </div>
+    </div>
+</form>
+
+<script>
+     $(function () {
+            $("#recordPaymentForm").submit(function (e) {
+                e.preventDefault();
+                var form = $(this);
+                var formData = new FormData($('#recordPaymentForm')[0]);
+                if (form.valid()) {
+                    $.ajax({
+                        type: 'post',
+                        url: '@Url.Action("RecordPayment", "GestorShifts")',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (resp) {
+                            $('#ListTurnos').html(resp);
+                            OnSuccessAddOrEditTurno();
+                        },
+                        error: function (error) {
+                            onFailureTurno(error);
+                        }
+                    });
+                } else {
+                    return false;
+                }
+            });
+        });
+</script>

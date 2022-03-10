@@ -1,0 +1,59 @@
+﻿@model IEnumerable<BarCejas.Entities.Banner>
+
+    <form asp-action="UpdateOrdenBanner" asp-controller="GestorBanner" method="post" data-ajax="true" data-ajax-failure="fnOnFailed" data-ajax-success="fnOnSuccess" id="formBannerOrden">
+        <ul id="sortableBanner" class="list-group">
+            @foreach (var item in Model)
+            {
+                <partial name="_ItemListadoBanner" model="item" />
+            }
+        </ul>
+    </form>
+
+    @section script{
+        <script>
+
+        /*$('#sortableBanner').sortable({
+            update: function (event, ui) {
+                $(this).children().each(function (index) {
+                    if ($(this).attr('data-orden') != (index + 1)) {
+                        $(this).attr('data-orden', (index + 1)).addClass('updated');
+                    }
+                });
+                
+                setTimeout(function () {
+                    $(document).on('#formBannerOrden').submit();
+                }, 500);
+                //guardandoPosicionesBanner();
+            }
+        });*/
+
+        function guardandoPosicionesBanner() {
+
+            var positions = [];
+            $('.updated').each(function () {
+                var p = { Id: parseInt($(this).attr('data-index')), Orden: parseInt($(this).attr('data-order')) };
+                positions.push(p);
+                $(this).removeClass('updated');
+
+            });
+
+            $.ajax({
+                url: '@Url.Action("UpdateOrdenBanner", "ManagerTestimonials")',
+                method: 'POST',
+                ContentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: { ptestimonios: positions },
+
+                success: function (response) {
+                    alert(response.mensaje);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                     alert("Error: " + errorThrown);
+                }
+            });
+        }
+        </script>
+
+    }
+
+

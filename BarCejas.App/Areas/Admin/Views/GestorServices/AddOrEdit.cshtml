@@ -1,0 +1,306 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@model BarCejas.App.Areas.Admin.Models.ServicioViewModel
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = ViewBag.Title;
+}
+
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans">
+                        <a href="javascript:history.back()">
+                            <i class="fas fa-solid fa-angle-left"></i>
+                        </a>
+                    </li>
+                    <li class="spa-bag"><a asp-controller="GestorServices" asp-action="Index">Gestor</a></li>
+                    <li class="spa-bag">-</li>
+                    <li class="active spa-bag">Gestor de servicios</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+
+
+    <div class="container title-secon-header">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon">@(ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit ? "EDITAR" : "CREAR") SERVICIO</h4>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="company-mission section" style="padding-top: 68px!important;">
+    <div class="container">
+
+        <form enctype="multipart/form-data" id="ServicesForm" method="post">
+            <div class="hide">
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="IdUsuarioAlta" />
+                <input type="hidden" asp-for="EsActivo" />
+                <input type="hidden" asp-for="RutaImagenTarjeta" />
+                <input type="hidden" asp-for="RutaImagenPaagina" />
+                <input type="hidden" asp-for="RutaFormulario" />
+                <input type="hidden" asp-for="RutaVideoPagina" />
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6 mb-4">
+                    <label asp-for="Nombre">Nombre del Servicio</label>
+                    <input type="text" class="form-control" asp-for="Nombre" placeholder="Nombre del Servicio">
+                    <span class="field-validation-error" asp-validation-for="Nombre"></span>
+                </div>
+                <div class="form-group col-md-6 mb-4">
+                    <label asp-for="ServicioContactoLocal">Locales</label>
+                    @*<select class="form-control" asp-for="ServicioContactoLocal" asp-items="(ViewBag.ContactoLocales!=null?ViewBag.ContactoLocales:null)">
+                        <option value="">Seleccione una opción</option>
+                    </select>*@
+                    <select id="ServicioContactoLocal" class="selectpicker form-control" multiple asp-for="ServicioContactoLocal" asp-items="(ViewBag.ContactoLocales!=null?ViewBag.ContactoLocales:null)">
+                    </select>
+                    <span class="field-validation-error" asp-validation-for="ServicioContactoLocal"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-4 mb-4">
+                    <label asp-for="DescripcionCorta">Descripción corta</label>
+                    <textarea class="form-control" asp-for="DescripcionCorta" rows="7"></textarea>
+                    <span class="field-validation-error" asp-validation-for="DescripcionCorta"></span>
+                </div>
+                <div class="form-group col-md-8 mb-4">
+                    <label asp-for="DescripcionLarga">Descripción larga</label>
+                    <textarea class="form-control" asp-for="DescripcionLarga" rows="7"></textarea>
+                    <span class="field-validation-error" asp-validation-for="DescripcionLarga"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6 mb-4">
+                    <label asp-for="IdCategoria">Categoría del servicio</label>
+                    <select class="form-control" asp-for="IdCategoria" asp-items="(ViewBag.Categorias!=null?ViewBag.Categorias:null)">
+                        <option value="">Seleccione una opción</option>
+                    </select>
+                    <span class="field-validation-error" asp-validation-for="IdCategoria"></span>
+                </div>
+                <div class="form-group col-md-6 mb-4">
+                    <label asp-for="Duracion">Duración en minutos</label>
+                    <input type="text" class="form-control" asp-for="Duracion" placeholder="Duración en minutos">
+                    <span class="field-validation-error" asp-validation-for="Duracion"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-12 mb-4">
+                    <label asp-for="ServicioProfesional">Profesionales</label>
+                    @*<select class="form-control" asp-for="ServicioProfesional" asp-items="(ViewBag.Profesionales!=null?ViewBag.Profesionales:null)">
+                        <option value="">Seleccione una opción</option>
+                    </select>*@
+                    <select id="profesioanles" class="selectpicker form-control" multiple asp-for="ServicioProfesional" asp-items="(ViewBag.Profesionales!=null?ViewBag.Profesionales:null)">
+                    </select>
+                    <span class="field-validation-error" asp-validation-for="ServicioProfesional"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6 mb-4">
+                    <label asp-for="PrecioLista">Precio de lista</label>
+                    <input type="text" class="form-control" asp-for="PrecioLista" placeholder="Precio de lista">
+                    <span class="field-validation-error" asp-validation-for="PrecioLista"></span>
+                </div>
+                <div class="form-group col-md-6 mb-4">
+                    <label asp-for="PrecioPromocioal">Precio promocional</label>
+                    <input type="text" class="form-control"  asp-for="PrecioPromocioal" placeholder="Precio promocional">
+                    <span class="field-validation-error" asp-validation-for="PrecioPromocioal"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-4 mb-4">
+                    <div class="custom-control custom-radio color">
+                        <input  type="checkbox" id="IndAplicarDescuento" @(((Model.Descuento > 0 || ViewBag.Action == BarCejas.Entities.Enumerations.Actions.New) ? "checked" : string.Empty)) name="IndAplicarDescuento" asp-for="IndAplicarDescuento" class="custom-control-input" onchange="OnChangeDiscount(this)">
+                        <label class="custom-control-label" asp-for="IndAplicarDescuento">Aplicar descuento</label>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="row" id="AreaDiscount" style="display : @(((Model.Descuento > 0 || ViewBag.Action == BarCejas.Entities.Enumerations.Actions.New) ? "flex;" : "none;"))">
+                <div class="form-group col-md-4 mb-4">
+                    <label asp-for="Descuento">Porcentaje de desceuento</label>
+                    <input type="text" class="form-control" asp-for="Descuento" placeholder="Porcentaje de desceuento">
+                    <span class="field-validation-error" asp-validation-for="Descuento"></span>
+                </div>
+                <div class="form-group col-md-4 mb-4">
+                    <label asp-for="FechaDescuentoInicio">Fecha de vigencia desde</label>
+                    <div class="md-form md-outline input-with-post-icon datepicker">
+                        <input placeholder="Select date" type="date" asp-for="FechaDescuentoInicio" class="form-control">
+                    </div>
+                    <span class="field-validation-error" asp-validation-for="FechaDescuentoInicio"></span>
+                </div>
+                <div class="form-group col-md-4 mb-4">
+                    <label asp-for="FechaDescuentoFin">Fecha de vigencia hasta</label>
+                    <div class="md-form md-outline input-with-post-icon datepicker">
+                        <input placeholder="Select date" type="date" asp-for="FechaDescuentoFin" class="form-control">
+                    </div>
+                    <span class="field-validation-error" asp-validation-for="FechaDescuentoFin"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6 mb-4">
+                    <label asp-for="FormaPagoServicio">Medios de pago(s)</label>
+                    @*<select class="form-control" asp-for="FormaPagoServicio" asp-items="(ViewBag.FormasPago!=null?ViewBag.FormasPago:null)">
+                        <option value="">Seleccione una opción</option>
+                    </select>*@
+                    <select id="FormaPagoServicio" class="selectpicker form-control listbox" multiple asp-for="FormaPagoServicio" asp-items="(ViewBag.FormasPago!=null?ViewBag.FormasPago:null)">
+                    </select>
+                    <span class="field-validation-error" asp-validation-for="FormaPagoServicio"></span>
+                </div>
+                <div class="form-group col-md-6 mb-4">
+                    <label asp-for="ModalidadPagoServicio">modaliades de pago(s)</label>
+                    @*<select class="form-control" asp-for="ModalidadPagoServicio" asp-items="(ViewBag.ModalidadesPago!=null?ViewBag.ModalidadesPago:null)">
+                        <option value="">Seleccione una opción</option>
+                    </select>*@
+                    <select id="ModalidadPagoServicio" class="selectpicker form-control" multiple asp-for="ModalidadPagoServicio" asp-items="(ViewBag.ModalidadesPago!=null?ViewBag.ModalidadesPago:null)">
+                    </select>
+                    <span class="field-validation-error" asp-validation-for="ModalidadPagoServicio"></span>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="form-group col-md-4 mb-4">
+                    <label asp-for="ArchivoImagenTarjeta">Imagen de tarjeta</label>
+                    @if (!string.IsNullOrEmpty(Model.RutaImagenTarjeta) && !(Model.RutaImagenTarjeta.Contains("images/")))
+                    {
+                        Model.RutaImagenTarjeta = null;
+                    }
+                    
+                    <div id="imagenPrevisualizacion" class="form-control-file customInputFile mx-auto p-5" style="background-image: url(@Url.Content(Model!= null && Model.RutaImagenTarjeta != null ? Model.RutaImagenTarjeta : string.Empty))">
+                        <span> </span>
+                        <input type="file" asp-for="ArchivoImagenTarjeta" id="seleccionArchivos" accept="image/*">
+                        @*<img src="@(Model!= null && Model.RutaImagenTarjeta != null ? Model.RutaImagenTarjeta : string.Empty)" asp-append-version="true" height="300" />*@
+                    </div>
+
+
+                    @*<span class="field-validation-error" asp-validation-for="ArchivoImagenTarjeta"></span>*@
+                </div>
+                <div class="form-group col-md-8 mb-4">
+                    <label asp-for="ArchivoImagenPaagina">Imagen página de servicio</label>
+                    @*<input type="file" class="form-control-file customInputFile mx-auto p-5" asp-for="ArchivoImagenPaagina">*@
+                   @* <img src="@(Model!= null && Model.RutaImagenPaagina != null ? Model.RutaImagenPaagina : string.Empty)" asp-append-version="true" height="300" />*@
+                <div id="imagenPrevisualizacionTri" class="form-control-file customInputFile mx-auto p-5" style="background-image: url(@Url.Content(Model!= null && Model.RutaImagenPaagina != null ? Model.RutaImagenPaagina : string.Empty))">
+                    <span> </span>
+                    <input type="file" asp-for="ArchivoImagenPaagina" id="seleccionArchivosTri" accept="image/*">
+                    @* <img src="@(Model!= null && Model.RutaVideoPagina != null ? Model.RutaVideoPagina : string.Empty)" asp-append-version="true" height="300" />*@
+                </div>
+                    @*<span class="field-validation-error" asp-validation-for="ArchivoImagenPaagina"></span>*@
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="form-group col-md-12 mb-4">
+                    <label asp-for="ArchivoVideoPagina">Video de página de servicio</label>
+                    <div id="imagenPrevisualizacionSecon" class="form-control-file customInputFile mx-auto p-5" style="background-image: url(@Url.Content(Model!= null && Model.RutaVideoPagina != null ? Model.RutaVideoPagina : string.Empty))">
+                        <span> </span>
+                        <input type="file" asp-for="ArchivoVideoPagina" id="seleccionArchivosSecon" accept="image/*">
+                        @* <img src="@(Model!= null && Model.RutaVideoPagina != null ? Model.RutaVideoPagina : string.Empty)" asp-append-version="true" height="300" />*@
+                    </div>
+                    
+                   
+                    @*<span class="field-validation-error" asp-validation-for="ArchivoVideoPagina"></span>*@
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="form-group col-md-8 mb-4">
+                    <label asp-for="RecomendacionesReserva">Recomendaciones para tarjeta</label>
+                    <textarea class="form-control" asp-for="RecomendacionesReserva" rows="7"></textarea>
+                    @*<img src="@(Model!= null && Model.RecomendacionesReserva != null ? Model.RecomendacionesReserva : string.Empty)" asp-append-version="true" height="300" />*@
+                    <span class="field-validation-error" asp-validation-for="RecomendacionesReserva"></span>
+                </div>
+                <div class="form-group col-md-4 mb-4">
+                    <label asp-for="ArchivoFormulario">Formulario de servicio</label>
+                    @if (!string.IsNullOrEmpty(Model.RutaFormulario) && !(Model.RutaFormulario.Contains("images/")))
+                    {
+                        Model.RutaFormulario = null;
+                    }
+                    <div id="imagenPrevisualizacionFor" class="form-control-file customInputFile mx-auto p-5" style="background-image: url(@Url.Content(Model!= null && Model.RutaFormulario != null ? Model.RutaFormulario : string.Empty))">
+                        <span> </span>
+                        <input type="file" asp-for="ArchivoFormulario" id="seleccionArchivosFor" accept="image/*">
+                        @* <img src="@(Model!= null && Model.RutaVideoPagina != null ? Model.RutaVideoPagina : string.Empty)" asp-append-version="true" height="300" />*@
+                    </div>
+
+                    @*<input type="file" class="form-control-file customInputFile mx-auto p-5" asp-for="ArchivoFormulario">
+        <img src="@(Model!= null && Model.RutaFormulario != null ? Model.RutaFormulario : string.Empty)" asp-append-version="true" height="300" />*@
+                    @*<span class="field-validation-error" asp-validation-for="ArchivoFormulario"></span>*@
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6 mb-4">
+                    <a asp-controller="GestorServices" asp-action="Index" class="btn btn-main float-right">DESCARTAR</a>
+                </div>
+                <div class="form-group col-md-6 mb-4">
+                    <button class="btn btn-main-accion" type="submit">@(ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit ? "EDITAR" : "CREAR") SERVICIO</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+@section scripts {
+    <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/jquery.inputmask.bundle.js"></script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script type="text/javascript">
+        //$('#PrecioLista, #PrecioPromocioal').inputmask({ "mask": "999,999.99" });
+        //$('#PrecioLista, #PrecioPromocioal').inputmask('999.999.999,99', { numericInput: true });
+    var contentProfesionales =@Html.Raw(Json.Serialize(ViewBag.Profesionales));
+    MultiselectService("profesioanles", contentProfesionales);
+ /*   -----*/
+    var contentFormasPago =@Html.Raw(Json.Serialize(ViewBag.FormasPago));
+    MultiselectService("FormaPagoServicio", contentFormasPago);
+/*    -----*/
+    var contentModalidadesPago =@Html.Raw(Json.Serialize(ViewBag.ModalidadesPago));
+    MultiselectService("ModalidadPagoServicio", contentModalidadesPago);
+    /*    -----*/
+    var contentContactoLocales =@Html.Raw(Json.Serialize(ViewBag.ContactoLocales));
+    MultiselectService("ServicioContactoLocal", contentContactoLocales);
+
+
+        $(function () {
+            $("#ServicesForm").submit(function (e) {
+                e.preventDefault();
+                var form = $(this);
+                var formData = new FormData($('#ServicesForm')[0]);
+                if (form.valid()) {
+                    $.ajax({
+                        type: 'post',
+                        url: '@Url.Action(ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit ? "Update" : "Registre", "GestorServices")',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (resp) {
+                            OnSuccessAddOrEdit(resp);
+                        },
+                        error: function (error) {
+                           OnFailureAddOrEdit(error);
+                        }
+                    });
+                } else {
+                    return false;
+                }
+            });
+        });
+
+        function OnChangeDiscount(element) {
+            console.log(element);
+            if (element.checked) {
+                document.getElementById("AreaDiscount").style.display = "flex";
+            }
+            else {
+                document.getElementById("AreaDiscount").style.display = "none";
+                $('#Descuento').val(0);
+                $('#FechaDescuentoInicio').val('');
+                $('#FechaDescuentoFin').val('');
+            }
+        }
+</script>
+}

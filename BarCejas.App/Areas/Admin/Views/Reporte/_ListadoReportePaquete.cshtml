@@ -1,0 +1,79 @@
+﻿@model List<BarCejas.Entities.Reporte.ReportePaquete>
+@using BarCejas.Entities.Enumerations
+
+@{
+
+    string EstadoPago(int x)
+    {
+        string result = string.Empty;
+
+        result = Enum.GetName(typeof(EstatusPago), x);
+
+        return result;
+    }
+
+    string EstatusOrden(int x)
+    {
+        string result = string.Empty;
+
+        result = Enum.GetName(typeof(EstatusOrden), x);
+
+        return result;
+    }
+
+    string FormaDePago(int x)
+    {
+        string result = string.Empty;
+
+        result = Enum.GetName(typeof(FormaDePago), x).Replace("_", " ");
+
+        return result;
+    }
+
+    string MedioDePago(int x)
+    {
+        string result = string.Empty;
+
+        result = Enum.GetName(typeof(MedioDePago), x).Replace("_", " ").Replace("porc", "%");
+
+        return result;
+    }
+}
+
+<table id="example" class="table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Profesional</th>
+            <th>Paquete</th>
+            <th>Cliente</th>
+            <th>Fecha</th>
+            <th>Local</th>
+            <th>Precio</th>
+            <th>Medio pago</th>
+            <th>Forma de pago</th>
+            <th>Estado turno</th>
+            <th>Estado pago</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.IdOrden</td>
+                <td>@item.NombreProfesional</td>
+                <td>@item.NombrePaquete</td>
+                <td>@item.NombreCliente</td>
+                <td>@item.Fecha.ToString("dd/MM/yyyy")</td>
+                <td>@item.NombreLocal</td>
+                <td>@(((decimal)item.Precio).ToString("#,###.00"))$</td>
+                <td>@MedioDePago(item.MedioDePago) @EstadoPago(item.EstadoPago)</td>
+                <td>@FormaDePago(item.FormaDePago)</td>
+                <td style="color: #34A853;">@EstatusOrden(item.EstadoTurno)</td>
+                <td style="color: #34A853;">@EstadoPago(item.EstadoPago)</td>
+            </tr>
+        }
+    </tbody>
+
+</table>

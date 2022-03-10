@@ -1,0 +1,55 @@
+﻿@model IEnumerable<BarCejas.Entities.Banner>
+
+<div class="hero-slider sl-full">
+    @foreach (var item in Model)
+    {
+        <div class="slider-item th-fullpage hero-area" style="background-image: url(@Url.Content(item.RutaImagenDestok));">
+            <div class="container container-Banner">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <h2 data-duration-in=".3" data-animation-in="fadeInUp" data-delay-in=".1">
+                            @item.Texto
+                        </h2>
+                        <!-- <p data-duration-in=".3" data-animation-in="fadeInUp" data-delay-in=".5">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod, <br> veritatis tempore nostrum id
+                            officia quaerat eum corrupti, <br> ipsa aliquam velit.</p> -->
+                        @if (!string.IsNullOrEmpty(item.TextoBoton) && !string.IsNullOrEmpty(item.LinkBoton))
+                        {
+                            <a href="@Url.Action("UrlRedirect", "Home", new { pUrl = item.LinkBoton.Replace("\"", "'") })" data-duration-in=".3" data-animation-in="fadeInUp" data-delay-in=".8" class="btn btn-main">@item.TextoBoton</a>
+                        }
+                        else
+                        {
+                            <br />
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<!-- slider mobile -->
+<div class="hero-slider sl-mobile">
+    @foreach (var item in Model)
+    {
+        <div class="slider-item th-fullpage hero-area" style="background-image: url(@Url.Content(item.RutaImagenMobile));">
+            <div class="container container-Banner">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <h2 data-duration-in=".3" data-animation-in="fadeInUp" data-delay-in=".1">
+                            @item.Texto
+                        </h2>
+                        @if (!string.IsNullOrEmpty(item.TextoBoton) && !string.IsNullOrEmpty(item.LinkBoton))
+                        {
+                            <a href="@Url.Action("UrlRedirect", "Home", new { pUrl = item.LinkBoton.Replace("\"", "'") })" data-duration-in=".3" data-animation-in="fadeInUp" data-delay-in=".8" class="btn btn-main">@item.TextoBoton</a>
+                        }
+                        else
+                        {
+                            <br />
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+

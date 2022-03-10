@@ -1,0 +1,148 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@model BarCejas.App.Areas.Admin.Models.OrderViewModel
+
+<form asp-controller="GestorShifts" asp-action=@(ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit ? "Update" : "Registre") data-ajax="true" data-ajax-method="POST" data-ajax-failure="onFailureTurno" data-ajax-success="OnSuccessAddOrEditTurno" data-ajax-mode="replace" data-ajax-update="#ListTurnos">
+    <div class="row centrar">
+        <h4 class="text-center">@(ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit ? "EDITAR" : "NUEVO") TURNO</h4>
+        <div class="form-group col-md-12 mb-12">
+            <input asp-for="IdOrden" type="hidden" />
+            <input asp-for="IdOrdenItem" type="hidden" />
+            @if (ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit)
+            {
+                <input asp-for="IdServicio" type="hidden" />
+                <input asp-for="IdContactoLocal" type="hidden" />
+                <input asp-for="FechaCita" type="hidden" />
+                <input asp-for="IdModalidadPago" type="hidden" />
+                <input asp-for="IdFormaPago" type="hidden" />
+            }
+
+            <label asp-for="IdServicio">Servicio</label>
+            @if (ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit)
+            {
+                <select class="form-control" asp-for="IdServicio" asp-items="(ViewBag.Servicios!=null?ViewBag.Servicios:null)" onchange="onChangeService(this)" disabled>
+                    <option value="0">Seleccione una opción</option>
+                </select>
+            }
+            else
+            {
+                <select class="form-control" asp-for="IdServicio" asp-items="(ViewBag.Servicios!=null?ViewBag.Servicios:null)" onchange="onChangeService(this)">
+                    <option value="0">Seleccione una opción</option>
+                </select>
+            }
+            <input asp-for="Monto" type="hidden" />
+        </div>
+        <div class="form-group col-md-12 mb-12">
+            <label asp-for="IdContactoLocal">Local</label>
+            <select class="form-control" asp-for="IdContactoLocal" asp-items="(ViewBag.ContactoLocales!=null?ViewBag.ContactoLocales:null)" onchange="onChangeContact(this)" disabled>
+                <option value="0">Seleccione una opción</option>
+            </select>
+        </div>
+        <div class="form-group col-md-12 mb-12">
+            <label asp-for="IdProfesional">Profesional</label>
+            @if (ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit && ViewBag.Reprogramar)
+            {
+                <select class="form-control" asp-for="IdProfesional" asp-items="(ViewBag.Profesionales!=null?ViewBag.Profesionales:null)" onchange="onChangeProfessional(this)">
+                    <option value="0">Seleccione una opción</option>
+                </select>
+            }
+            else
+            {
+                <select class="form-control" asp-for="IdProfesional" asp-items="(ViewBag.Profesionales!=null?ViewBag.Profesionales:null)" onchange="onChangeProfessional(this)" disabled>
+                    <option value="0">Seleccione una opción</option>
+                </select>
+            }
+
+        </div>
+        <div class="form-group col-md-12 mb-12">
+            <label asp-for="Cliente">Cliente</label>
+            <div class="input-group mb-3">
+                <input asp-for="Cliente" type="text" class="form-control" disabled readonly placeholder="Cliente" />
+                <input asp-for="IdCliente" type="hidden" class="form-control" />
+                @if (ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit)
+                {
+                    <button class="btn btn-main-accion float-right ml-3" type="button" disabled><i class="bi bi-search"></i></button>
+                }
+                else
+                {
+                    <a class="btn btn-main-accion float-right ml-3" data-toggle="modal" data-target="#clientModal" data-ajax="true" data-ajax-failure="onFailureTurno" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#clientModalBody" asp-controller="GestorShifts" asp-action="Clients"><i class="bi bi-search"></i></a>
+                }
+            </div>
+        </div>
+        <div class="form-group col-md-6 mb-6">
+            <label asp-for="FechaCita">Fecha</label>
+            <div class="md-form md-outline input-with-post-icon datepicker">
+                @if (ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit)
+                {
+                    if (ViewBag.Reprogramar)
+                    {
+                        <input placeholder="Select date" type="date" asp-for="FechaCita" class="form-control" onchange="onChangeDate(this)">
+                    }
+                    else
+                    {
+                        <input placeholder="Select date" type="date" asp-for="FechaCita" class="form-control" onchange="onChangeDate(this)" disabled>
+                    }
+                }
+                else
+                {
+                    <input placeholder="Select date" type="date" asp-for="FechaCita" value="@string.Empty" class="form-control" onchange="onChangeDate(this)" disabled>
+                }
+
+            </div>
+        </div>
+        <div class="form-group col-md-6 mb-6">
+            <label asp-for="Hora">Hora</label>
+            @if (ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit)
+            {
+                <select class="form-control" asp-for="Hora" onchange="onChangeHour(this)" disabled>
+                    <option value="@Model.Hora" selected>@Model.Hora</option>
+                </select>
+            }
+            else
+            {
+                <select class="form-control" asp-for="Hora" disabled>
+                    <option value="0">Seleccione un horario</option>
+                </select>
+            }
+        </div>
+        <div class="form-group col-md-12 mb-12">
+            <label asp-for="IdFormaPago">Medios de pago</label>
+            @if (ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit)
+            {
+                <select class="form-control" asp-for="IdFormaPago" asp-items="(ViewBag.FormasPago!=null?ViewBag.FormasPago:null)" disabled>
+                    <option value="0">Seleccione una opción</option>
+                </select>
+            }
+            else
+            {
+                <select class="form-control" asp-for="IdFormaPago" asp-items="(ViewBag.FormasPago!=null?ViewBag.FormasPago:null)" onchange="onChangeFormaPago(this)">
+                    <option value="0">Seleccione una opción</option>
+                </select>
+            }
+
+        </div>
+        <div class="form-group col-md-12 mb-12">
+            <label asp-for="IdModalidadPago">Modalidades de pago</label>
+            @if (ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit)
+            {
+                <select class="form-control" asp-for="IdModalidadPago" asp-items="(ViewBag.ModalidadesPago!=null?ViewBag.ModalidadesPago:null)" disabled>
+                    <option value="0">Seleccione una opción</option>
+                </select>
+            }
+            else
+            {
+                <select class="form-control" asp-for="IdModalidadPago" disabled>
+                    <option value="0">Seleccione una opción</option>
+                </select>
+            }
+
+        </div>
+    </div>
+
+    <div class="row centrar">
+        <div class="col-md-12 mb-4 centrar">
+            <button class="btn btn-main-accion" type="submit">@(ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit ? "EDITAR" : "CREAR") TURNO</button>
+        </div>
+    </div>
+</form>

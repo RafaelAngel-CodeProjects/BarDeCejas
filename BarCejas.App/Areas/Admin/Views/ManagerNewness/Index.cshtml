@@ -1,0 +1,129 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+
+@{
+
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Novedades";
+}
+
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans">
+                        <a href="javascript:history.back()">
+                            <i class="fas fa-solid fa-angle-left"></i>
+                        </a>
+                    </li>
+                    <li class="spa-bag"><a href="@Url.Action("Index")">Home</a></li>
+                    <li class="spa-bag">-</li>
+                    <li class="active spa-bag">Gestor de Novedades</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+
+
+    <div class="container title-secon-header">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon">GESTIONAR NOVEDADES</h4>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="about-shot-info section-sm">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <p>Crea,edita o elimina las novedades que se muestra en el home y en novedades.</p>
+
+            </div>
+            <div class="col-md-4">
+
+                <a class="btn btn-main-accion float-right" asp-controller="ManagerNewness" asp-action="Create_edit">CREAR NOVEDAD</a>
+
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="company-mission section" style="padding-top: 2%;">
+    <div class="container">
+        <div class="row">
+
+
+            <div class="col-md-12" id="ListNovedades">
+
+                <partial name="_List" model="Model" />
+            </div>
+        </div>
+    </div>
+</section>
+@section scripts{
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script type="text/javascript">
+        OnLoadTable('#NovedadesList');
+
+        function CambiarEstatus(Id, IndEstatus) {
+            $.post('@Url.Action("CambiarEstatusNovedad", "ManagerNewness")', { Id: Id, IndEstatus: IndEstatus }, function (Data) {
+            }).done(function (Data) {
+                if (!Data.success) {
+                    if (IndEstatus == true) {
+                        $('#nv_' + Id).attr("checked", false).attr('onclick', 'CambiarEstatus(' + Id + ',"False")');
+                    } else {
+                        $('#nv_' + Id).attr("checked", true).attr('onclick', 'CambiarEstatus(' + Id + ',"True")');
+                    }
+                }
+
+        }).fail(function (jqxhr, settings, ex) {
+            //Mensaje('Error ' + ex);
+            ModalGeneral("", ex, false);
+            if (IndEstatus == "True") {
+                $('#nv_' + Id).attr('onclick', 'CambiarEstatus(' + Id + ',"True")');
+                $('#nv_' + Id).prop('checked', false);
+            } else {
+                $('#nv_' + Id).attr('onclick', 'CambiarEstatus(' + Id + ',"False")');
+                $('#nv_' + Id).prop('checked', true);
+            }
+        });
+        }
+
+         function ActivarIndHome(Id, IndHome) {
+             $.post('@Url.Action("ActivarIndHome", "ManagerNewness")', { Id: Id, IndHome: IndHome }, function (Data) {
+
+             }).done(function (Data) {
+                 if (!Data.success) {
+                     if (IndHome == "True") {
+                         $('#ind_' + Id).attr("checked", false).attr('onclick', 'ActivarIndHome(' + Id + ',"False")');
+                     } else {
+                         $('#ind_' + Id).attr("checked", true).attr('onclick', 'ActivarIndHome(' + Id + ',"True")');
+                     }
+                 } else {
+                     if (IndHome == "True") {
+                         $('#ind_' + Id).attr("checked", true).attr('onclick', 'ActivarIndHome(' + Id + ',"False")');
+                     } else {
+                         $('#ind_' + Id).attr("checked", false).attr('onclick', 'ActivarIndHome(' + Id + ',"True")');
+                     }
+                 }
+             //alert('ok ' + Data.mensaje);
+
+        }).fail(function (jqxhr, settings, ex) {
+            alert('Error ' + ex);
+            if (IndEstatus == "True") {
+                $('#ind_' + Id).attr('onclick', 'ActivarIndHome(' + Id + ',"True")');
+                $('#ind_' + Id).prop('checked', false);
+            } else {
+                $('#ind_' + Id).attr('onclick', 'ActivarIndHome(' + Id + ',"False")');
+                $('#ind_' + Id).prop('checked', true);
+            }
+        });
+        }
+    </script>
+}

@@ -1,0 +1,378 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@model BarCejas.App.Areas.Admin.Models.ProfesionalViewModel
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Calendario";
+}
+@*<link href="~/css/full-calendar/main.css" rel="stylesheet" />*@
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans"><a href="javascript:history.back()"><i class="fas fa-solid fa-angle-left"></i></a></li>
+                    <li class="spa-bag"><a asp-controller="GestorProfessional" asp-action="Index">Gestor</a></li>
+                    <li class="spa-bag">-</li>
+                    <li class="active spa-bag">Gestionar turnos</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+
+    <div class="container title-secon-header">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon">TURNOS</h4>
+
+            </div>
+        </div>
+    </div>
+</section>
+<div class="hide">
+    <input type="hidden" asp-for="Id" />
+</div>
+<section class="about-shot-info section-sm">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <b id="nameProfessional"></b>
+            </div>
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="form-group col-md-12 mb-4">
+                        <label>Local</label>
+                        <select id="Locals" class="form-control" onchange="onChangeLocal(this.value)" @((ViewData["IsAdmin"] != null && (bool)ViewData["IsAdmin"])? string.Empty : "disabled")>
+                            <option value="-1">Todos</option>
+                            @foreach (var local in ViewBag.Locales)
+                            {
+                                <option value="@local.Id">@local.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="form-group col-md-12 mb-4">
+                        <label>Cambiar Profesional</label>
+                        <select id="Professionals" class="form-control" onchange="onChangeProfessional(this.value)" @((ViewData["IsAdmin"] != null && (bool)ViewData["IsAdmin"])? string.Empty : "disabled")>
+                            <option value="-1">Todos</option>
+                            @foreach (var profesional in ViewBag.Profesionales)
+                            {
+                                <option value="@profesional.Id">@profesional.IdUsuarioNavigation.Nombre @profesional.IdUsuarioNavigation.Apellido</option>
+                            }
+                        </select>
+                        <div class="alert alert-primary align-items-center noti" role="alert">
+                            <i class="fas fa-info" style="float:left"></i>
+                            <div style="padding-left:2rem;">
+                                Cargando datos, por favor, espere..
+                            </div>
+                        </div>
+                        <div class="alert alert-primary  align-items-center notiSuss" style="display:none;" role="alert">
+                            <i class="fas fa-check" style="float:left"></i>
+                            <div style="padding-left: 2rem;">
+                                Data cargada con éxito!!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="company-mission section" style="padding-top: 2%;">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="loader" style="display:none">
+                    <div class='preloader'>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+                <div id='calendar'>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<div class="modal fade" id="TurnoModal" tabindex="-1" aria-labelledby="TurnoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="TurnoModalLabel"></h5>
+                <a href="#" class="close" data-dismiss="modal" aria-label="close">&times;</a>
+            </div>
+            <div class="modal-body pl-5 pr-5" id="TurnoModalBody">
+            </div>
+        </div>
+    </div>
+</div>
+
+@*<script src="~/js/full-calendar/main.js"></script>
+    <script src="~/fullcalendar/locales/es.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>*@
+@section scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+    idProfessional = -1;
+        idLocal = -1;
+    isAdmin = @((ViewData["IsAdmin"] != null && (bool)ViewData["IsAdmin"])? 1 : 0);
+    $(document).ready(function () {
+            init();
+            chargeAllTurns($('#Professionals').val(), $('#Locals').val())
+            $('html').on('click', function (e) {
+                if (typeof $(e.target).data('original-title') == 'undefined' &&
+                    !$(e.target).parents().is('.popover.in')) {
+                    $('[data-original-title]').popover('hide');
+                }
+            });
+
+    });
+
+        function onFailureTurno(error) {
+            if (error.responseJSON !== undefined)
+                ModalGeneral('', error.responseJSON.message, error.responseJSON.isCompleted);
+            else
+                ModalGeneral('', 'Ha ocurrido un error interno en el servidor', false);
+        }
+
+        function onBeginTurno() {
+            $('#TurnoModalBody').html('');
+            $('#TurnoModal').modal('show');
+        }
+
+        function OnSuccessAddOrEditTurno() {
+            ModalGeneral('', 'Accón completada con éxito.', true);
+            $('.modal').modal('hide');
+            chargeAllTurns($('#Professionals').val(), $('#Locals').val());
+        }
+
+        function resetValues(element) {
+            $(element).find('option')
+                .remove()
+                .end()
+                .append('<option value="0">Seleccione una opción</option>')
+                .val(0);
+        }
+
+        function loadSelectValue(element, data) {
+            resetValues(element);
+            if (data.length > 0) {
+                $.each(data, function (index, itemData) {
+                    $(element).append(new Option(itemData.text, itemData.value))
+                });
+            }
+            $(element).val(0);
+        }
+
+        function onChangeDate(element) {
+            resetValues("#Hora");
+            $('#Hora').prop('disabled', 'disabled');
+            var idProfessional = $('#IdProfesional') === null ? 0 : $('#IdProfesional').val();
+            if (element.value.length > 0) {
+                $('#FechaCita').val(element.value);
+                $.get('@Url.Action("OnChangeDateService", "GestorShifts")', { date: element.value, idService: $('#IdServicio').val(), idContact: $('#IdContactoLocal').val(), idProfessional: idProfessional }, function (resp) {
+                    if (resp !== undefined && resp.isCompleted) {
+                        loadSelectValue("#Hora", resp.hours);
+                        $('#Hora').prop('disabled', false);
+                    }
+                })
+                .fail(function (error) {
+                    onFailureTurno(error);
+                });
+            }
+        }
+
+        function onChangeHour(element) {
+            $('#Hora').val(element.value);
+        }
+
+        function init() {
+            var calendarEl = document.getElementById('calendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'today prev,next',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+                },
+                locale: 'es',
+                initialDate: new Date(),
+                editable: true,
+                selectable: true
+            });
+
+            calendar.render();
+        }
+
+        function chargeAllTurns(idprofessional, idLocal) {
+            $('.loader').show();
+            $('.noti').show();
+            $('.notiSuss').hide();
+                $.ajax({
+                        url: '@Url.Action("GetTurns", "GestorTurns")',
+                        method: 'GET',
+                        ContentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                    data: { idprofessional: idprofessional, idLocal: idLocal },
+                    success: function (response) {
+                        //debugger;
+                        console.log(response);
+
+                        var turns = [];
+                        for (var i = 0; i < response.length; i++) {
+                            var turn = {
+                                id: response[i].idOrden,
+                                title: response[i].nombreServicio,
+                                start: response[i].fechaDeCita
+                            }
+                            turns.push(turn)
+                        }
+
+                            var calendarEl = document.getElementById('calendar');
+
+                            var calendar = new FullCalendar.Calendar(calendarEl, {
+                                initialView: 'dayGridMonth',
+                                dayMaxEventRows: true, // for all non-TimeGrid views
+                                views: {
+                                    timeGrid: {
+                                        dayMaxEventRows: 4 // adjust to 6 only for timeGridWeek/timeGridDay
+                                    }
+                                },
+                                loading: function (isLoading) {
+                                    if (isLoading) {
+                                        $('.loader').show();
+                                        $('.noti').show();
+                                        $('.notiSuss').hide();
+                                    }
+                                    else {
+                                        $('.loader').hide();
+                                        $('.noti').hide();
+                                        $('.notiSuss').show();
+                                    }
+                                },
+                                headerToolbar: {
+                                    left: 'today prev,next',
+                                    center: 'title',
+                                    right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+                                },
+                                locale: 'es',
+                                initialDate: new Date(),
+                                editable: false,
+                                selectable: false,
+                                eventClick: function (info) {
+                                    var turn = response.find(x => x.idOrden == parseInt(info.event._def.publicId))
+                                    console.log(turn);
+                                    $('.popover_show').popover('dispose');
+                                    $(info.jsEvent.srcElement).popover({
+
+                                        container: 'body',
+                                        animation: true,
+                                        //title: '<div class="popular_courses"><div class="row"><div class="item col-md-12"><div class="single_course"><div class="course_head course_head_service"><img class="img-fluid course_img_center" src="' + turn.rutaImagenPaagina + '" alt=""></div><div class="title_course"><span class="tag " style="float: left;">' + turn.hora + '</span><span class="tag2" style="text-align: right;">' + turn.profesional + '</span><a class="close servi" data-dismiss="popover">×</a></div>',
+                                        title: titlePopover(turn),
+                                        placement: 'bottom',
+                                        boundary: 'window',
+                                        sanitize: false,
+                                        trigger: 'manual',
+                                        popperConfig: { eventsEnabled: false },
+                                        "html": true,
+                                        //content: '<div class="course_content" style="height: auto;"><h4 class="mb-3"><span>' + info.event._def.title + '</span></h4><p class="text-troncate">' + turn.descripcionCorta + '</p><label>Cliente: ' + turn.nombreCliente + " " + turn.apellidoCliente + '</label><label>Local: ' + turn.direccionSuc + '</label></div><div class="course_meta justify-content-lg-between align-items-lg-center flex-lg-row flex-column " style="background-color: #fadce6;"><div class="row-section pt-4 pb-4 pl-3"><label>Modalidad de pago: ' + turn.modalidadPago + '</label><label>Estatus de pago: ' + (turn.estatusPago == 10 ? "Pendiente" : "Pagado") +'</label></div></div></div></div> </div></div>'
+                                        content: contentPopover(info, turn)
+                                    });
+                                    $(document).on("click", ".servi", function () {
+                                        $(info.jsEvent.srcElement).popover('hide');
+                                    });
+                                    $(info.jsEvent.srcElement).popover('show');
+                                    $(info.jsEvent.srcElement).addClass('popover_show');
+                                },
+                                events: turns
+                            });
+
+                            calendar.render();
+                        },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest);
+                        console.log(textStatus);
+                        console.log(errorThrown);
+                             alert("Error: " + errorThrown);
+                        }
+                    });
+        }
+
+        function onChangeProfessional(id) {
+            idProfessional = id;
+            chargeAllTurns(parseInt(id), idLocal)
+
+        }
+
+        function onChangeLocal(id) {
+            idLocal = id;
+            chargeAllTurns(idProfessional, parseInt(id))
+
+        }
+        function titlePopover(turn) {
+            return '<div class="popular_courses"><div class="row"><div class="item col-md-12"><div class="single_course"><div class="course_head course_head_service"><img class="img-fluid course_img_center" src="' + turn.rutaImagenPaagina + '" alt=""></div><div class="title_course"><span class="tag " style="float: left;">' + turn.hora + '</span><span class="tag2" style="text-align: right;">' + turn.profesional + '</span><a class="close servi" data-dismiss="popover">×</a></div>'
+        }
+
+        function contentPopover(info, turn) {
+            console.log()
+            var str = '<div class="course_content" style="height: auto;">';
+            //            str += '<h4 class="mb-3"><span>' + info.event._def.title + '</span></h4>';
+            str += '<h4 class="mb-3"><span>' + turn.hora + '</span></h4>';
+
+                str +=      '<p class="text-troncate">' + turn.descripcionCorta + '</p>';
+                str +=      '<label>Cliente: ' + turn.nombreCliente + " " + turn.apellidoCliente + '</label>';
+                str +=      '<label>Local: ' + turn.direccionSuc + '</label>';
+                str += '</div>';
+            if (turn.idEstatus != @((int)BarCejas.Entities.Enumerations.EstatusOrden.Anulada)) {
+
+                //str += '<a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+                //str +=      '<i class="fas fa-ellipsis-v"></i>';
+                //str += '</a>';
+                //str += '<div class="dropdown-menu menu-left" aria-labelledby="navbarDropdown">';
+                if (turn.idEstatus == @((int)BarCejas.Entities.Enumerations.EstatusOrden.pendiente)) {
+                    str += '<a class="dropdown-item" href='+"@(Url.Action("PrintFormService", "GestorShifts"))"+'?id=' + turn.idServicio + '> Imprimir formulario</a>';
+                    @*if (isAdmin == 1) {
+                    str += '<a class="dropdown-item" data-toggle="modal" data-target="#TurnoModal" data-ajax="true" data-ajax-begin="onBeginTurno" data-ajax-fail="onFailureTurno" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#TurnoModalBody" href='+"@(Url.Action("Edit", "GestorShifts"))"+'/' + turn.idOrdenItem + '> Asignar nuevo profesional </a>';
+                    }*@
+                }
+                str += '<a class="dropdown-item" data-toggle="modal" data-target="#TurnoModal" data-ajax="true" data-ajax-begin="onBeginTurno" data-ajax-fail="onFailureTurno" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#TurnoModalBody" href=' + "@(Url.Action("reschedule", "GestorShifts"))" + '/' + turn.idOrdenItem + '> Reprogramar turno </a>';
+                if (turn.idEstatus == @((int)BarCejas.Entities.Enumerations.EstatusOrden.completada)) {
+                    str += '<a class="dropdown-item" data-toggle="modal" data-target="#TurnoModal" data-ajax="true" data-ajax-begin="onBeginTurno" data-ajax-fail="onFailureTurno" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#TurnoModalBody" href=' + "@(Url.Action("CancelShift", "GestorShifts"))" + '?id=' + turn.idOrdenItem + '> Cancelar turno </a>';
+                }
+                if (isAdmin == 1 && turn.idEstatusPago != @((int)BarCejas.Entities.Enumerations.EstatusPago.Pagado)) {
+                str +=      '<a class="dropdown-item" data-toggle="modal" data-target="#TurnoModal" data-ajax="true" data-ajax-begin="onBeginTurno" data-ajax-fail="onFailureTurno" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#TurnoModalBody" href=' + "@(Url.Action("RecordPayment", "GestorShifts"))" + '?id=' + turn.idOrden + '> Registrar pago </a>';
+                }
+                if (turn.idEstatusPago == @((int)BarCejas.Entities.Enumerations.EstatusPago.Pagado) && (turn.idFormaPago != @((int)BarCejas.Entities.Enumerations.FormaDePago.Efectivo) || turn.idFormaPago != @((int)BarCejas.Entities.Enumerations.FormaDePago.En_local))) {
+                    str += '<a class="dropdown-item" data-toggle="modal" data-target="#TurnoModal" data-ajax="true" data-ajax-begin="onBeginTurno" data-ajax-fail="onFailureTurno" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#TurnoModalBody" href=' + "@(Url.Action("Voucher", "GestorShifts"))" + '?id=' + turn.idOrden + '> Ver comprobante </a>';
+                }
+                //str += '</div>';
+            }
+                str += '<div class="course_meta justify-content-lg-between align-items-lg-center flex-lg-row flex-column " style="background-color: #fadce6;">';
+                str +=      '<div class="row-section pt-4 pb-4 pl-3">';
+                str +=          '<label>Modalidad de pago: ' + turn.modalidadPago + '</label>';
+                str +=          '<label>Estatus de pago: ' + (turn.estatusPago == 10 ? "Pendiente" : "Pagado") + '</label>';
+                str +=      '</div>';
+                str += '</div>';
+                //str += '</div>';
+                //str += '</div>';
+                //str += '</div>';
+                //str += '</div>';
+            return str;
+    }
+    </script>
+}

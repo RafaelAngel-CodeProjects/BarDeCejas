@@ -1,0 +1,176 @@
+﻿@model BarCejas.App.Areas.Admin.Models.BannerViewModel
+@using BarCejas.Entities;
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@{
+    ViewData["Title"] = Model != null && Model.Id > 0 ? "Editar" : "Crear";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans"><a href="javascript:history.back()"><i class="fas fa-solid fa-angle-left"></i></a></li>
+                    <li class="spa-bag"><a href="@Url.Action("Index", "ManagerTestimonials")">Gestor</a></li>
+                    <li class="spa-bag">-</li>
+                    <li class="active spa-bag">Gestor de Banner</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+    <div class="container title-secon-header">
+        <div class="row">
+            <div class="col-md-12">
+                @if (Model != null && Model.Id > 0)
+                {
+                    <h4 class="title-secon">EDITAR BANNER</h4>
+                }
+                else
+                {
+                    <h4 class="title-secon">CREAR BANNER</h4>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="company-mission section" style="padding-top: 68px!important;">
+    <div class="container">
+        <form asp-action="Create_Edit" method="post" data-ajax-failure="fnOnFailed" data-ajax-success="fnOnSuccess" data-content="false" id="formBanner" enctype="multipart/form-data">
+            @*data-ajax="true"*@
+
+            <div style="display:none">
+                @if (Model != null && Model.Id > 0)
+                {
+                    <input asp-for="Id" type="hidden" />
+                    <input asp-for="FechaAlta" type="hidden" />
+                    <input asp-for="Orden" type="hidden" />
+                    <input asp-for="EsActivo" type="hidden" />
+                    <input asp-for="RutaImagenDestok" type="hidden" />
+                    <input asp-for="RutaImagenMobile" type="hidden" />
+                }
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-12 mb-12">
+                    <label for="Titulo">Título del banner</label>
+                    <input type="text" class="form-control" asp-for="Titulo" placeholder="Título">
+                    <span asp-validation-for="Titulo" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-12 mb-12">
+                    <label for="Texto">Texto</label>
+                    <textarea class="form-control" asp-for="Texto" rows="3"></textarea>
+                    <span asp-validation-for="Texto" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6 mb-4">
+                    <label for="TextoBoton">Texto del boton <span class="optionalText">- opcional</span></label>
+                    <input type="text" class="form-control" asp-for="TextoBoton" placeholder="texto del boton">
+                    <span asp-validation-for="TextoBoton" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6 mb-4">
+                    <label for="LinkBoton">Link <span class="optionalText">- opcional</span></label>
+                    <input type="text" class="form-control" asp-for="LinkBoton" placeholder="Link">
+                    <span asp-validation-for="LinkBoton" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="form-group col-md-8 mb-8">
+                    <label for="ImagenDestok">Imagen del banner</label>
+    
+                    <div id="imagenPrevisualizacion" class="form-control-file customInputFile mx-auto p-5" style="background-image: url(@Url.Content(Model!= null && Model.RutaImagenDestok != null ? Model.RutaImagenDestok : string.Empty))">
+                        <span> </span>
+                        <input type="file"  accept="image/jpg, image/png, image/jpeg" asp-for="ImagenDestok" id="seleccionArchivos">
+                    </div>
+
+
+                </div>
+                <div class="form-group col-md-4 mb-4">
+                    <label for="ImagenMobile">Imagen mobile</label>
+                    <div id="imagenPrevisualizacionSecon" class="form-control-file customInputFile mx-auto p-5" style="background-image: url(@Url.Content(Model!= null && Model.RutaImagenMobile != null ? Model.RutaImagenMobile: string.Empty))">
+                        <span> </span>
+                        <input type="file" accept="image/jpg, image/png, image/jpeg" asp-for="ImagenMobile" id="seleccionArchivosSecon">
+                      
+                    </div>
+                </div>
+            </div>
+            <div class="row row-mobile">
+                <div class="form-group col-md-6 col-sm-12 mb-4 z-index">
+                    <a href="javascript:history.back()" class="btn btn-main float-right">DESCARTAR</a>
+                </div>
+                <div class="form-group col-md-6 mb-4 col-sm-12">
+                    @if (Model != null && Model.Id > 0)
+                    {
+                        <button type="submit" class="btn btn-main-accion">EDITAR BANNER</button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-main-accion">CREAR BANNER</button>
+                    }
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+
+@section scripts{
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+
+        $("#formBanner").submit(function (e) {
+            e.preventDefault();
+            e.preventDefault();
+
+               //CKEDITOR.instances.Contenido.updateElement(); // La unica forma de que actualice el contenido al momento de editar
+                var form = $(this);
+                var formData = new FormData(form[0]);
+                if (form.valid()) {
+                    $.ajax({
+                        type: form.attr('method'),
+                        url: form.attr('action'),
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    }).done(function (Data) {
+                        fnOnSuccess(Data);
+
+                    }).fail(function (XMLHttpRequest, textStatus, errorThrown)
+                    {
+                        console.log("Error: " + errorThrown);
+                        fnOnFailed(errorThrown);
+                    });
+                } else {
+                    return false;
+                }
+
+        });
+
+        function fnOnSuccess(Data) {
+            var url = '';
+            if (Data.success) {
+                url = '@Url.Action("Index", "ManagerTestimonials")';
+            } else {
+                console.log('Disculpe, ha ocurrido un error.');
+                console.log(Data);
+            }
+            ModalGeneral(url, Data.mensaje, Data.success);
+        }
+
+        function fnOnFailed(Data) {
+            alert('Disculpe, ha ocurrido un error.');
+            console.log(Data);
+        }
+
+    </script>
+
+}

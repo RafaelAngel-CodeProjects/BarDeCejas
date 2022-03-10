@@ -1,0 +1,40 @@
+﻿
+@{
+    ViewData["Title"] = "Preguntas frecuentes";
+}
+
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans"><a href="javascript:history.back()"><i class="fas fa-solid fa-angle-left"></i></a></li>
+                    <li class="spa-bag d-none d-md-block d-lg-block d-sm-none"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="spa-bag d-none d-md-block d-lg-block d-sm-none">-</li>
+                    <li class="active spa-bag d-none d-md-block d-lg-block d-sm-none">Preguntas frecuentes</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon mayuscula">preguntas frecuentes</h4>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="company-mission section" style="padding-top: 68px!important;">
+    <div class="container">
+        <section>
+            <div class="accordion md-accordion" id="accordionEx1" role="tablist" aria-multiselectable="true">
+                <partial name="_ListadoFrequentQ" model="Model" />
+            </div>
+        </section>
+        <!-- Accordion wrapper -->
+    </div>
+</section>

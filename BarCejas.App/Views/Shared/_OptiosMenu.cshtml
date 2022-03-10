@@ -1,0 +1,96 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+<!-- esto se ve si inicia sesion -->
+<header class="navigation fixed-top">
+    <div class="container">
+        <!-- main nav -->
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation"
+                    aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- logo -->
+            <a class="navbar-brand logo" href="/BarDeCejasFront/Presentation/Views/index.html">
+                <img class="logo-default" src="/BarDeCejasFront/wwwroot/images/logo.png" alt="logo" />
+                <!-- <img class="logo-white" src="images/logo-white.png" alt="logo"/> -->
+                <img class="logo-white" src="/BarDeCejasFront/wwwroot/images/logo.png" alt="logo" />
+            </a>
+            <!-- /logo -->
+
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav text-center">
+                    <li class="nav-item active">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                           aria-haspopup="true" aria-expanded="false">
+                            SERVICIOS
+                        </a>
+                        <div class="dropdown-menu menu-left" aria-labelledby="navbarDropdown">
+                            <div class="padding-l-r">
+                                <a class="dropdown-item" href="/BarDeCejasFront/Presentation/Views/ServicioCejas.html">Cejas</a>
+                                <a class="dropdown-item" href="/BarDeCejasFront/Presentation/Views/ServicioCejas.html">Pestañas</a>
+                                <a class="dropdown-item" href="/BarDeCejasFront/Presentation/Views/ServicioCejas.html">Labios</a>
+                            </div>
+
+                        </div>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="@Url.Action("Index","Packages")">PAQUETES</a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="/BarDeCejasFront/Presentation/Views/NovedadesList.html">NOVEDADES</a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="/BarDeCejasFront/Presentation/Views/preguntasFrecuentes.html">PREGUNTAS FRECUENTES</a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="/BarDeCejasFront/Presentation/Views/contact.html">CONTACTO</a>
+                    </li>
+
+                </ul>
+                <ul class="navbar-nav ml-auto text-center">
+
+                    <li class="nav-item ">
+                        <a class="nav-link row" href="#" style="padding-top: 1%;" id="navbarDropdownUser" role="button" data-toggle="dropdown"
+                           aria-haspopup="true" aria-expanded="false">
+                            <div class="first col-sm-12"><span style="font-weight:bold;">NOMBRE DE USUARIO</span></div>
+                            <div class="second col-sm-12"><span style="font-weight:normal;">MI PERFIL</span></div>
+                        </a>
+
+                        <div id="sidenav" class="sidenav menu-left" style="display: none;">
+                            <a href="/BarDeCejasFront/Presentation/Views/misTurnos.html">MIS TURNOS</a>
+                            <a href="/BarDeCejasFront/Admin/Views/EditarPerfilDatos.html">MIS DATOS</a>
+                            <button class="dropdown-btn">
+                                GESTOR
+                                <i class="fa fa-caret-down" style="font-size: 27px;"></i>
+                            </button>
+                            <div class="dropdown-container">
+                                <a href="/BarDeCejasFront/Admin/Views/GestionarHome.html">GESTOR DE HOME</a>
+                                <a href="/BarDeCejasFront/Admin/Views/GestionarClientes.html">GESTOR DE CLIENTES</a>
+                                <a href="/BarDeCejasFront/Admin/Views/GestionarProfesionales.html">GESTOR DE PROFESIONALES</a>
+                                <a href="/BarDeCejasFront/Admin/Views/GestionarTurnos.html">GESTOR DE TURNOS</a>
+                                <a href="/BarDeCejasFront/Admin/Views/GestionarServicios.html">GESTOR DE SERVICIOS</a>
+                                <a href="/BarDeCejasFront/Admin/Views/GestionarPaquetes.html">GESTOR DE PAQUETES</a>
+                                <a href="/BarDeCejasFront/Admin/Views/GestionarMensajesMasivos.html">MENSAJES MASIVOS</a>
+                                <a href="/BarDeCejasFront/Admin/Views/GestionarNovedades.html">GESTOR DE NOVEDADES</a>
+                                <a href="/BarDeCejasFront/Admin/Views/GestionarPreguntasFrecuentes.html">PREGUNTAS FRECUENTES</a>
+                                <a href="/BarDeCejasFront/Admin/Views/GestionarContactos.html">GESTOR DE CONTACTO</a>
+                            </div>
+                            <a href="#">REPORTES</a>
+                            <a href="#">CERRAR SESIÓN</a>
+                        </div>
+                    </li>
+
+                </ul>
+            </div>
+            <!-- user-->
+            <a class="navbar-brand logo " href="#">
+
+                <i class="tf-ion-ios-person-outline d-none d-sm-block d-md-block d-lg-block" style="font-size: 2.25rem!important;"></i>
+            </a>
+            <!-- /user -->
+        </nav>
+        <!-- /main nav -->
+    </div>
+</header>

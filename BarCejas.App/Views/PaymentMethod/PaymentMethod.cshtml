@@ -1,0 +1,158 @@
+﻿@model PaymentMethodViewModel
+@using System.Globalization;
+@using System.Text.Json;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers;
+@addTagHelper *, AuthoringTagHelpers;
+@using System.Security.Claims
+
+@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string strUser = User.FindFirstValue(ClaimTypes.Name);
+
+}
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/bootstrap/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css">
+
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans"><a href="javascript:history.back()"><i class="fas fa-solid fa-angle-left"></i></a></li>
+                    <li class="spa-bag d-none d-md-block d-lg-block d-sm-none"><a href="/BarDeCejasFront/Presentation/Views/index.html">Home</a></li>
+                    <li class="spa-bag d-none d-md-block d-lg-block d-sm-none">-</a></li>
+                    <li class="active spa-bag d-none d-md-block d-lg-block d-sm-none">Servicios - Pago</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon mayuscula">¿CUÁNDO querés pagar?</h4>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="company-mission section" style="padding-top: 68px!important;">
+    <div class="container">
+        <form>
+            <div class="row">
+                <div class="col-md-6 ">
+                    <div class="row shadow ml-0 mr-0">
+                        <div class="col-md-12" style="border-bottom: 1px solid #DFDFDF;padding-top: 5%; padding-bottom: 2%;padding-left: 5%;">
+                            <h4 style="padding-bottom: 3%;" class="text-center">EN EL LOCAL</h4>
+                            <p style="height: 47px;">Podrás pagar la totalidad con los medios de pago habilitados en el local el día del turno.</p>
+                        </div>
+                        <div class="col-md-12" style="background-color: #fadce6; padding-top: 3%; padding-bottom: 1.9rem">
+                            @if (!String.IsNullOrEmpty(strUser))
+                            {
+                                @*<a href="@Url.Action("ProcessLocal","PaymentMethod", Model )" class="btn btn-main mt-20" style="width: 100%!important;">PAGAR EN EL LOCAL</a>*@
+                                <a href="@Url.Action("ProcessLocal","PaymentMethod", new
+                                                    {
+                                                        PackageId = Model.PackageId,
+                                                        ServiceId = Model.ServiceId, 
+                                                        BranchOfficeId = Model.BranchOfficeId,
+                                                        ProfessionalId = Model.ProfessionalId,
+                                                        ServiceDate = Model.ServiceDate,
+                                                        HourService = Model.HourService,
+                                                        OrderId = Model.OrderId,
+                                                        PromotionalPrice = Model.PromotionalPrice,
+                                                        TotalPrice = Model.TotalPrice
+                                                    })"
+                                   class="btn btn-main mt-20" style="width: 100%!important;">PAGAR EN EL LOCAL</a>
+                            }
+                            else
+                            {
+                                <a id="linkModalLogin"
+                                   data-toggle="modal"
+                                   data-target="#LoginModal"
+                                   data-ajax="true"
+                                   data-ajax-begin="onBeginModalLogin"
+                                   data-ajax-success="onSuccessModalLogin"
+                                   data-ajax-fail="onFailModalLogin"
+                                   data-ajax-complete=""
+                                   data-ajax-method="GET"
+                                   data-ajax-mode="replace"
+                                   data-ajax-update="#LoginModalCuerpo"
+                                   asp-controller="User"
+                                   asp-action="ModalRegisterLogin" class="btn btn-main mt-20">PAGAR EN EL LOCAL</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 ">
+                    <div class="row shadow ml-0 mr-0">
+                        <div class="col-md-12" style="border-bottom: 1px solid #DFDFDF;padding-top: 5%; padding-bottom: 2%;padding-left: 5%;">
+                            <h4 style="padding-bottom: 3%;" class="text-center">PAGO ONLINE</h4>
+                            <p style="height: 47px;">
+                                Podrás pagar online al momento de hacer la reserva.
+                            </p>
+                        </div>
+
+                        <div class="col-md-12" style="background-color: #fadce6;    padding-top: 3%; padding-bottom: 1.9rem">
+                            @if (!String.IsNullOrEmpty(strUser))
+                            {
+                                @*<a href="@Url.Action("ProcessOnlinePayment","PaymentMethod", Model)" class="btn btn-main mt-20" style="width: 100%!important;">PAGAR ONLINE</a>*@
+                                <a href="@Url.Action("ProcessOnlinePayment", "PaymentMethod", new {  PackageId = Model.PackageId, 
+                                                                                            ServiceId = Model.ServiceId, 
+                                                                                            BranchOfficeId = Model.BranchOfficeId,
+                                                                                            ProfessionalId = Model.ProfessionalId,
+                                                                                            ServiceDate = Model.ServiceDate,
+                                                                                            HourService = Model.HourService,
+                                                                                            OrderId = Model.OrderId,
+                                                                                            PromotionalPrice = Model.PromotionalPrice,
+                                                                                            TotalPrice = Model.TotalPrice})" 
+                                    class="btn btn-main mt-20" style="width: 100%!important;">PAGAR ONLINE</a>
+                            }
+                            else
+                            {
+                                <a id="linkModalLogin"
+                                   data-toggle="modal"
+                                   data-target="#LoginModal"
+                                   data-ajax="true"
+                                   data-ajax-begin="onBeginModalLogin"
+                                   data-ajax-success="onSuccessModalLogin"
+                                   data-ajax-fail="onFailModalLogin"
+                                   data-ajax-complete=""
+                                   data-ajax-method="GET"
+                                   data-ajax-mode="replace"
+                                   data-ajax-update="#LoginModalCuerpo"
+                                   asp-controller="User"
+                                   asp-action="ModalRegisterLogin" class="btn btn-main mt-20">PAGAR POR TRANSFERENCIA</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<section class="counter-wrapper section-sm" style="background-color: #fadce6;">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12" style="background-color: #fadce6;padding-top:3%; padding-bottom:4%;">
+
+                @if (Model.PromotionalPrice > 0)
+                {
+                    <span style="float: right;color: #000;font-weight: 600;font-size: 24px;"> $@Model.PromotionalPrice</span>
+                    <span style="float: right;color: #958389;text-decoration:line-through;padding-top: 7px;padding-right: 2px;">$@Model.TotalPrice </span>
+                }
+                else
+                {
+                    <span class="float-right" style="color: #000;font-weight: 600;font-size: 24px;">
+                        @Model.TotalPrice
+                    </span>
+                }
+                <span class="float-right" style="color: #958389;padding-top: 7px;padding-right: 7px;">Total </span>
+            </div>
+        </div> 		<!-- end row -->
+    </div>   	<!-- end container -->
+</section>

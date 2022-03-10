@@ -1,0 +1,614 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+@using System.Security.Claims
+@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    List<ContactoViewModel> lContacto = (List<ContactoViewModel>)ViewBag.lContacto;
+    List<BarCejas.Entities.Novedades> lNovedades = (List<BarCejas.Entities.Novedades>)ViewBag.lNovedades;
+    List<BarCejas.Entities.Testimonios> ltestimonios = (List<BarCejas.Entities.Testimonios>)ViewBag.ltestimonios;
+    List<BarCejas.Entities.Categoria> lCategorias = (List<BarCejas.Entities.Categoria>)ViewBag.lCategorias;
+    List<BarCejas.Entities.Paquete> lPaquetes = (List<BarCejas.Entities.Paquete>)ViewBag.lPaquetes;
+    RegistreViewModel user = new RegistreViewModel();
+    bool isLogin = false;
+
+    if (ViewBag.user != null)
+    {
+        isLogin = (bool)ViewBag.IsLogin;
+        user = (RegistreViewModel)(ViewBag.user);
+    }
+    string strUser = User.FindFirstValue(ClaimTypes.Name);
+}
+
+<div id="sliderBanners">
+
+    <partial name="_ListadoBanner" model="ViewBag.lBanner" />
+
+    <input type="hidden" value="@ViewBag.user" id="modeRedSocial" />
+</div>
+
+<!--
+Start About Section CATEGORIAS
+==================================== -->
+<section class="service-2 section">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-12">
+                <!-- section title -->
+                <div class="title text-center">
+                    <h2>SERVICIOS</h2>
+                    <a class="sub-title" asp-controller="Services" asp-action="Index">VER TODOS</a>
+
+                    <!-- <div class="border"></div> -->
+                </div>
+                <!-- /section title -->
+            </div>
+
+
+            <div class="col-md-12">
+                <div class="row text-center">
+                    @foreach (var item in lCategorias)
+                    {
+                        <div class="col-md-4 col-sm-4 col-xs-12">
+                            @*<img class="img-fluid" src="@(Service.RutaImagenTarjeta!= null ? Service.RutaImagenTarjeta:string.Empty)" asp-append-version="true" alt="" />*@
+
+                            <div class="service-item imagen-cat" style="background-image: url(@Url.Content(item.RutaImagen))">
+                                
+                                    <div class="color-tite-cat">
+                                        <h5>@item.Nombre</h5>
+                                        <a class="btn btn-main" asp-controller="Services" asp-action="Category" asp-route-id="@item.Id">+ info</a>
+                                    </div>
+
+                                
+                            </div>
+                        </div><!-- END COL -->
+                    }
+
+                </div>
+
+
+            </div>
+        </div> <!-- End row -->
+    </div> <!-- End container -->
+</section> <!-- End section -->
+<!--PAQUETES-->
+<section class="service-2 section" style="padding-top: 0%!important;">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-12">
+                <!-- section title -->
+                <div class="title text-center">
+                    <h2>PAQUETES</h2>
+                    <a class="sub-title" asp-controller="Packages" asp-action="Index">VER TODOS</a>
+
+                    <!-- <div class="border"></div> -->
+                </div>
+                <!-- /section title -->
+            </div>
+
+
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="portfolio-filter">
+                    <div class="row ">
+                        @{
+                            int index = 0;
+                        }
+                        @foreach (var item in lPaquetes)
+                        {
+                            string cssclass = index == 0 ? "active" : "";
+                            <div class="col-md-4 col-sm-12 col-xs-12 divButtonFilter" id="divButton_@item.Id">
+                                <button class="with @cssclass btnPackages" id="@item.Id" type="button" data-filter="@item.Id" onclick="HideElement(@item.Id);">@item.Nombre</button>
+                            </div>
+                            index++;
+                        }
+                    </div>
+
+                    <!-- <button type="button" data-filter="development">Development</button>
+                    <button type="button" data-filter="design">Design</button> -->
+                </div>
+
+                @{
+                    int indx = 0;
+                }
+                <div class="filtr-container he div-paquetes">
+                    @foreach (var item in lPaquetes)
+                    {
+                        string ccssclass = indx == 0 ? "" : "filteredOut-ocultar";
+
+                        <div class="filtr-item @ccssclass" data-category="@item.Id" id="divPaquete_@item.Id">
+                            <div class="row">
+                                <div class="col-md-6 ">
+                                    @{
+                                        if (item.RutaImagenHome != null && !(item.RutaImagenHome.Contains("images/")))
+                                        {
+                                            item.RutaImagenHome = null;
+                                        }
+                                    }
+                                    @*<img src="@(!string.IsNullOrWhiteSpace(item.RutaImagenTarjeta) ? Url.Content(item.RutaImagenTarjeta):"")" asp-append-version="true" alt="">*@
+                                    <img class="img-fluid" src="@(!String.IsNullOrEmpty(item.RutaImagenHome) ? Url.Content(item.RutaImagenHome):Url.Content("~/images/sinImagen.png"))" asp-append-version="true" alt="" />
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="col-md-12" style="border-bottom: 1px solid #DFDFDF;padding-top: 5%; padding-bottom: 2%;padding-left: 5%;">
+                                        <h5 style="font-weight:normal!important;padding-bottom: 3%;">@item.Nombre</h5>
+                                        <p>@item.DescripcionCorta</p>
+                                    </div>
+                                    <div class="col-md-12" style="padding: 6% 5%;">
+                                        <h4>INCLUYE</h4>
+                                        <ul class="feature-list" style="height: 158px;">
+                                            @foreach (var service in item.ServicioPaquete)
+                                            {
+                                                <li> <i class="tf-ion-android-checkmark-circle"></i> @service.IdServicioNavigation.Nombre <span style="float: right;color: #917145;">@(service.IdServicioNavigation.Duracion) min</span></li>
+                                            }
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-12" style="background-color: #fadce6;    padding-top: 3%; padding-bottom: 1.9rem">
+                                        <span style="float: right;color: #000;">  $@item.PrecioFinal</span><span style="float: right;color: #958389;text-decoration:line-through;">$@item.PrecioFinal</span>
+
+                                        @if (!String.IsNullOrEmpty(strUser))
+                                        {
+                                            <a href="@Url.Action("Package","Packages", new {id=item.Id, professionalId = 0,
+                                                        serviceId = 0,
+                                                        contactoId = 0,
+                                                        hora = "",
+                                                        serviceDate = new DateTime(),
+                                                        orderId = 0
+                                                    })" class="btn btn-main mt-20" style="width: 100%!important;">RESERVAR TURNOS</a>
+                                        }
+                                        else
+                                        {
+                                            <a id="linkModalLogin"
+                                               data-toggle="modal"
+                                               data-target="#LoginModal"
+                                               data-ajax="true"
+                                               data-ajax-begin="onBeginModalLogin"
+                                               data-ajax-success="onSuccessModalLogin"
+                                               data-ajax-fail="onFailModalLogin"
+                                               data-ajax-complete=""
+                                               data-ajax-method="GET"
+                                               data-ajax-mode="replace"
+                                               data-ajax-update="#LoginModalCuerpo"
+                                               asp-controller="User"
+                                               asp-action="ModalRegisterLogin" class="btn btn-main mt-20" style="width: 100%!important;">RESERVAR TURNOS</a>
+
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        indx++;
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</section> <!-- End section -->
+<!--
+Start About Section
+==================================== -->
+
+<section class="about-2 section" id="abouidt">
+    <div class="container">
+        <div class="row">
+            <!-- section title -->
+            <div class="col-12">
+                <!-- section title -->
+                <div class="title text-center">
+                    <h2>NOVEDADES</h2>
+                    <a class="sub-title" asp-controller="Newness" asp-action="Index"> VER TODOS</a>
+                    <!-- <div class="border"></div> -->
+                </div>
+                <!-- /section title -->
+            </div>
+            <!-- /section title -->
+            <div class="col-md-12">
+                <div class="row text-center">
+                    @foreach (var item in lNovedades)
+                    {
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+
+                            <div class="service-item imagen-cat" style="background-image: url(@(item.RutaImagen!=null ? Url.Content(item.RutaImagen):"")) ;">
+                                <div class="service-item">
+                                    <div class="color-tite-cat">
+                                        <h5 class="stile-fecha">@item.Fecha.ToString("dd/MM/yyyy")</h5>
+                                        <h5>@item.Titulo</h5>
+                                        <a href="@Url.Action("ProfileNewness", "Newness", new { Id =item.Id })" class="btn btn-main">LEER MÁS</a>
+                                    </div>
+                                </div>
+                            </div><!-- END COL -->
+                        </div><!-- END COL -->
+                    }
+                </div>
+            </div>
+        </div> <!-- End row -->
+    </div> <!-- End container -->
+</section> <!-- End section -->
+<!-- Start Testimonial
+=========================================== -->
+<section class=" service-2 section" id="testimonial">
+    <div class="container">
+        <div class="row">
+            <!-- section title -->
+            <div class="col-12">
+                <!-- section title -->
+                <div class="title text-center">
+                    <h2>TESTIMONIALES</h2>
+
+
+                    <!-- <div class="border"></div> -->
+                </div>
+                <!-- /section title -->
+            </div>
+            <!-- /section title -->
+            <div class="col-lg-12">
+                <!-- testimonial wrapper -->
+
+                <div class="col-md-12 col-sm-12 row-block">
+                    <div class="popular_courses">
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12" style="padding-right: 0px;">
+                                <div id="owl-testimoniales" class="owl-carousel owl-theme w-100" style="width: 100%;">
+                                    @foreach (var item in ltestimonios)
+                                    {
+                                        <div class="item">
+
+                                            <div class="testimonial">
+                                                <span class="icon fa fa-quote-left"></span>
+                                                <p class="description">
+                                                    @item.Testimonio
+                                                </p>
+                                                <div class="testimonial-content">
+
+                                                    <div class="pic"><img src="@(item.RutaImagen!=null ? Url.Content(item.RutaImagen):"")" asp-append-version="true" alt=""></div>
+                                                    <h3 class="title">@item.Autor</h3>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    }
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div> 		<!-- end col lg 12 -->
+        </div>	    <!-- End row -->
+    </div>       <!-- End container -->
+</section>
+
+<!-- End Section -->
+<!--
+        Start Blog Section
+        =========================================== -->
+<section class="blog" id="blog">
+    <div class="container">
+        <div class="row">
+            <!-- section title -->
+            <div class="col-12">
+                <div class="title text-center ">
+                    <h2> INSTAGRAM</h2>
+                    <!-- <div class="border"></div>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ducimus facere accusamus, reprehenderit libero
+                        inventore nam.</p> -->
+                </div>
+            </div>
+            <!-- /section title -->
+            <div class="col-lg-12">
+                <!-- testimonial wrapper -->
+                <div id="myCarousel" class="carousel slide w-100 myCarousel" data-ride="carousel">
+                    <div class="carousel-inner w-100" role="listbox">
+                        <div class="carousel-item active">
+                            <div class="col-lg-4 col-md-6">
+
+                                <img class="img-fluid" src="~/images/client-logo/I1.jpg" alt="">
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="col-lg-4 col-md-6">
+
+                                <img class="img-fluid" src="~/images/client-logo/I2.jpg" alt="">
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="col-lg-4 col-md-6">
+
+                                <img class="img-fluid" src="~/images/client-logo/I3.jpg" alt="">
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="col-lg-4 col-md-6">
+                                <img class="img-fluid" src="~/images/client-logo/I1.jpg" alt="">
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="col-lg-4 col-md-6">
+                                <img class="img-fluid" src="~/images/client-logo/I2.jpg" alt="">
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="col-lg-4 col-md-6">
+                                <img class="img-fluid" src="~/images/client-logo/I3.jpg" alt="">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <a class="carousel-control-prev bg-dark w-auto" href="#myCarousel" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next bg-dark w-auto" href="#myCarousel" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a> -->
+                </div>
+            </div>
+        </div>
+    </div> <!-- end container -->
+</section> <!-- end section -->
+
+<section class="section" style="background-color: #FADCE6;">
+    <div class="container">
+        <div class="row">
+            <!-- section title -->
+            <div class="col-12">
+                <div class="title text-center ">
+                    <h2>¡DESCARGA NUESTRA APP!</h2>
+                    <!-- <div class="border"></div>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ducimus facere accusamus, reprehenderit libero
+                        inventore nam.</p> -->
+                </div>
+            </div>
+            <!-- /section title -->
+            <div class="col-md-12">
+                <div class="row text-center">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <a class="btn btn-main width" style="width: 100%;" href="#"><i class="tf-ion-social-android"></i> GOOGLE PLAY</a>
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <a class="btn btn-main width" style="width: 100%;" href="#S"> <i class="tf-ion-social-angular"></i>APP STORE</a>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- end container -->
+    </div> <!-- end container -->
+</section> <!-- end section -->
+<!-- Start MAPA
+=========================================== -->
+<section class="section" style="padding: 0px!important;">
+
+
+    @*<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d26084372.769284744!2d-81.64266444395703!3d-37.054443870536254!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bccaf5f5fdc667%3A0x3d2f77992af00fa8!2sArgentina!5e0!3m2!1ses!2sve!4v1636098218645!5m2!1ses!2sve" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>*@
+    @*<div id="map-canvas-contact" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></div>*@
+    <div id="map-canvas-contact" style="position: relative;overflow: hidden;width: 100%;height: 31rem;" allowfullscreen="" loading="lazy"></div>
+
+</section> <!-- end section -->
+<!-- Start Testimonial
+=========================================== -->
+
+<section class="section">
+    <div class="container">
+        <div class="row">
+            <!-- section title -->
+            <div class="col-12">
+                <div class="title text-center ">
+                    <h2> Nuestros locales</h2>
+                    <!-- <div class="border"></div>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ducimus facere accusamus, reprehenderit libero
+                        inventore nam.</p> -->
+                </div>
+            </div>
+            <div class="col-md-12 col-sm-12 row-block">
+                <div class="popular_courses">
+
+                    <div id="owl-locales" class="owl-carousel owl-theme w-100" style="width: 100%;">
+                        @foreach (var item in lContacto)
+                        {
+                            <div class="item carousel-inner w-100">
+
+                                <h6>@item.Nombre</h6>
+
+                                <ul class="item-adress">
+                                    <li><i class="icon fas fa-map-marker-alt"></i> <span>@item.Direccion</span> </li>
+                                    <li><i class="icon fas fa-mobile-alt"></i> <span>@item.Telefono</span></li>
+                                    <li><i class="icon far fa-envelope"></i> <span>@item.Email</span> </li>
+                                    <li style="line-height: normal!important; padding-top: 0.89rem;">
+                                        <div class="row">
+                                            <div class="col-md-1">
+                                                <i class="icon far fa-clock"></i>
+                                            </div>
+                                            <div class="col-md-11 pl-0">
+                                                <span>
+                                                    @item.HorioSemanal
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- end col lg 12 -->
+
+        </div>	    <!-- End row -->
+    </div>       <!-- End container -->
+</section>    <!-- End Section -->
+
+@section scripts {
+     
+    <!-- Google Map -->
+    @*<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBu5nZKbeK-WHQ70oqOWo-_4VmwOwKP9YQ"></script>
+        <script src="~/lib/google-map/gmap.js"></script>*@
+
+    <script async defer type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBoxoZXxehMIMXLlDrXvDVvfFgUz4907K8&callback=initMap&sensor=false"></script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    @if (user != null && user.Email != null)
+    {
+        <script type="text/javascript">
+
+            $(document).ready(function(){
+                //var obj = user;
+                //console.log('@user');
+                console.log('@isLogin')
+
+                $.post('@Url.Action("ModalRegisterLogin", "User")', { obj: JSON.parse('@Html.Raw(Json.Serialize(user))'), pLogin: '@isLogin' }, function (Data) {
+
+                    onSuccessModalLogin(Data);
+                    $('#LoginModalCuerpo').html(Data);
+                    $('#LoginModalCuerpo #login').css('display', 'none');
+                    $('#LoginModalCuerpo #register').css('display', 'block');
+                    $('#LoginModal').modal('show');
+                });
+            });
+        </script>
+    }
+    <script type="text/javascript">
+
+    @*console.log(JSON.parse('@Html.Raw(Json.Serialize(lPaquetes))'));*@
+        function HideElement(Id) {
+            $('.filtr-item').removeClass("filteredOut-ocultar");
+
+            $('.divButtonFilter button').removeClass("active");
+            $('#divButton_' + Id + ' button').addClass("active");
+        };
+
+        $('.myCarousel').carousel({
+            interval: 4500
+        })
+
+        $('.carousel .carousel-item').each(function () {
+            var minPerSlide = 4;
+            var next = $(this).next();
+            if (!next.length) {
+                next = $(this).siblings(':first');
+            }
+            next.children(':first-child').clone().appendTo($(this));
+
+            for (var i = 0; i < minPerSlide; i++) {
+                next = next.next();
+                if (!next.length) {
+                    next = $(this).siblings(':first');
+                }
+                next.children(':first-child').clone().appendTo($(this));
+            }
+        });
+
+        $('#owl-locales').owlCarousel({
+            loop: true,
+            margin: 1,
+            items: 2,
+            nav: true,
+            autoplaySpeed: false,
+            startPosition: 1,
+            autoplay: 2500,
+            smartSpeed: 1500,
+            dots: false,
+            responsiveClass: true,
+            thumbs: true,
+            thumbsPrerendered: true,
+            navText: [
+                "<img src='@Url.Content("~/images/prev.png")' />",
+                "<img src='@Url.Content("~/images/next.png")'>"],
+            responsive: {
+                0: {
+                    items: 1,
+                    margin: 0
+                },
+                991: {
+                    items: 2,
+                    margin: 5
+                },
+                1200: {
+                    items: 2,
+                    margin: 5
+                }
+
+
+            }
+        });
+
+        $('#owl-testimoniales').owlCarousel({
+            loop: true,
+            margin: 1,
+            items: 3,
+            nav: true,
+            autoplaySpeed: false,
+            startPosition: 1,
+            autoplay: 2500,
+            smartSpeed: 1500,
+            dots: false,
+            responsiveClass: true,
+            thumbs: true,
+            thumbsPrerendered: true,
+            navText: [
+                "<img src='@Url.Content("~/images/prev.png")' />",
+                "<img src='@Url.Content("~/images/next.png")'>"],
+            responsive: {
+                0: {
+                    items: 1,
+                    margin: 0
+                },
+                991: {
+                    items: 2,
+                    margin: 5
+                },
+                1200: {
+                    items: 3,
+                    margin: 5
+                }
+
+
+            }
+        });
+
+        var map;
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map-canvas-contact'), {
+                center: { lat: -36.0540992, lng: -62.7388904 },
+                zoom: 4,
+                //disableDefaultUI: false,
+                mapTypeId: google.maps.MapTypeId.RoadMap
+            });
+            var infoWindow = new google.maps.InfoWindow({ content: "Cargando..." });
+
+            var image = {
+                url: 'http://imgfz.com/i/RNL1V8Q.png',
+            }
+
+        @foreach (var marker in lContacto)
+        {
+           <text>
+            var point = new google.maps.LatLng(parseFloat(@marker.CoordenadaLatitud), parseFloat(@marker.CoordenadaLongitud));
+            //bounds.extend(point);
+            var html = '<div> <span> @marker.Nombre, @marker.Direccion</span> </div>';
+
+            var marker = new google.maps.Marker({
+                    position: point,
+                    map: map,
+                    //icon:image,
+                    //'~/Content/images/marker.png',
+                    html: html
+                });
+
+               google.maps.event.addListener(marker, "click", function () {
+                    infoWindow.setContent(this.html);
+                    infoWindow.open(map, this);
+               });
+          </text>
+        }
+        }
+    </script>
+}

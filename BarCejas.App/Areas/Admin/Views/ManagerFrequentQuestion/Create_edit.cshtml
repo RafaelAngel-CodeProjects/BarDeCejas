@@ -1,0 +1,131 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@model BarCejas.App.Areas.Admin.Models.PreguntasFrecuentesViewModel
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = ViewBag.Title;
+}
+
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans">
+                        <a href="javascript:history.back()">
+                            <i class="fas fa-solid fa-angle-left"></i>
+                        </a>
+                    </li>
+                    <li class="spa-bag"><a asp-controller="ManagerFrequentQuestion" asp-action="Index">Gestor</a></li>
+                    <li class="spa-bag">-</li>
+                    <li class="active spa-bag">Gestor de Preguntas</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+
+
+    <div class="container title-secon-header">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon">@ViewBag.Title</h4>
+
+            </div>
+        </div>
+    </div>
+</section>
+<section class="company-mission section" style="padding-top: 68px!important;">
+    <div class="container">
+
+        <form asp-controller="ManagerFrequentQuestion" asp-action="OnPostFrequent" data-ajax="true"
+              data-ajax-failure="fnonFailed" data-ajax-success="fnonSuccess" method="post" id="frmPreg">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            @if (Model != null && Model.Id > 0)
+            {
+                <input asp-for="Id" type="hidden" />
+                <input asp-for="IndEstatus" type="hidden" />
+                <input asp-for="EsEliminado" type="hidden" />
+                <input asp-for="Orden" type="hidden" />
+
+            }
+            <div class="row">
+                <div class="form-group col-md-12 mb-12">
+                    <div asp-validation-summary="ModelOnly"></div>
+                    <label asp-for="Pregunta">Pregunta</label>
+                    <input type="text" class="form-control" asp-for="Pregunta" placeholder="Pregunta">
+                    <span asp-validation-for="Pregunta" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-12 mb-12">
+                    <div asp-validation-summary="ModelOnly"></div>
+                    <label asp-for="Respuesta">Respuesta</label>
+                    <span id="editor_error" asp-validation-for="Respuesta" class="text-danger"></span>
+                    <textarea asp-for="Respuesta"></textarea>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6 mb-4">
+
+                    <a asp-controller="ManagerFrequentQuestion" asp-action="Index" class="btn btn-main float-right">DESCARTAR</a>
+                </div>
+                <div class="form-group col-md-6 mb-4">
+                    @if (Model != null && Model.Id > 0)
+                    {
+                        <button type="submit" class="btn btn-main-accion">EDITAR PREGUNTA</button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-main-accion">CREAR PREGUNTA</button>
+                    }
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+@section scripts{
+    <script type="text/javascript">
+        
+    var bodyEditor = CKEDITOR.replace('Respuesta');
+  
+    function fnonSuccess(Data) {
+
+        if (Data.success) {
+            ModalGeneral('@Url.Action("Index", "ManagerFrequentQuestion")', Data.mensaje, Data.success);
+
+            @*setTimeout(function () {
+                window.location.href = '@Url.Action("Index")';
+            }, 6000);*@
+        } else {
+            ModalGeneral('', Data.mensaje, Data.success);
+            //alert('Disculpe, ' + Data.mensaje);
+        }
+    }
+
+    function fnonFailed(XMLHttpRequest, textStatus, errorThrown) {
+        // alert("Error: " + errorThrown);
+
+        ModalGeneral('', errorThrown.mensaje, false);
+    }
+    function onBegin() {
+        var editor_val = $('#Respuesta').val();
+        if (!(editor_val.length > 0)) {
+            $("#editor_error").html("Campo requerido.");
+           // resultado_validacion = false;
+        }
+    }
+
+    //Necesario para poder evaluar el cambio, despues de haber mostrar el mensaje de validacion
+    bodyEditor.on('change', function () {
+        CKEDITOR.instances.Respuesta.updateElement();
+        if (($('#Respuesta').val().length > 0)) {
+            $("#editor_error").html("");
+        }
+    });
+    </script>
+
+}

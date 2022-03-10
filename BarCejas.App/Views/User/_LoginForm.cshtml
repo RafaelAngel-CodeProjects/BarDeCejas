@@ -1,0 +1,107 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@model LoginViewModel
+
+<div class="modal-body">
+    <div class="container-fluid">
+        <form asp-controller="User" asp-action="Authentication" method="post" data-ajax="true" data-ajax-method="POST" data-ajax-failure="OnFailureLoginRegistre" data-ajax-success="OnSuccessLogin">
+            <div class="row mb-4">
+                <div class="col">
+                </div>
+                <div class="col-6 enterLoginText FontText">
+                    INGRESÁ
+                </div>
+                <div class="col">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col"></div>
+                <div class="col-8">
+                    <div class="form-group">
+                        <label asp-for="Email">Email</label>
+                        <input asp-for="Email" type="email" class="form-control rounded-0"
+                               aria-describedby="emailHelp"
+                               placeholder="Ingresá tu email">
+                        @*<span class="field-validation-error" asp-validation-for="Email"></span>*@
+                    </div>
+                </div>
+                <div class="col"></div>
+            </div>
+            <div class="row mb-4">
+                <div class="col"></div>
+                <div class="col-8">
+                    <div class="form-group">
+                        <label asp-for="Password">Contraseña</label>
+                        <input asp-for="Password" type="password" class="form-control rounded-0"
+                               placeholder="Ingresá tu contraseña">
+                        @*<span class="field-validation-error" asp-validation-for="Password"></span>*@
+                    </div>
+                </div>
+                <div class="col"></div>
+            </div>
+            <div class="row mb-4">
+                <div class="col"></div>
+                <div class="col-8">
+                    <button type="submit"
+                            class="btn btn-lg btn-block ButtonLogin rounded-0 FontText">
+                        INGRESÁ
+                    </button>
+                </div>
+                <div class="col"></div>
+            </div>
+            <div class="row mb-4">
+                <div class="col"></div>
+                <div class="col-8 justify-content-center centerText">
+                    Olvidé mi contraseña, <u>recuperar</u>
+                </div>
+                <div class="col"></div>
+            </div>
+            <div class="row mb-4">
+                <div class="col"></div>
+                <div class="col-8 justify-content-center centerText">
+                    <div class="Line"></div>
+                </div>
+                <div class="col"></div>
+            </div>
+            <div class="row mb-3">
+                <div class="col"></div>
+                <div class="col-8">
+                    @*<button type="button"
+                            class="btn btn-lg btn-block ButtonSocial rounded-0 FontText">
+                        <i class="mr-2 p-2 iconSocial rounded-circle tf-ion-social-facebook"></i>Ingresar
+                        Con Facebook
+                    </button>*@
+                    <a href="@Url.Action("FacebookLogin", "User", new { pLogin =true })" class="btn btn-lg btn-block ButtonSocial rounded-0 FontText">
+                        <i class="mr-2 p-2 iconSocial rounded-circle tf-ion-social-facebook"></i>Ingresar Con Facebook
+                    </a>
+                </div>
+                <div class="col"></div>
+            </div>
+            <div class="row mb-3">
+                <div class="col"></div>
+                <div class="col-8">
+                    @*<button type="button"
+                class="btn btn-lg btn-block ButtonSocial rounded-0 FontText">
+             <i class="mr-2 p-2 iconSocial rounded-circle tf-ion-social-facebook"></i>Ingresar
+            Con Gmail
+             </button>*@
+                    <a href="@Url.Action("GoogleLogin", "User", new { pLogin =true })" class="btn btn-lg btn-block ButtonSocial rounded-0 FontText"> <i class="mr-2 p-2 iconSocial rounded-circle tf-ion-social-google"></i>Ingresar Con Gmail
+                    </a>
+                </div>
+                <div class="col"></div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col-8 justify-content-center centerText">
+                No tengo usuario, <u onclick="toggleLogin()">registrarme</u>
+            </div>
+            <div class="col"></div>
+        </div>
+    </div>
+</div>

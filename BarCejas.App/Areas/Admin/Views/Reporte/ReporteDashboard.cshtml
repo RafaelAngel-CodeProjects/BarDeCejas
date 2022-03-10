@@ -1,0 +1,202 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+
+@model BarCejas.App.Areas.Admin.Models.ReporteDhasboardViewModel;
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Reporte";
+}
+
+
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans">
+                        <a href="javascript:history.back()">
+                            <i class="fas fa-solid fa-angle-left"></i>
+                        </a>
+                    </li>
+                    <li class="spa-bag"><a href="#">Reportes</a></li>
+                    <li class="spa-bag">-</li>
+                    <li class="active spa-bag">Dashboard</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+
+    <div class="container title-secon-header">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon">REPORTES</h4>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="company-mission" style="padding-top: 36px!important; padding-bottom: 36px!important;">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-8 col-lg-7 mb-4">
+                <div class="card cardReport">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0">Servicios (cantidad de servicios vendidos históricos)</h6>
+
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="myAreaChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4 col-lg-5">
+                <div class="card cardReport mb-4">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0">Visitas totales</h6>
+
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-pie pt-3 pb-2">
+                            <canvas id="myPieChart"></canvas>
+                        </div>
+                        <div class="mt-4 text-center small">
+                            <span class="mr-2">
+                                <i class="fas fa-circle text-primary"></i> Por web
+                            </span>
+                            <span class="mr-2">
+                                <i class="fas fa-circle text-info"></i> Por app
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-xl-4 col-lg-5">
+                <div class="row">
+                    <div class="col-xl-12 col-md-12 mb-4">
+                        <div class="card cardReport border-left-primary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            Clientes registrados
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.Cant_Usuario </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-12 col-md-12 mb-4">
+                        <div class="card cardReport border-left-warning shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            Servicios del mes
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.Cant_ServicioMes <label class="text-gray-800 text-xs" id="textMonth"></label></div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-concierge-bell fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-8 col-lg-7 mb-4">
+                <div class="card cardReport">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0">Visitas en el mes</h6>
+
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="myBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section scripts{
+
+    <script src="~/plugins/chart.js/Chart.min.js"></script>
+    <script src="~/plugins/demo/chart-area-demo.js"></script>
+    @*
+    <script src="~/plugins/demo/chart-pie-demo.js"></script>*@
+
+    <script>
+
+
+        //-----------------------------------GRAFICO DE BARRAS-----------------------------------------------
+
+        var Meses = JSON.parse('@Html.Raw(Json.Serialize(Model.lReporteMes.Select(x => x.CantMes)))');
+
+
+        //-----------------------------------GRAFICO DE TORTAS?-----------------------------------------------
+        // Set new default font family and font color to mimic Bootstrap's default styling
+        Chart.defaults.global.defaultFontFamily = 'Raleway', 'Raleway,"Raleway",Raleway,"Raleway",Raleway';
+        Chart.defaults.global.defaultFontColor = '#858796';
+
+        // Pie Chart Example
+        var ctx = document.getElementById("myPieChart");
+
+        var Cant_IngesosWeb = @(ViewBag.Cant_IngesosWeb),
+        Cant_IngesosAPP = @(ViewBag.Cant_IngesosAPP);
+
+        var myPieChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ["Por web", "Por app"],
+                datasets: [{
+                    data: [Cant_IngesosWeb, Cant_IngesosAPP],
+                    backgroundColor: ['#4e73df', '#36b9cc'],
+                    hoverBackgroundColor: ['#2e59d9', '#2c9faf'],
+                    hoverBorderColor: "rgba(234, 236, 244, 1)",
+                }],
+            },
+            options: {
+                maintainAspectRatio: false,
+                tooltips: {
+                    backgroundColor: "rgb(255,255,255)",
+                    bodyFontColor: "#858796",
+                    borderColor: '#dddfeb',
+                    borderWidth: 1,
+                    xPadding: 15,
+                    yPadding: 15,
+                    displayColors: false,
+                    caretPadding: 10,
+                },
+                legend: {
+                    display: false
+                },
+                cutoutPercentage: 80,
+            },
+        });
+
+
+
+
+    </script>
+
+
+    <script src="~/plugins/demo/chart-bar-demo.js"></script>
+
+}

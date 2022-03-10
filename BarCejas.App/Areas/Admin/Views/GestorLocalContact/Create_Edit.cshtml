@@ -1,0 +1,282 @@
+﻿@model BarCejas.Entities.ContactoLocal
+@using BarCejas.Entities;
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@{
+    List<Dia> lDia = (List<Dia>)ViewBag.lDia;
+    ViewData["Title"] = Model != null && Model.Id > 0 ? "Editar" : "Crear";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    string CoordenadaLatitudLatLog = Model != null && !string.IsNullOrEmpty(Model.CoordenadaLatitud) && !string.IsNullOrEmpty(Model.CoordenadaLongitud) ? Model.CoordenadaLatitud + "," + Model.CoordenadaLongitud : "";
+}
+
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans"><a href="javascript:history.back()"><i class="fas fa-solid fa-angle-left"></i></a></li>
+                    <li class="spa-bag"><a  asp-controller="GestorLocalContact" asp-action="Index" asp-area="Admin">Gestor</a></li>
+                    <li class="spa-bag">-</li>
+                    <li class="active spa-bag">Gestor de contacto</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+    <div class="container title-secon-header">
+        <div class="row">
+            <div class="col-md-12">
+                @if (Model != null && Model.Id > 0)
+                {
+                    <h4 class="title-secon">EDITAR LOCAL</h4>
+                }
+                else
+                {
+                    <h4 class="title-secon">CREAR LOCAL</h4>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+<section class="company-mission section" style="padding-top: 68px!important;">
+    <div class="container">
+        <form asp-action="Create_Edit" method="post" data-ajax="true" data-ajax-failure="fnOnFailed" data-ajax-success="fnOnSuccess" data-content="false">
+
+            <div style="display:none">
+                @if (Model != null && Model.Id > 0)
+                {
+                    <input asp-for="Id" />
+                    <input asp-for="FechaAlta" />
+                    <input asp-for="Orden" />
+                    <input asp-for="EsActivo" />
+                }
+
+                <input type="text" class="form-control" asp-for="CoordenadaLatitud" placeholder="Coordenadas Latitud">
+                <input type="text" class="form-control" asp-for="CoordenadaLongitud" placeholder="Coordenada Longitud">
+            </div>
+            <div class="row">
+                <div class="form-group col-md-12 mb-12">
+                    <label for="Nombre">Nombre</label>
+                    <input type="text" class="form-control" asp-for="Nombre" placeholder="Nombre">
+                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+
+                <div class="form-group col-md-6 mb-6">
+                    <label for="inputEmail4">Dirección</label>
+                    <input type="text" class="form-control" asp-for="Direccion" placeholder="Dirección">
+                    <span asp-validation-for="Direccion" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-6 mb-6">
+                    <label for="Coordenadas">Coordenadas de google maps</label>
+                    <input type="text" class="form-control" id="Coordenadas" placeholder="Coordenadas" value="@CoordenadaLatitudLatLog">
+                </div>
+
+                @*<div class="form-group col-md-3 mb-3">
+                    <label for="CoordenadaLatitud">Coordenadas de google maps Latitud</label>
+                    <input type="text" class="form-control" asp-for="CoordenadaLatitud" placeholder="Coordenadas Latitud">
+                </div>
+                <div class="form-group col-md-3 mb-3">
+                    <label for="CoordenadaLongitud">Coordenadas de google maps Longitud</label>
+                    <input type="text" class="form-control" asp-for="CoordenadaLongitud" placeholder="Coordenada Longitud">
+                </div>*@
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6 mb-6">
+                    <label for="Telefono">Teléfono</label>
+                    <input type="text" class="form-control" asp-for="Telefono" placeholder="Teléfono">
+                </div>
+                <div class="form-group col-md-6 mb-6">
+                    <label for="Email">Email</label>
+                    <input type="email" class="form-control" asp-for="Email" placeholder="Email">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="title" style="padding-bottom:26px!important">
+                        <h6>Días y horarios</h6>
+                    </div>
+                </div>
+            </div>
+
+            @for (int i = 0; i < lDia.Count; i++)
+            {
+
+                <div class="row align-items-center franjaHorario">
+                    <div style="display:none">
+                        <input name="HorarioAtencionLocal[@i].IdDia" value="@lDia[i].Id" />
+                    </div>
+                    <div class="form-group col-md-4 mb-4">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="chkDia_@lDia[i].Id" name="@("chkDia["+i+"]")" value="true" class="custom-control-input radioButton" data-valor="@((Model != null && Model.HorarioAtencionLocal != null && Model.HorarioAtencionLocal.Any(x => x.IdDia == lDia[i].Id))?"false":"true")" @((Model != null && Model.HorarioAtencionLocal != null && Model.HorarioAtencionLocal.Any(x => x.IdDia == lDia[i].Id)) ? "checked" : "")>
+                            <label class="custom-control-label" for="chkDia_@lDia[i].Id">@lDia[i].Nombre</label>
+                            <input type="hidden" id="dia_@lDia[i].Id" name="@("Dia["+i+"]")" value="@((Model != null && Model.HorarioAtencionLocal != null && Model.HorarioAtencionLocal.Any(x => x.IdDia == lDia[i].Id))? lDia[i].Id : 0 )" data-valor="@lDia[i].Id" class="custom-control-input">
+                        </div>
+                    </div>
+                    @if (Model != null && Model.HorarioAtencionLocal != null && Model.HorarioAtencionLocal.Any(x => x.IdDia == lDia[i].Id))
+                    {
+                        <div style="display:none">
+                            <input name="HorarioAtencionLocal[@i].IdContactoLocal" value="@Model.Id" />
+                            <input name="HorarioAtencionLocal[@i].IdContactoLocal" value="@Model.Id" />
+                        </div>
+                        <div class="form-group col-md-4 mb-4">
+                            <label for="inputPassword4">Horario de inicio</label>
+                            <input type="text" name="HorarioAtencionLocal[@i].HoraInicio" class="form-control HorarioInicio" data-inicio="1" value="@Model.HorarioAtencionLocal.FirstOrDefault(x => x.IdDia == lDia[i].Id).HoraInicio" placeholder="ej. 09:00">
+                        </div>
+                        <div class="form-group col-md-4 mb-4">
+                            <label for="inputPassword4">Horario final</label>
+                            <input type="text" name="HorarioAtencionLocal[@i].HoraFin" class="form-control HorarioFin" data-inicio="0" value="@Model.HorarioAtencionLocal.FirstOrDefault(x => x.IdDia == lDia[i].Id).HoraFin" placeholder="ej. 09:00">
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-group col-md-4 mb-4">
+                            <label for="inputPassword4">Horario de inicio</label>
+                            <input type="text" name="HorarioAtencionLocal[@i].HoraInicio" class="form-control HorarioInicio" data-inicio="1" placeholder="ej. 09:00">
+                        </div>
+                        <div class="form-group col-md-4 mb-4">
+                            <label for="inputPassword4">Horario final</label>
+                            <input type="text" name="HorarioAtencionLocal[@i].HoraFin" class="form-control HorarioFin" data-inicio="0" placeholder="ej. 09:00">
+                        </div>
+                    }
+                </div>
+
+            }
+
+            <div class="row">
+                <div class="form-group col-md-6 mb-4">
+                    <a href="javascript:history.back()" class="btn btn-main float-right">DESCARTAR</a>
+                </div>
+                <div class="form-group col-md-6 mb-4">
+                    @if (Model != null && Model.Id > 0)
+                    {
+                        <button type="submit" class="btn btn-main-accion">EDITAR LOCAL</button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-main-accion">CREAR LOCAL</button>
+                    }
+                </div>
+            </div>
+        </form>
+
+    </div>
+</section>
+
+
+@section scripts{
+
+    <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/jquery.inputmask.bundle.js"></script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+<script type="text/javascript">
+
+        /*Documentación
+         * https://css-tricks.com/input-masking/
+        */
+        $('.HorarioInicio, .HorarioFin').inputmask({ "mask": "99:99" });
+
+        $(document).on('input', '.HorarioInicio, .HorarioFin', function () {
+            if ($(this).val().replace('_', '').length == 5)
+            {
+                var resul = '';
+                var hh = parseInt($(this).val().split(':')[0]);
+                var mm = parseInt($(this).val().split(':')[1]);
+
+                if (hh > 23){
+                    resul = '23:';
+                }else{
+                    resul = (hh < 10 ? '0' + hh : hh) + ':';
+                }
+                if (mm > 59){
+                    resul += '59';
+                } else {
+                    resul += mm < 10 ? '0' + mm : mm;
+                }
+
+                $(this).val(resul);
+
+                if ($(this).data('inicio') == 1 && $(this).closest('.franjaHorario').find('.HorarioFin').val().replace('_', '').length == 5) {
+
+                    //console.log('Inicio');
+
+                    var Inicio = $(this).val().split(':');
+                    var Fin = $(this).closest('.franjaHorario').find('.HorarioFin').val().split(':');
+
+                    totalSecondsInicio = parseInt(Inicio[0]) * 3600 + parseInt(Inicio[1]) * 60;
+                    totalSecondsFin = parseInt(Fin[0]) * 3600 + parseInt(Fin[1]) * 60;
+
+                    if (totalSecondsFin <= totalSecondsInicio ) {
+                        $(this).val('');
+                    }
+
+                    //console.log('Inicio: ' + Inicio + ' - Fin: ' + Fin)
+                    //console.log('totalSecondsInicio: ' + totalSecondsInicio + ' - totalSecondsFin: ' + totalSecondsFin);
+
+                } else if ($(this).data('inicio') == 0 && $(this).closest('.franjaHorario').find('.HorarioInicio').val().replace('_', '').length == 5) {
+
+                    //console.log('Fin');
+
+                    var Inicio = $(this).closest('.franjaHorario').find('.HorarioInicio').val().split(':');
+                    var Fin = $(this).val().split(':');
+
+                    totalSecondsInicio = parseInt(Inicio[0]) * 3600 + parseInt(Inicio[1]) * 60;
+                    totalSecondsFin = parseInt(Fin[0]) * 3600 + parseInt(Fin[1]) * 60;
+
+                    if (totalSecondsFin <= totalSecondsInicio) {
+                        $(this).val('');
+                    }
+
+                    //console.log('Inicio: ' + Inicio + ' - Fin: ' + Fin);
+                    //console.log('totalSecondsInicio: ' + totalSecondsInicio + ' - totalSecondsFin: ' + totalSecondsFin);
+                }
+
+            }
+
+        });
+
+        $(document).on('input', '#Coordenadas', function (e) {
+            var coord = $(this).val().split(',');
+            $('#CoordenadaLatitud').val(coord[0]);
+            $('#CoordenadaLongitud').val(coord[1]);
+
+            //console.log('CoordenadaLatitud: ' + $('#CoordenadaLatitud').val());
+            //console.log('CoordenadaLongitud: ' + $('#CoordenadaLongitud').val());
+        });
+
+        $('.radioButton').click(function (e) {
+            var dia = $(this).closest('.custom-radio').find('input[type=hidden]').data('valor');
+            if ($(this).data('valor') == true) {
+                $(this).prop('checked', true);
+                $(this).data('valor', false);
+                $(this).closest('.custom-radio').find('input[type=hidden]').val(dia);
+            } else {
+                $(this).prop('checked', false);
+                $(this).data('valor', true);
+                $(this).closest('.custom-radio').find('input[type=hidden]').val(0);
+            }
+        });
+
+        function fnOnSuccess(Data) {
+            var url = '';
+            if (Data.success){
+                url = '@Url.Action("Index", "GestorLocalContact")';
+            } else {
+                console.log('Disculpe, ha ocurrido un error.');
+                console.log(Data);
+            }
+            ModalGeneral(url, Data.mensaje, Data.success);
+        }
+
+        function fnOnFailed(Data) {
+            alert('Disculpe, ha ocurrido un error.');
+            console.log(Data);
+        }
+
+</script>
+
+}

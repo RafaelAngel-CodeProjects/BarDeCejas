@@ -1,0 +1,35 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@model IEnumerable<BarCejas.Entities.Servicio>
+
+<table id="example" class="table" style="width:100%">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Precio de lista</th>
+            <th>Precio promocional</th>
+            <th>Editar</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (BarCejas.Entities.Servicio item in Model)
+        {
+            <tr>
+                <td>@item.Nombre</td>
+                <td>@item.IdCategoriaNavigation.Nombre</td>
+                <td>@item.PrecioLista</td>
+                <td>@item.PrecioPromocioal</td>
+                <td><a class="btn btn-cir" asp-controller="GestorServices" asp-action="Edit" asp-route-id="@item.Id"><i class="fas fa-light fa-pen"></i></a></td>
+                <td>
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" @((bool)item.EsActivo ? "checked" : string.Empty) onclick="ChangeStatus(@item.Id, '@(!(bool)item.EsActivo)')" id="gsr_@item.Id" class="custom-control-input">
+                        <label class="custom-control-label" for="gsr_@item.Id" data-original-title="@((bool)item.EsActivo ? "Activo" : "Inactivo")"></label>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

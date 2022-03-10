@@ -1,0 +1,38 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelperss
+
+@model BarCejas.Entities.ServicioPaquete
+@using HtmlHelpers.BeginCollectionItemCore
+
+
+<div class="row">
+    @using (Html.BeginCollectionItem("ServicioPaquete"))
+    {
+        <input type="hidden" asp-for="IdPaquete" value="@Model.IdPaquete" />
+        <input type="hidden" asp-for="Id" value="@Model.Id" />
+        <input type="hidden" asp-for="EsActivo" value="@Model.EsActivo" />
+        <input type="hidden" asp-for="IdServicioNavigation.PrecioLista" value="@Model.IdServicioNavigation.PrecioLista" />
+        <input type="hidden" asp-for="IdServicioNavigation.PrecioPromocioal" value="@Model.IdServicioNavigation.PrecioPromocioal" />
+        <input type="hidden" asp-for="IdServicioNavigation.Descuento" value="@Model.IdServicioNavigation.Descuento" />
+
+        <div class="form-group col-md-7 mb-4 mt-4">
+            <label asp-for="IdServicio">Servicio</label>
+            <select class="form-control" asp-for="IdServicio" asp-items=@(ViewBag.Servicios != null ? ViewBag.Servicios : null) onchange="OnChangeService(this)">
+                <option value="">Seleccione una opción</option>
+            </select>
+        </div>
+        <div class="form-group col-md-2 mb-4 mt-4">
+            <label asp-for="Cantidad">Cantidad</label>
+            <input type="number" class="form-control" asp-for="Cantidad" placeholder="Cantidad" value="@(Model.Cantidad ==0 ? 1 : Model.Cantidad)" onchange="OnChangeQuantity(this)">
+        </div>
+        <div class="form-group col-md-2 mb-4 mt-4 price">
+            <label>Sub-total</label>
+            <br>
+            <span>@(Model.IdServicioNavigation is null? 0 : (Model.IdServicioNavigation.PrecioPromocioal * Model.Cantidad))</span>
+        </div>
+        <div class="form-group col-md-1 mb-4 centrar mt-4">
+            <button class="btn btn-cir" type="button" onclick="OnDeletePackageService(this)"><i class="far fa-trash-alt"></i></button>
+        </div>
+
+    }
+</div>

@@ -1,0 +1,161 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+@model BarCejas.App.Models.UserViewModel
+
+@{
+    ViewData["Title"] = "Editar usuario";
+    string dafault = "https://ui-avatars.com/api/?name=" +  Model.Nombre.Substring(0, 1) + "+" + Model.Apellido.Substring(0, 1) + "&background=fadce6&color=333&rounded=true&bold=true&size=80";
+}
+
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans">
+                        <a href="javascript:history.back()">
+                            <i class="fas fa-solid fa-angle-left"></i>
+                        </a>
+                    </li>
+                    <li class="spa-bag"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="spa-bag">-</li>
+                    <li class="active spa-bag">Perfil</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon">PERFIL</h4>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="company-mission section" style="padding-top: 68px!important;">
+    <div class="container">
+        <form asp-controller="User" asp-action="Update" data-ajax="true" data-ajax-method="POST" data-ajax-failure="OnFailureAddOrEdit" data-ajax-success="OnSuccessAddOrEdit">
+           <div class="row">
+               <div class="col-md-2">
+                   <div class="row justify-content-center">
+                       <label for="inputEmail4">Foto de perfil</label>
+                   </div>
+                   <div class="row justify-content-center">
+                       @if (Model.Avatar != null)
+                       {
+                           <img class="rounded-circle" alt="80x80" src="@(!string.IsNullOrEmpty(Model.Avatar) ? Url.Content(Model.Avatar):"")" data-holder-rendered="true">
+                       }
+                       else
+                       {
+                           
+                            <img class="rounded-circle" alt="80x80" src="@dafault" data-holder-rendered="true">
+                       }
+
+                       
+                   </div>
+                 
+               </div>
+               <div class="col-md-10">
+                   <div class="row">
+                       @if (Model != null && Model.Id > 0)
+                       {
+                           <input asp-for="Id" type="hidden" />
+                           <input asp-for="EsActivo" type="hidden" />
+                           <input asp-for="Password" type="hidden" />
+                           <input asp-for="Registro" type="hidden" />
+                           <input asp-for="IdTipoUsuario" type="hidden" />
+                           <input asp-for="IdTipoGenero" type="hidden" />
+                       }
+                       <div class="form-group col-md-6 mb-6">
+                           <label asp-for="Dni">DNI</label>
+                           <input type="text" class="form-control" asp-for="Dni" placeholder="DNI">
+                           <span class="field-validation-error" asp-validation-for="Dni"></span>
+                       </div>
+                       <div class="form-group col-md-6 mb-6">
+                           <label asp-for="Nombre">Nombre</label>
+                           <input type="text" class="form-control" asp-for="Nombre" placeholder="Nombre">
+                           <span class="field-validation-error" asp-validation-for="Nombre"></span>
+                       </div>
+
+                   </div>
+                   <div class="row">
+                       <div class="form-group col-md-12 mb-12">
+                           <label asp-for="Apellido">Apellido</label>
+                           <input type="text" class="form-control" asp-for="Apellido" placeholder="Apellido">
+                           <span class="field-validation-error" asp-validation-for="Apellido"></span>
+                       </div>
+
+                   </div>
+                   <div class="row">
+                       <div class="form-group col-md-6 mb-6">
+                           <label asp-for="Email">Email</label>
+                           <input type="email" class="form-control" asp-for="Email" placeholder="Email">
+                           <span class="field-validation-error" asp-validation-for="Email"></span>
+                       </div>
+                       <div class="form-group col-md-6 mb-6">
+                           <label asp-for="Telefono">Teléfono</label>
+                           <input type="tel" class="form-control" asp-for="Telefono" placeholder="Teléfono">
+                           <span class="field-validation-error" asp-validation-for="Telefono"></span>
+                       </div>
+                   </div>
+                   <div class="row">
+                       <div class="form-group col-md-6 mb-6">
+                           <label asp-for="Genero">Género</label>
+                           <select class="form-control" asp-for="Genero">
+                               <option selected>Femenino</option>
+                               <option>Masculino</option>
+                               <option>otro</option>
+                           </select>
+                       </div>
+                       <div class="form-group col-md-6 mb-6">
+                           <label asp-for="FechaNacimiento">Fecha de nacimiento</label>
+                           <div class="md-form md-outline input-with-post-icon">
+                               <input placeholder="DD/MM/AAAA" type="text" value="@(Model.FechaNacimiento!=null ? Convert.ToDateTime(Model.FechaNacimiento).ToShortDateString():DateTime.Now.ToShortDateString())" asp-for="FechaNacimiento" class="form-control date">
+                           </div>
+                           <span class="field-validation-error" asp-validation-for="FechaNacimiento"></span>
+                       </div>
+                   </div>
+                   @if (Model.Avatar == null)
+                   {
+                       <div class="row">
+                           <div class="form-group col-md-6 mb-6">
+                               <label asp-for="Password">Modificar contraseña</label>
+                               <input type="password" class="form-control" asp-for="Password" placeholder="Ingrese su nueva contraseña">
+                               <span class="field-validation-error" asp-validation-for="Password"></span>
+                           </div>
+                           <div class="form-group col-md-6 mb-6">
+                               <label asp-for="ConfirmarPassword">Confirme contraseña</label>
+                               <input type="password" class="form-control" asp-for="ConfirmarPassword" placeholder="Repita su nueva contraseña">
+                               <span class="field-validation-error" asp-validation-for="ConfirmarPassword"></span>
+                           </div>
+                       </div>
+                   }
+
+               </div>
+           </div>
+           <div class="row">
+               <div class="form-group col-md-4 mt-4 justify-content-center">
+                   <a asp-area="" asp-controller="User" asp-action="MyTurns" class="btn btn-main col-md-12">VER MIS TURNOS</a>
+               </div>
+               <div class="form-group col-md-4 mt-4 justify-content-center">
+                   <a asp-controller="Home" asp-action="Index"  class="btn btn-main col-md-12">DESCARTAR CAMBIOS</a>
+               </div>
+               <div class="form-group col-md-4 mt-4 justify-content-center">
+                 
+                   <button class="btn btn-main-accion col-md-12" type="submit">GUARDAR CAMBIOS</button>
+               </div>
+           </div>
+            
+           
+           
+        </form>
+    </div>
+</section>
+
+@section scripts {
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+   
+}

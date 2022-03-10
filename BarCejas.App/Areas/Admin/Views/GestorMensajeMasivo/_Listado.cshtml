@@ -1,0 +1,47 @@
+﻿@model IEnumerable<BarCejas.Entities.MensajeMasivo>
+@using BarCejas.Entities.Enumerations
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@{ 
+
+    string RolesMensaje(List<int> lst) {
+
+        string result = string.Empty;
+
+        lst.ForEach(x =>
+            result += (string.IsNullOrEmpty(result) ? "" : ", ")  + Enum.GetName(typeof(RoleType), x) 
+        );
+
+        return result;
+    }
+
+}
+
+<table id="example" class="table" style="width:100%">
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Horario</th>
+            <th>Asunto</th>
+            <th>Roles</th>
+            <th>Editar</th>
+            <th>Eliminar</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.FechaAlta.ToString("dd/MM/yyyy")</td>
+                <td>@item.FechaAlta.ToString("HH:mm")</td>
+                <td>@item.Asunto</td>
+                <td>@(RolesMensaje(item.RolTipoUsuarioMensajeMasivo.Select(s => s.IdTipoUsuario).ToList()))</td>
+                <td><a class="btn btn-cir" href="@Url.Action("Create_Edit", new { Id = item.Id })"><i class="fas fa-light fa-pen"></i></a></td>
+                <td><a class="btn btn-cir" onclick="ModalEliminarElemento('@Url.Action("Delete", "GestorMensajeMasivo")', { Id: @item.Id }, '¿Está seguro que desea eliminar el mensaje?', '@item.Asunto')"><i class="fas fa-solid fa-trash"></i></a></td>
+            </tr>
+        }
+    </tbody>
+
+</table>

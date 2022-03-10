@@ -1,0 +1,542 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model BarCejas.Entities.Usuario
+@using BarCejas.Entities.Enumerations
+
+<header class="navigation fixed-top">
+    <div class="container">
+        <!-- main nav -->
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <button class="navbar-toggler" id="menu" type="button" data-toggle="collapse" data-target="#navigation"
+                    aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <!-- logo -->
+            <a class="navbar-brand logo" asp-area="" asp-controller="Home" asp-action="Index">
+                <img class="logo-default" src="@Url.Content("~/images/logo.png")" alt="logo" />
+                <!-- <img class="logo-white" src="images/logo-white.png" alt="logo"/> -->
+                <img class="logo-white" src="@Url.Content("~/images/logo.png")" alt="logo" />
+            </a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav text-center">
+                    <li class="nav-item dropdown active">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
+                           aria-haspopup="true" aria-expanded="false">
+                            SERVICIOS
+                            <span class="text-footer-menu"><i class="fas fa-chevron-down"></i></span>
+                        </a>
+                        <div class="dropdown-menu menu-left" aria-labelledby="navbarDropdown">
+                            <div class="padding-l-r">
+                                @foreach (var item in ViewBag.Categories)
+                                {
+                                    <a class="dropdown-item" style="text-transform:uppercase" asp-area="" asp-controller="Services" asp-action="Category" asp-route-id="@item.Value">@item.Text</a>
+                                }
+                            </div>
+
+                        </div>
+                    </li>
+
+                    <li class="nav-item ">
+                        <a class="nav-link" asp-area="" asp-controller="Packages" asp-action="Index">PAQUETES</a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" asp-area="" asp-controller="Newness" asp-action="Index"> NOVEDADES</a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" asp-area="" asp-controller="FrequentQuestion" asp-action="Index"> PREGUNTAS FRECUENTES</a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" asp-area="" asp-controller="Contacto" asp-action="Index">CONTACTO</a>
+                    </li>
+
+                </ul>
+                <ul class="navbar-nav ml-auto text-center">
+                    @if (Model == null || Model.Id == 0)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" id="linkModalLogin"
+                               data-toggle="modal"
+                               data-target="#LoginModal"
+                               data-ajax="true"
+                               data-ajax-begin="onBeginModalLogin"
+                               data-ajax-success="onSuccessModalLogin"
+                               data-ajax-fail="onFailModalLogin"
+                               data-ajax-complete=""
+                               data-ajax-method="GET"
+                               data-ajax-mode="replace"
+                               data-ajax-update="#LoginModalCuerpo"
+                               asp-controller="User"
+                               asp-action="ModalRegisterLogin">INGRESÁ/REGISTRATE</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item ">
+                            <a class="nav-link row" href="#" style="padding-top: 1%;" id="navbarDropdownUser" role="button" data-toggle="dropdown"
+                               aria-haspopup="true" aria-expanded="false">
+                                <div class="first col-sm-12"><span style="font-weight:bold;">@Model.Nombre&nbsp;@Model.Apellido</span></div>
+                                <div class="second col-sm-12"><span style="font-weight:normal;">MI PERFIL</span></div>
+                            </a>
+
+                            <div id="sidenav" class="sidenav menu-left" style="display: none;">
+                                <a asp-area="" asp-controller="User" asp-action="MyTurns">MIS TURNOS</a>
+                                @*href="@this.Url.Action("edit", "User", new { Id = Model.Id })"*@
+                                <a asp-area="" asp-controller="User" asp-action="Edit">MIS DATOS</a>
+                                @if (Model.IdTipoUsuario == (int)RoleType.Profesional || /*Model.IdTipoUsuario == (int)RoleType.Secretario ||*/ Model.IdTipoUsuario == (int)RoleType.Administrador)
+                                {
+                                    <button class="dropdown-btn">
+                                        GESTOR
+                                        <i class="fa fa-caret-down" style="font-size: 27px;"></i>
+                                    </button><div class="dropdown-container">
+                                        @if (Model.IdTipoUsuario == (int)RoleType.Administrador)
+                                        {
+                                            <a asp-area="Admin" asp-controller="ManagerTestimonials" asp-action="Index">GESTOR DE HOME</a>
+                                            <a asp-area="Admin" asp-controller="GestorCustomer" asp-action="Index">GESTOR DE CLIENTES</a> @* href="/BarDeCejasFront/Admin/Views/GestionarClientes.html" *@
+                                            <a asp-area="Admin" asp-controller="GestorProfessional" asp-action="Index">GESTOR DE PROFESIONALES</a>
+                                            <a asp-area="Admin" asp-controller="GestorShifts" asp-action="Index">GESTOR DE TURNOS</a> @* href="/BarDeCejasFront/Admin/Views/GestionarTurnos.html" *@
+                                            <a asp-area="Admin" asp-controller="GestorServices" asp-action="Index">GESTOR DE SERVICIOS</a>
+                                            <a asp-area="Admin" asp-controller="GestorPackages" asp-action="Index">GESTOR DE PAQUETES</a>
+                                            <a asp-area="Admin" asp-controller="GestorMensajeMasivo" asp-action="Index">MENSAJES MASIVOS</a>
+                                            <a asp-area="Admin" asp-controller="ManagerNewness" asp-action="Index">GESTOR DE NOVEDADES</a>
+                                            <a asp-area="Admin" asp-controller="ManagerFrequentQuestion" asp-action="Index">PREGUNTAS FRECUENTES</a>
+                                            <a asp-area="Admin" asp-controller="GestorLocalContact" asp-action="Index">GESTOR DE CONTACTO</a>
+                                        }
+                                        else if (Model.IdTipoUsuario == (int)RoleType.Profesional)
+                                        {
+                                            <a asp-area="Admin" asp-controller="GestorProfessional" asp-action="AttentionHours" asp-route-id="@Model.Id">HORARIO DE ATENCIÓN</a> @* href="/BarDeCejasFront/Admin/Views/GestionarProfesionales.html" *@
+                                            <a asp-area="Admin" asp-controller="GestorShifts" asp-action="Index">GESTOR DE TURNOS</a> @* href="/BarDeCejasFront/Admin/Views/GestionarTurnos.html" *@
+                                        }
+
+                                    </div>
+                                    if (Model.IdTipoUsuario == (int)RoleType.Profesional)
+                                    {
+                                        <a asp-area="Admin" asp-controller="Reporte" asp-action="ReporteProfesional">REPORTE</a>
+                                    }
+                                    else if (Model.IdTipoUsuario == (int)RoleType.Administrador)
+                                    {
+                                        <button class="dropdown-btn">
+                                            REPORTE
+                                            <i class="fa fa-caret-down" style="font-size: 27px;"></i>
+                                        </button>
+                                        <div class="dropdown-container">
+                                            <a asp-area="Admin" asp-controller="Reporte" asp-action="Index">REPORTE GENERALES</a>
+                                            <a asp-area="Admin" asp-controller="Reporte" asp-action="ReportePaquete">REPORTE PAQUETES</a>
+                                            <a asp-area="Admin" asp-controller="Reporte" asp-action="ReporteProfesional">REPORTE PROFESIONAL</a>
+                                            <a asp-area="Admin" asp-controller="Reporte" asp-action="ReporteServicio">REPORTE SERVICIO</a>
+                                        </div>
+                                       
+
+                                    }
+                                }
+                                <a asp-area="" asp-controller="User" asp-action="Logout">CERRAR SESIÓN</a>
+                            </div>
+                            <!-- <div class="dropdown-menu menu-left" aria-labelledby="navbarDropdownUser">
+                                <div class="padding-l-r">
+                                    <a class="dropdown-item"href="/BarDeCejasFront/Presentation/Views/index.html">MIS TURNOS</a>
+                                    <a class="dropdown-item"href="/BarDeCejasFront/Presentation/Views/index.html">MIS DATOS</a>
+                                    <a class="dropdown-item"href="/BarDeCejasFront/Presentation/Views/index.html" >GESTOR</a>
+                                </div>
+
+                            </div> -->
+                        </li>
+
+                    }
+                </ul>
+            </div>
+            <!-- user-->
+            <a class="navbar-brand logo" href="javascript:void(0)" onclick="$('#linkModalLogin').click()">
+
+                @if (Model.Avatar != null)
+                {
+                    <img class="rounded-circle" src="@(!string.IsNullOrEmpty(Model.Avatar) ? Url.Content(Model.Avatar):"")" alt="Avatar" width="70%">
+                }
+                else
+                {
+                    <i class="tf-ion-ios-person-outline d-none d-sm-block" style="font-size: 2.25rem!important;"></i>
+                }
+            </a>
+            <!-- /user -->
+        </nav>
+        <!-- /main nav -->
+    </div>
+</header>
+<div class="collapse navbar-collapse row" id="navigation">
+    <!-- esto se ve si no esta logueado -->
+    <!-- <div class="jquery-accordion-menu-header col-md-12">
+     <div class="media">
+         <div class="media-left align-self-center pr-5" style="width: 20%;">
+             <span style="font-size: 2.4rem;"><i class="far fa-user-circle"></i></span>
+         </div>
+         <div class="media-body pt-3 pl-2">
+            <h6 ><a href="#" class="text-black" data-toggle="modal" data-target="#LoginModal">Ingresá / Registrate</a></h6>
+
+         </div>
+
+     </div>
+
+     </div> -->
+    <!-- esto se ve si inicia sesion -->
+    <div class="jquery-accordion-menu-header col-md-12 mb-3" style="border-bottom: none !important;">
+        <div class="media">
+            <div class="media-left align-self-center" style="width: 20%;">
+                <img class="rounded-circle" src="/BarDeCejasFront/wwwroot/images/usuarios/U4.png" width="70%">
+            </div>
+            <div class="media-body pt-1">
+                <h6 class="mb-0" style="font-weight: 700!important;font-size: 0.8rem;">NOMBRE DE USUARIO</h6>
+                <span><a class="subTitelUser" asp-area="" asp-controller="User" asp-action="Edit">MI PERFIL</a></span>
+            </div>
+
+        </div>
+
+    </div>
+    <div id="wrapperMenu" class="col-md-12">
+        <ul id="menu-dashboard" class="nav nav-pills nav-stacked">
+            <li class="mb-3"><a asp-area="" asp-controller="User" asp-action="MyTurns"><span>MIS TURNOS</span></a></li>
+            <li class="mb-3"><a asp-area="" asp-controller="User" asp-action="Edit"><span>MIS DATOS</span></a></li>
+            @if (Model.IdTipoUsuario == (int)RoleType.Profesional || Model.IdTipoUsuario == (int)RoleType.Secretario || Model.IdTipoUsuario == (int)RoleType.Administrador)
+            {
+                <li class="dropdown mb-3">
+                    <a href="#" class="dropdown-toggle" data-toggle="collapse" data-target="#submenu1" aria-expanded="false">
+                        <span class="icon-link2"></span>
+                        GESTOR<span class="move-1 text-footer-menu"><i class="fas fa-chevron-down"></i></span>
+                    </a>
+                    <ul class="nav collapse ml-4 mt-3" id="submenu1" role="menu" aria-labelledby="btn-1">
+                        @if (Model.IdTipoUsuario == (int)RoleType.Administrador)
+                        {
+                            <li class="mb-3"><a asp-area="Admin" asp-controller="ManagerTestimonials" asp-action="Index">GESTOR DE HOME</a></li>
+                            <li class="mb-3"><a asp-area="Admin" asp-controller="GestorCustomer" asp-action="Index">GESTOR DE CLIENTES</a></li>
+                            <li class="mb-3"><a asp-area="Admin" asp-controller="GestorProfessional" asp-action="Index">GESTOR DE PROFESIONALES</a></li>
+                            <li class="mb-3"><a asp-area="Admin" asp-controller="GestorShifts" asp-action="Index">GESTOR DE TURNOS</a></li>
+                            <li class="mb-3"><a asp-area="Admin" asp-controller="GestorServices" asp-action="Index">GESTOR DE SERVICIOS</a></li>
+                            <li class="mb-3"><a asp-area="Admin" asp-controller="GestorPackages" asp-action="Index">GESTOR DE PAQUETES</a></li>
+                            <li class="mb-3"><a asp-area="Admin" asp-controller="GestorMensajeMasivo" asp-action="Index">MENSAJES MASIVOS</a></li>
+                            <li class="mb-3"><a asp-area="Admin" asp-controller="ManagerNewness" asp-action="Index">GESTOR DE NOVEDADES</a></li>
+                            <li class="mb-3"><a asp-area="Admin" asp-controller="ManagerFrequentQuestion" asp-action="Index">PREGUNTAS FRECUENTES</a></li>
+                            <li class="mb-3"><a asp-area="Admin" asp-controller="GestorLocalContact" asp-action="Index">GESTOR DE CONTACTO</a></li>
+                        }
+                        else if (Model.IdTipoUsuario == (int)RoleType.Profesional)
+                        {
+                            <li class="mb-3"><a asp-area="Admin" asp-controller="GestorProfessional" asp-action="AttentionHours" asp-route-id="@Model.Id">HORARIO DE ATENCIÓN</a></li>
+                            <li class="mb-3"><a asp-area="Admin" asp-controller="GestorShifts" asp-action="Index">GESTOR DE TURNOS</a></li>
+                        }
+
+                        @if (Model.IdTipoUsuario == (int)RoleType.Profesional)
+                        {
+                            <li class="mb-3"><a asp-area="Admin" asp-controller="Reporte" asp-action="ReporteProfesional">REPORTE</a></li>
+                        }
+                        else if (Model.IdTipoUsuario == (int)RoleType.Administrador)
+                        {
+                            <li class="mb-3"><a asp-area="Admin" asp-controller="Reporte" asp-action="Index">REPORTE GENERALES</a></li>
+                            <li class="mb-3"><a asp-area="Admin" asp-controller="Reporte" asp-action="ReportePaquete">REPORTE PAQUETES</a></li>
+                            <li class="mb-3"><a asp-area="Admin" asp-controller="Reporte" asp-action="ReporteServicio">REPORTE SERVICIO</a></li>
+                            <li class="mb-3"><a asp-area="Admin" asp-controller="Reporte" asp-action="ReporteProfesional">REPORTE PROFESIONAL</a></li>
+                        }
+                        <li class="mb-2"><a asp-area="" asp-controller="User" asp-action="Logout">CERRAR SESIÓN</a></li>
+                    </ul>
+                </li>
+            }
+            <!-- --------------------------------------------------- -->
+            <li class="dropdown mb-3 pt-4 border-top">
+                <a href="#" class="dropdown-toggle" data-toggle="collapse" data-target="#submenu2" aria-expanded="false">
+                    <span class="icon-link2"></span>SERVICIOS
+                    <span class="move text-footer-menu"><i class="fas fa-chevron-down"></i></span>
+                </a>
+                <ul class="nav collapse ml-4 mt-3" id="submenu2" role="menu" aria-labelledby="btn-1">
+                    @foreach (var item in ViewBag.Categories)
+                    {
+                        <li class="mb-3"><a asp-area="" asp-controller="Services" asp-action="Category" asp-route-id="@item.Value">@item.Text</a></li>
+                    }
+                    @*<li class="mb-3"><a href="/BarDeCejasFront/Presentation/Views/ServicioCejas.html">Cejas</a></li>
+                    <li class="mb-3"><a href="/BarDeCejasFront/Presentation/Views/ServicioCejas.html">Pestañas</a></li>
+                    <li class="mb-2"><a href="/BarDeCejasFront/Presentation/Views/ServicioCejas.html">Labios</a>*@
+                </ul>
+            </li>
+            <li class="mb-3"><a asp-area="" asp-controller="Packages" asp-action="Index"> <span>PAQUETES</span></a></li>
+            <li class="mb-3"><a asp-area="" asp-controller="Newness" asp-action="Index"> <span>NOVEDADES</span></a></li>
+            <li class="mb-3"><a asp-area="" asp-controller="FrequentQuestion" asp-action="Index"> <span>PREGUNTAS FRECUENTES</span></a></li>
+            <li class="mb-3"><a asp-area="" asp-controller="Contacto" asp-action="Index"> <span>CONTACTO</span></a></li>
+
+        </ul>
+    </div>
+    <div class="jquery-accordion-menu-footer col-md-12 pt-4 border-top text-center text-footer-menu">
+
+        <h6>
+            <i style="font-size: 33px!important;" class="tf-ion-social-instagram mr-4"></i>
+            <i style="font-size: 33px!important;" class="tf-ion-social-facebook"></i>
+        </h6>
+
+    </div>
+
+    <!-- -------------------------------------	 -->
+
+
+
+</div>
+
+
+
+
+
+
+
+@*
+        @if (Model.Nombre == null)
+        {
+            <header class="navigation fixed-top">
+                <div class="container">
+                    <!-- main nav -->
+                    <nav class="navbar navbar-expand-lg navbar-light">
+                        <button class="navbar-toggler" id="menu" type="button" data-toggle="collapse" data-target="#navigation"
+                                aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <!-- logo -->
+                        <a class="navbar-brand logo" asp-controller="Home" asp-action="Index">
+                            <img class="logo-default" src="@Url.Content("~/images/logo.png")" alt="logo" />
+                            <!-- <img class="logo-white" src="images/logo-white.png" alt="logo"/> -->
+                            <img class="logo-white" src="@Url.Content("~/images/logo.png")" alt="logo" />
+                        </a>
+                        <div class="collapse navbar-collapse">
+                            <ul class="navbar-nav text-center">
+                                <li class="nav-item dropdown active">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                                       aria-haspopup="true" aria-expanded="false">
+                                        SERVICIOS
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <div class="padding-l-r">
+                                            <a class="dropdown-item" href="index.html">Cejas</a>
+                                            <a class="dropdown-item" href="index.html">Pestañas</a>
+                                            <a class="dropdown-item" href="index.html">Labios</a>
+                                        </div>
+
+                                    </div>
+                                </li>
+
+                                <li class="nav-item ">
+                                    <a class="nav-link" href="#">PAQUETES</a>
+                                </li>
+                                <li class="nav-item ">
+                                    <a class="nav-link" asp-controller="Newness" asp-action="Index"> NOVEDADES</a>
+                                </li>
+                                <li class="nav-item ">
+                                    <a class="nav-link" asp-controller="FrequentQuestion" asp-action="Index"> PREGUNTAS FRECUENTES</a>
+                                </li>
+                                <li class="nav-item ">
+                                    <a class="nav-link" asp-controller="Contacto" asp-action="Index">CONTACTO</a>
+                                </li>
+
+                            </ul>
+                            <ul class="navbar-nav ml-auto text-center">
+
+                                <li class="nav-item ">
+                                    <a class="nav-link" id="linkModalLogin" data-toggle="modal"
+                                       data-target="#LoginModal"
+                                       data-ajax="true"
+                                       data-ajax-begin="onBeginModalLogin"
+                                       data-ajax-success="onSuccessModalLogin"
+                                       data-ajax-fail="onFailModalLogin"
+                                       data-ajax-complete=""
+                                       data-ajax-method="GET"
+                                       data-ajax-mode="replace"
+                                       data-ajax-update="#LoginModal"
+                                       asp-controller="User"
+                                       asp-action="ModalRegisterLogin">INGRESÁ/REGISTRATE</a>
+                                </li>
+
+                            </ul>
+                        </div>
+                        <!-- user-->
+                        <a class="navbar-brand logo" href="javascript:void(0)" onclick="$('#linkModalLogin').click()">
+                            <i class="tf-ion-ios-person-outline d-none d-sm-block" style="font-size: 2.25rem!important;"></i>
+                        </a>
+                        <!-- /user -->
+                    </nav>
+                    <!-- /main nav -->
+                </div>
+            </header>
+            <div class="collapse navbar-collapse row" id="navigation">
+                <!--<div class="jquery-accordion-menu-header col-md-12">
+                        <div class="media">
+                            <div class="media-left align-self-center pr-5" style="width: 20%;">
+                                <span style="font-size: 2.4rem;"><i class="far fa-user-circle"></i></span>
+                            </div>
+                            <div class="media-body pt-3 pl-2">
+                                <h6><a href="#" class="text-black" data-toggle="modal" data-target="#LoginModal">Ingresá / Registrate</a></h6>
+
+                            </div>
+
+                        </div>
+
+                    </div>-->
+    <!-- esto se ve si inicia sesion -->
+    <!-- <div class="jquery-accordion-menu-header col-md-12 mb-3" style="border-bottom: none !important;">
+        <div class="media">
+            <div class="media-left align-self-center" style="width: 20%;">
+                <img class="rounded-circle" src="/BarDeCejasFront/wwwroot/images/usuarios/U4.png" width="70%">
+            </div>
+            <div class="media-body pt-1">
+                <h6 class="mb-0" style="font-weight: 700!important;font-size: 0.8rem;">NOMBRE DE USUARIO</h6>
+                <span ><a class="subTitelUser" href="/BarDeCejasFront/Admin/Views/EditarPerfilDatos.html">MI PERFIL</a></span>
+            </div>
+
+        </div>
+
+    </div> -->
+    <div id="wrapperMenu" class="col-md-12">
+        <ul id="menu-dashboard" class="nav nav-pills nav-stacked">
+            <!-- <li class="mb-3"><a href="/BarDeCejasFront/Presentation/Views/misTurnos.html"><span>MIS TURNOS</span></a></li>
+            <li class="mb-3"><a href="/BarDeCejasFront/Admin/Views/EditarPerfilDatos.html"><span >MIS DATOS</span></a></li>
+            <li class="dropdown mb-3">
+              <a href="#" class="dropdown-toggle" data-toggle="collapse" data-target="#submenu1" aria-expanded="false">
+                 <span class="icon-link2"></span>
+                 GESTOR<span class="move-1 text-footer-menu"><i class="fas fa-chevron-down"></i></span>
+              </a>
+              <ul class="nav collapse ml-4 mt-3" id="submenu1" role="menu" aria-labelledby="btn-1">
+                  <li class="mb-3"><a href="/BarDeCejasFront/Admin/Views/GestionarHome.html">GESTOR DE HOME</a></li>
+                  <li class="mb-3"><a href="/BarDeCejasFront/Admin/Views/GestionarClientes.html">GESTOR DE CLIENTES</a></li>
+                  <li class="mb-3"><a href="/BarDeCejasFront/Admin/Views/GestionarProfesionales.html">GESTOR DE PROFESIONALES</a></li>
+                  <li class="mb-3"><a href="/BarDeCejasFront/Admin/Views/GestionarTurnos.html">GESTOR DE TURNOS</a></li>
+                  <li class="mb-3"><a href="/BarDeCejasFront/Admin/Views/GestionarServicios.html">GESTOR DE SERVICIOS</a></li>
+                  <li class="mb-3"><a href="/BarDeCejasFront/Admin/Views/GestionarPaquetes.html">GESTOR DE PAQUETES</a></li>
+                  <li class="mb-3"><a href="/BarDeCejasFront/Admin/Views/GestionarMensajesMasivos.html">MENSAJES MASIVOS</a></li>
+                  <li class="mb-3"><a href="/BarDeCejasFront/Admin/Views/GestionarNovedades.html">GESTOR DE NOVEDADES</a></li>
+                  <li class="mb-3"><a href="/BarDeCejasFront/Admin/Views/GestionarPreguntasFrecuentes.html">PREGUNTAS FRECUENTES</a></li>
+                  <li class="mb-3"><a href="/BarDeCejasFront/Admin/Views/GestionarContactos.html">GESTOR DE CONTACTO</a></li>
+                  <li class="mb-3"><a href="#">REPORTES</a></li>
+                  <li class="mb-2"><a href="#">CERRAR SESIÓN</a></li>
+              </ul>
+              </li> -->
+            <!-- --------------------------------------------------- -->
+            <li class="dropdown mb-3 pt-4 border-top">
+                <a href="#" class="dropdown-toggle" data-toggle="collapse" data-target="#submenu2" aria-expanded="false">
+                    <span class="icon-link2"></span>SERVICIOS
+                    <span class="move text-footer-menu"><i class="fas fa-chevron-down"></i></span>
+                </a>
+                <ul class="nav collapse ml-4 mt-3" id="submenu2" role="menu" aria-labelledby="btn-1">
+                    <li class="mb-3"><a href="/BarDeCejasFront/Presentation/Views/ServicioCejas.html">Cejas</a></li>
+                    <li class="mb-3"><a href="/BarDeCejasFront/Presentation/Views/ServicioCejas.html">Pestañas</a></li>
+                    <li class="mb-2"><a href="/BarDeCejasFront/Presentation/Views/ServicioCejas.html">Labios</a>
+                </ul>
+            </li>
+            <li class="mb-3"><a href="/BarDeCejasFront/Presentation/Views/paquetesList.html"> <span>PAQUETES</span></a></li>
+            <li class="mb-3"><a href="/BarDeCejasFront/Presentation/Views/NovedadesList.html"> <span>NOVEDADES</span></a></li>
+            <li class="mb-3"><a href="/BarDeCejasFront/Presentation/Views/preguntasFrecuentes.html"> <span>PREGUNTAS FRECUENTES</span></a></li>
+            <li class="mb-3"><a href="/BarDeCejasFront/Presentation/Views/contact.html"> <span>CONTACTO</span></a></li>
+
+        </ul>
+    </div>
+    <div class="jquery-accordion-menu-footer col-md-12 pt-4 border-top text-center text-footer-menu">
+
+        <h6>
+            <i style="font-size: 33px!important;" class="tf-ion-social-instagram mr-4"></i>
+            <i style="font-size: 33px!important;" class="tf-ion-social-facebook"></i>
+        </h6>
+
+    </div>
+
+    <!-- -------------------------------------	 -->
+        </div>
+    }
+    else
+    {
+    <header class="navigation fixed-top">
+        <div class="container">
+            <!-- main nav -->
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation"
+                        aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- logo -->
+                <a class="navbar-brand logo" href="">
+                    <img class="logo-default" src="@Url.Content("~/images/logo.png")" alt="logo" asp-append-version="true" />
+                    <!-- <img class="logo-white" src="images/logo-white.png" alt="logo"/> -->
+                    <img class="logo-white" src="@Url.Content("~/images/logo.png")" alt="logo" asp-append-version="true" />
+                </a>
+                <!-- /logo -->
+
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav text-center">
+                        <li class="nav-item active">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                               aria-haspopup="true" aria-expanded="false">
+                                SERVICIOS
+                            </a>
+                            <div class="dropdown-menu menu-left" aria-labelledby="navbarDropdown">
+                                <div class="padding-l-r">
+                                    <a class="dropdown-item" href="">Cejas</a>
+                                    <a class="dropdown-item" href="">Pestañas</a>
+                                    <a class="dropdown-item" href="">Labios</a>
+                                </div>
+
+                            </div>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link" href="">PAQUETES</a>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link" href="">NOVEDADES</a>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link" href="">PREGUNTAS FRECUENTES</a>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link" href="">CONTACTO</a>
+                        </li>
+
+                    </ul>
+                    <ul class="navbar-nav ml-auto text-center">
+
+                        <li class="nav-item ">
+                            <a class="nav-link row" href="#" style="padding-top: 1%;" id="navbarDropdownUser" role="button" data-toggle="dropdown"
+                               aria-haspopup="true" aria-expanded="false">
+                                <div class="first col-sm-12"><span style="font-weight:bold;">@Model.Nombre&nbsp;@Model.Apellido</span></div>
+                                <div class="second col-sm-12"><span style="font-weight:normal;">MI PERFIL</span></div>
+                            </a>
+
+                            <div id="sidenav" class="sidenav menu-left" style="display: none;">
+                                <a href="">MIS TURNOS</a>
+                                <a href="">MIS DATOS</a>
+                                <button class="dropdown-btn">
+                                    GESTOR
+                                    <i class="fa fa-caret-down" style="font-size: 27px;"></i>
+                                </button>
+                                <div class="dropdown-container">
+
+                                    <a href="">TURNOS</a>
+                                    <a href="">SERVICIOS</a>
+                                    <a href="">PAQUETES</a>
+                                    <a href="">NOVEDADES</a>
+                                    <a href="">FRECUENTES</a>
+                                    <a href="">CONTACTO</a>
+                                </div>
+                                <a href="#">REPORTES</a>
+                                <a href="@Url.Action("Logout","User")">CERRAR SESIÓN</a>
+                            </div>
+                            <!-- <div class="dropdown-menu menu-left" aria-labelledby="navbarDropdownUser">
+                                <div class="padding-l-r">
+                                    <a class="dropdown-item"href="/BarDeCejasFront/Presentation/Views/index.html">MIS TURNOS</a>
+                                    <a class="dropdown-item"href="/BarDeCejasFront/Presentation/Views/index.html">MIS DATOS</a>
+                                    <a class="dropdown-item"href="/BarDeCejasFront/Presentation/Views/index.html" >GESTOR</a>
+                                </div>
+
+                            </div> -->
+                        </li>
+
+                    </ul>
+                </div>
+                <!-- user-->
+                <a class="navbar-brand logo " href="#">
+
+                    <i class="tf-ion-ios-person-outline d-none d-sm-block d-md-block d-lg-block" style="font-size: 2.25rem!important;"></i>
+                </a>
+                <!-- /user -->
+            </nav>
+            <!-- /main nav -->
+        </div>
+    </header>
+    }
+*@

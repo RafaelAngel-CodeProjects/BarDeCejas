@@ -1,0 +1,50 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+@{
+    ViewData["Title"] = "Novedades";
+}
+
+
+<section class="single-page-header single-page-header-ol">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans"><a href="javascript:history.back()"><i class="fas fa-solid fa-angle-left"></i></a></li>
+                    <li class="spa-bag d-none d-md-block d-lg-block d-sm-none"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="spa-bag d-none d-md-block d-lg-block d-sm-none">-</li>
+                    <li class="active spa-bag d-none d-md-block d-lg-block d-sm-none">Novedades</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon mayuscula">NOVEDADES</h4>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="services row-section" id="servicespESTA">
+    <div class="container" style="padding-right: 0px!important;">
+        <div class="row no-gutters">
+
+
+            <div class="col-md-12 col-sm-12 row-block">
+                <div class="popular_courses">
+                    <div class="row">
+                        <partial name="_ListaNewness" model="Model" />
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div> <!-- End row -->
+    </div> <!-- End container -->
+</section>

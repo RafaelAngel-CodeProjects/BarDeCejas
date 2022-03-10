@@ -1,0 +1,242 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@model IEnumerable<BarCejas.Entities.OrdenesVigentes>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Gestor de turnos";
+}
+
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans"><a href="javascript:history.back()"><i class="fas fa-solid fa-angle-left"></i></a></li>
+                    <li class="spa-bag"><a asp-controller="GestorShifts" asp-action="Inderx">Gestor</a></li>
+                    <li class="spa-bag"></li>
+                    <li class="active spa-bag">Gestor de turnos</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+
+
+    <div class="container  title-secon-header">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon">GESTIONAR TURNOS</h4>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="about-shot-info section-sm">
+    <div class="container">
+        @await Html.PartialAsync("_TurnosFilter")
+    </div>
+</section>
+
+
+
+<section class="company-mission section" style="padding-top: 2%;">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12" id="ListTurnos">
+                @await Html.PartialAsync("_TurnosList", Model)
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="TurnoModal" tabindex="-1" aria-labelledby="TurnoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="TurnoModalLabel"></h5>
+                <a href="#" class="close" data-dismiss="modal" aria-label="close">&times;</a>
+            </div>
+            <div class="modal-body pl-5 pr-5" id="TurnoModalBody">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="clientModal" tabindex="-1" aria-labelledby="clientModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="clientModalLabel"></h5>
+                <a href="#" class="close" data-dismiss="modal" aria-label="close">&times;</a>
+            </div>
+            <div class="modal-body pl-5 pr-5" id="clientModalBody">
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script type="text/javascript">
+    var contentModalidadesPago =@Html.Raw(Json.Serialize(ViewBag.ModalidadesPago));
+        OnLoadTable('#tbTurnos');
+
+        function onFailureTurno(error) {
+            OnFailureAddOrEdit(error);
+        }
+        function onBeginTurno() {
+            $('#TurnoModalBody').html('');
+        }
+        function OnSuccessAddOrEditTurno() {
+            ModalGeneral('', 'Accón completada con éxito.', true);
+            $('.modal').modal('hide');
+            OnLoadTable('#tbTurnos');
+        }
+
+        function OnSuccessFilterTurno() {
+            OnLoadTable('#tbTurnos');
+        }
+
+        function onChangeService(element) {
+            $("#Hora").val(0);
+            $("#Monto").val(0);
+            $("#FechaCita").val('');
+            resetValues("#IdProfesional");
+            resetValues("#IdContactoLocal");
+            $('#IdContactoLocal, #IdProfesional, #FechaCita, #Hora').prop('disabled', 'disabled');
+            if (element.value > 0) {
+                $.get('@Url.Action("OnChangeService", "GestorShifts")', { id: element.value }, function (resp) {
+                    if (resp !== undefined && resp.isCompleted) {
+                        $("#Monto").val(resp.promotionalPrice);
+                        loadSelectValue("#IdContactoLocal", resp.contactItems);
+                        $('#IdContactoLocal').prop('disabled', false);
+                    }
+                })
+                .fail(function (error) {
+                    onFailureTurno(error);
+                });
+            }
+        }
+
+        function resetValues(element) {
+            $(element).find('option')
+                .remove()
+                .end()
+                .append('<option value="0">Seleccione una opción</option>')
+                .val(0);
+        }
+
+        function loadSelectValue(element, data) {
+            resetValues(element);
+            if (data.length > 0) {
+                $.each(data, function (index, itemData) {
+                    $(element).append(new Option(itemData.text, itemData.value))
+                });
+            }
+            $(element).val(0);
+        }
+
+        function onChangeContact(element) {
+            $("#Hora").val(0);
+            $("#FechaCita").val('');
+            resetValues("#IdProfesional");
+            $('#IdProfesional, #FechaCita, #Hora').prop('disabled', 'disabled');
+            if (element.value > 0) {
+                $.get('@Url.Action("OnChangeContactLocal", "GestorShifts")', { id: element.value, idService: $('#IdServicio').val() }, function (resp) {
+                    if (resp !== undefined && resp.isCompleted) {
+                        loadSelectValue("#IdProfesional", resp.professionalsItems);
+                        $('#IdProfesional').prop('disabled', false);
+                        $('#FechaCita').prop('disabled', false);
+                    }
+                })
+                .fail(function (error) {
+                    onFailureTurno(error);
+                });
+            }
+        }
+
+        function onChangeProfessional(element) {
+            //$('#Hora').prop('disabled', 'disabled');
+            if ($('#IdOrdenItem').val() > 0) {
+                if (element.value > 0) {
+                resetValues("#Hora");
+                if (element.value > 0) {
+                    $.get('@Url.Action("OnChangeDateService", "GestorShifts")', { date: $('#FechaCita').val(), idService: $('#IdServicio').val(), idContact: $('#IdContactoLocal').val(), idProfessional: element.value }, function (resp) {
+                        if (resp !== undefined && resp.isCompleted) {
+                            loadSelectValue("#Hora", resp.hours);
+                            $('#Hora').prop('disabled', false);
+                        }
+                    })
+                    .fail(function (error) {
+                        OnFailureAddOrEdit(error);
+                        $('#FechaCita').prop('disabled', false);
+                    });
+                }
+            }
+            }
+        }
+
+        function onChangeDate(element) {
+            resetValues("#Hora");
+            $('#Hora').prop('disabled', 'disabled');
+            var idProfessional = $('#IdProfesional') === null ? 0 : $('#IdProfesional').val();
+            if (element.value.length > 0) {
+                $('#FechaCita').val(element.value);
+                $.get('@Url.Action("OnChangeDateService", "GestorShifts")', { date: element.value, idService: $('#IdServicio').val(), idContact: $('#IdContactoLocal').val(), idProfessional: idProfessional }, function (resp) {
+                    if (resp !== undefined && resp.isCompleted) {
+                        loadSelectValue("#Hora", resp.hours);
+                        $('#Hora').prop('disabled', false);
+                    }
+                })
+                .fail(function (error) {
+                    onFailureTurno(error);
+                });
+            }
+    }
+
+    function onChangeHour(element) {
+        $('#Hora').val(element.value);
+    }
+
+        function onChangeFormaPago(element) {
+            if (element.value > 0) {
+                console.log(contentModalidadesPago);
+                resetValues("#IdModalidadPago");
+                var isCash = false;
+                if (element.value == '@((int)BarCejas.Entities.Enumerations.FormaDePago.Efectivo)')
+                    isCash = true;
+                $.each(contentModalidadesPago, function (index, itemData) {
+                    if (isCash == true) {
+                        if (itemData.value == '@((int)BarCejas.Entities.Enumerations.MedioDePago.En_el_local)') {
+                            $("#IdModalidadPago").append(new Option(itemData.text, itemData.value));
+                        }
+                    } else {
+                        if (itemData.value != '@((int)BarCejas.Entities.Enumerations.MedioDePago.En_el_local)') {
+                            $("#IdModalidadPago").append(new Option(itemData.text, itemData.value));
+                        }
+                    }
+                });
+                $('#IdModalidadPago').prop('disabled', false);
+            }
+        }
+
+        function onChangeFormaPagoComprobante(element) {
+            if (element.value > 0) {
+                document.getElementById("seccionComprobante").style.display = "none";
+                console.log(element.value != '@((int)BarCejas.Entities.Enumerations.FormaDePago.Efectivo)');
+                if (element.value != '@((int)BarCejas.Entities.Enumerations.FormaDePago.Efectivo)') {
+                    document.getElementById("seccionComprobante").style.display = "block";
+                }
+            }
+        }
+
+        function onClientSelect(id, name) {
+            console.log(id);
+            $('#Cliente').val(name);
+            $('#IdCliente').val(id);
+            $('#clientModal').modal('hide');
+        }
+</script>
+}

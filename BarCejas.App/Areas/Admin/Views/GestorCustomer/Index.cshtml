@@ -1,0 +1,113 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@model IEnumerable<BarCejas.Entities.Usuario>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Clientes";
+}
+
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans"><a href="javascript:history.back()"><i class="fas fa-solid fa-angle-left"></i></a></li>
+                    <li class="spa-bag"><a asp-controller="GestorCustomer" asp-action="Index">Gestor</a></li>
+                    <li class="spa-bag">-</li>
+                    <li class="active spa-bag">Gestionar clientes</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+
+    <div class="container title-secon-header">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon">GESTIONAR CLIENTES</h4>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="about-shot-info section-sm">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-7">
+                <p>Crea, edita o elimina categorías.</p>
+            </div>
+            <div class="col-md-5">
+                <a class="btn btn-main-accion float-right" asp-controller="GestorCustomer" asp-action="New">CREAR CLIENTE</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="company-mission section" style="padding-top: 2%;">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                @await Html.PartialAsync("_UsuarioList", Model)
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="ChangePasswordModal" tabindex="-1" role="dialog" aria-labelledby="ChangePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header CustomHeaderModal">
+                <button type="button" onclick="OnCloseModalChangePassword()" class="close closeModalLogin" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+<script type="text/javascript">
+
+        OnLoadTable('#example');
+
+        function ChangeStatus(id, status) {
+            $.post('@Url.Action("ChangeStatus", "GestorCustomer")', { id: id }, function (resp) {
+                ModalGeneral('', resp.message, resp.isCompleted);
+            }).fail(function (error) {
+                if (status) {
+                    $('#gcu_' + id).attr("checked", !status).attr('onclick', 'ChangeStatus(' + id + ','+ !status +')');
+                } else {
+                    $('#gcu_' + id).attr("checked", status).attr('onclick', 'ChangeStatus(' + id + ',' + status +')');
+                }
+                OnFailureAddOrEdit(error);
+            });
+        }
+
+        function OnFailureChangePassword(error) {
+            OnFailureAddOrEdit(error);
+        }
+
+        function OnSuccessChangePassword(resp) {
+            if (resp.isCompleted) {
+                ModalGeneral('', resp.message, resp.isCompleted);
+            }
+        }
+
+        function onFailureModalChangePassword(error) {
+            OnFailureAddOrEdit(error);
+        }
+
+        function onSuccessModalChangePassword(resp) {
+            $('#ChangePasswordModal').html(resp);
+            $('#ChangePasswordModal').modal('show');
+        }
+
+        function OnCloseModalChangePassword() {
+            $('#ChangePasswordModal').modal('hide');
+        }
+</script>
+}

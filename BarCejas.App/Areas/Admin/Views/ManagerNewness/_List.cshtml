@@ -1,0 +1,40 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model IEnumerable<BarCejas.Entities.Novedades>
+    <table id="NovedadesList" class="table" style="width:100%">
+        <thead>
+            <tr>
+                <th>Titulo</th>
+                <th>Fecha</th>
+                <th>Home</th>
+                <th>Editar</th>
+                <th class="text-center">Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td data-label="Titulo">@item.Titulo</td>
+                <td data-label="Fecha">@item.Fecha.ToShortDateString()</td>
+                <td data-label="Home">
+                    <div class="form-check">
+                        <input class="form-check-input position-static" type="radio" @(item.IndHome ? "checked":"")  name="ind_@item.Id" id="ind_@item.Id" value="@item.IndHome" onclick="ActivarIndHome(@item.Id, '@(!item.IndHome)')" aria-label="...">
+                    </div>
+                </td>
+                <td><a class="btn btn-cir" href="@this.Url.Action("Create_Edit", "ManagerNewness", new { Id = item.Id })"><i class="fas fa-light fa-pen"></i></a></td>
+                <td class="text-center">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" @(item.IndEstatus ? "checked" : "") onclick="CambiarEstatus(@item.Id, '@(!item.IndEstatus)')" id="nv_@item.Id" class="custom-control-input">
+                        <label class="custom-control-label" for="nv_@item.Id" data-original-title="@(item.IndEstatus ? "Activo" : "Inactivo")"></label>
+                    </div>
+                </td>
+               
+            </tr>
+            }
+
+
+        </tbody>
+
+    </table>

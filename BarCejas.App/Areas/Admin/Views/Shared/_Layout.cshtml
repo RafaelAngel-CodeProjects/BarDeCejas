@@ -1,0 +1,698 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="description" content="Bar de Cejas">
+
+    <meta name="author" content="">
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BarCejas.App</title>
+
+    <!-- Mobile Specific Meta
+      ================================================== -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="~/images/favicon.png" />
+
+
+    <!-- CSS
+    ================================================== -->
+    <!-- Themefisher Icon font -->
+    <link rel="stylesheet" href="~/lib/themefisher-font/style.css">
+    <!-- bootstrap.min css -->
+    @*<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">*@
+    @*<link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />*@
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css">
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.2.0/css/fixedHeader.bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css">
+
+    <!-- Lightbox.min css -->
+    <link rel="stylesheet" href="~/lib/lightbox2/dist/css/lightbox.min.css">
+    <!-- animation css -->
+    <link rel="stylesheet" href="~/lib/animate/animate.css">
+    <!-- Slick Carousel -->
+    <link rel="stylesheet" href="~/lib/slick/slick.css">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="~/css/style.css">
+    <!-- fuente icono -->
+    <link href="~/lib/fontawesome/css/all.css" rel="stylesheet"> <!--load all styles -->
+    <!--Sweet alert-->
+    <link href="~/plugins/sweetalert/sweetalert2.min.css" rel="stylesheet" />
+
+    <link href="~/css/menuMobile.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-select.min.css">
+    <link href="~/lib/bootstrap-datepicker/css/bootstrap-datepicker3.css" rel="stylesheet" />
+    @*full calendar*@
+    <link href="~/lib/full-calendar/main.css" rel="stylesheet" />
+</head>
+<body>
+
+    <!--
+    Start Preloader
+    ==================================== -->
+    <div id="preloader">
+        <div class='preloader'>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+    <!--
+    End Preloader
+    ==================================== -->
+    <!--
+    Fixed Navigation
+    ==================================== -->
+    @(await Component.InvokeAsync("ClientMenu"))
+    <!--
+    End Fixed Navigation
+    ==================================== -->
+
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+    @*</div>*@
+
+    <!-- Section Modal Login -->
+    <!-- Modal -->
+    <div class="modal fade" id="LoginModal" tabindex="-1" role="dialog" aria-labelledby="LoginModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header CustomHeaderModal">
+                    <button type="button" class="close closeModalLogin" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="login">
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <form>
+                                <div class="row mb-4">
+                                    <div class="col">
+                                    </div>
+                                    <div class="col-6 enterLoginText FontText">
+                                        INGRESÁ
+                                    </div>
+                                    <div class="col">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col"></div>
+                                    <div class="col-8">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Email</label>
+                                            <input type="email" class="form-control rounded-0"
+                                                   id="InputEmailLogin" aria-describedby="emailHelp"
+                                                   placeholder="Ingresá tu email">
+                                        </div>
+                                    </div>
+                                    <div class="col"></div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col"></div>
+                                    <div class="col-8">
+                                        <div class="form-group">
+                                            <label for="exampleInputPassword1">Password</label>
+                                            <input type="password" class="form-control rounded-0"
+                                                   id="InputPasswordLogin" placeholder="Ingresá tu contraseña">
+                                        </div>
+                                    </div>
+                                    <div class="col"></div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col"></div>
+                                    <div class="col-8">
+                                        <button type="button"
+                                                class="btn btn-lg btn-block ButtonLogin rounded-0 FontText">
+                                            INGRESÁ
+                                        </button>
+                                    </div>
+                                    <div class="col"></div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col"></div>
+                                    <div class="col-8 justify-content-center centerText">
+                                        Olvidé mi contraseña, <u>recuperar</u>
+                                    </div>
+                                    <div class="col"></div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col"></div>
+                                    <div class="col-8 justify-content-center centerText">
+                                        <div class="Line"></div>
+                                    </div>
+                                    <div class="col"></div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col"></div>
+                                    <div class="col-8">
+                                        <button type="button"
+                                                class="btn btn-lg btn-block ButtonSocial rounded-0 FontText">
+                                            <i class="mr-2 p-2 iconSocial rounded-circle tf-ion-social-facebook"></i>Ingresar
+                                            Con Facebook
+                                        </button>
+                                    </div>
+                                    <div class="col"></div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col"></div>
+                                    <div class="col-8">
+                                        <button type="button"
+                                                class="btn btn-lg btn-block ButtonSocial rounded-0 FontText">
+                                            <i class="mr-2 p-2 iconSocial rounded-circle tf-ion-social-facebook"></i>Ingresar
+                                            Con Gmail
+                                        </button>
+                                    </div>
+                                    <div class="col"></div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col"></div>
+                                <div class="col-8 justify-content-center centerText">
+                                    No tengo usuario, <u onclick="toggleLogin()">registrarme</u>
+                                </div>
+                                <div class="col"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="register" style="display: none;">
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <form>
+                                <div class="row mb-4">
+                                    <div class="col">
+                                    </div>
+                                    <div class="col-6 enterLoginText FontText">
+                                        REGISTRATE
+                                    </div>
+                                    <div class="col">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col"></div>
+                                    <div class="col-8">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Email</label>
+                                            <input type="email" class="form-control rounded-0"
+                                                   id="InputEmailLogin" aria-describedby="emailHelp"
+                                                   placeholder="Ingresá tu email">
+                                        </div>
+                                    </div>
+                                    <div class="col"></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col"></div>
+                                    <div class="col-8">
+                                        <div class="form-group">
+                                            <label style="margin-bottom: 0px;" for="exampleInputPassword1">Modificar contraseña</label>
+                                            <small style="margin-top: 0px;" id="passwordlHelp" class="form-text text-muted">Mínimo 8 caracteres, debe incluir números y letras</small>
+                                            <input type="password" class="form-control rounded-0"
+                                                   id="InputPasswordLogin" placeholder="Ingresá tu contraseña">
+                                        </div>
+                                    </div>
+                                    <div class="col"></div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col"></div>
+                                    <div class="col-8">
+                                        <div class="form-group">
+                                            <label for="exampleInputPassword1">Confirmar contraseña</label>
+                                            <input type="password" class="form-control rounded-0"
+                                                   id="InputConfirmPasswordLogin" placeholder="Repetí tu contraseña">
+                                        </div>
+                                    </div>
+                                    <div class="col"></div>
+                                </div>
+                                <div class="row mb-5">
+                                    <div class="col"></div>
+                                    <div class="col-8">
+                                        <button type="button"
+                                                class="btn btn-lg btn-block ButtonLogin rounded-0 FontText">
+                                            GUARDAR
+                                        </button>
+                                    </div>
+                                    <div class="col"></div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col"></div>
+                                    <div class="col-8 justify-content-center centerText">
+                                        <div class="Line"></div>
+                                    </div>
+                                    <div class="col"></div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col"></div>
+                                    <div class="col-8">
+                                        <button type="button"
+                                                class="btn btn-lg btn-block ButtonSocial rounded-0 FontText">
+                                            <i class="mr-2 p-2 iconSocial rounded-circle tf-ion-social-facebook"></i>Ingresar
+                                            Con Facebook
+                                        </button>
+                                    </div>
+                                    <div class="col"></div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col"></div>
+                                    <div class="col-8">
+                                        <button type="button"
+                                                class="btn btn-lg btn-block ButtonSocial rounded-0 FontText">
+                                            <i class="mr-2 p-2 iconSocial rounded-circle tf-ion-social-facebook"></i>Ingresar
+                                            Con Gmail
+                                        </button>
+                                    </div>
+                                    <div class="col"></div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col"></div>
+                                <div class="col-8 justify-content-center centerText">
+                                    ya tengo usuario, <u onclick="toggleLogin()">ingresar</u>
+                                </div>
+                                <div class="col"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end Section Modal Login -->
+    <!-- Modal de registros-->
+    <div id="Notificacion" class="modal fade">
+        <div class="modal-dialog" style="max-width: 640px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="button" class="close" data-dismiss="modal"><i class="icon-cross"></i></button>
+                                <h4 class="modal-title" id="Titulo"><i class="icon-scale"></i> </h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-body p-t-20">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p id="Mensaje"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @*<div class="modal-footer">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col">
+                                    <button type="button" class="btn btn-success" data-dismiss="modal">Aceptar <i class="icon-checkmark m-l-10"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>*@
+            </div>
+        </div>
+    </div>
+    <!-- end Modal registros-->
+
+    <footer id="footer" class="bg-one">
+        <div class="top-footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-3 col-md-3 col-lg-3">
+                        <h3>Nosotros</h3>
+                        <p>Especialista en cejas y pestañas. El cuidado de las cejas es un aspecto que, desde siempre, ha importado mucho tanto a las mujeres pero también a los hombres.</p>
+                    </div>
+                    <!-- End of .col-sm-3 -->
+
+                    <div class="col-sm-3 col-md-3 col-lg-3">
+                        <ul>
+                            <li><h3>Nuestros servicios</h3></li>
+                            <li><a href="#">Pestañas</a></li>
+                            <li><a href="#">Labios</a></li>
+                            <li><a href="#">Cejas</a></li>
+                            <li><a href="#">y más</a></li>
+                        </ul>
+                    </div>
+                    <!-- End of .col-sm-3 -->
+
+                    <div class="col-sm-3 col-md-3 col-lg-3">
+                        <ul>
+                            <li><h3>Enlaces rápidos</h3></li>
+                            <li><a asp-controller="Service" asp-action="Index">Servicios</a></li>
+                            <li><a asp-controller="Packages" asp-action="Index">Paquetes</a></li>
+                            <li><a asp-controller="Newness" asp-action="Index">Novedades</a></li>
+                            <li><a asp-controller="FrequentQuestion" asp-action="Index">Preguntas frecuentes</a></li>
+                        </ul>
+                    </div>
+                    <!-- End of .col-sm-3 -->
+
+                    <div class="col-sm-3 col-md-3 col-lg-3">
+                        <ul>
+                            <li><h3>Contáctanos</h3></li>
+                            <li><a asp-area="" asp-controller="Contacto" asp-action="Index">Nuestros locales</a></li>
+                            <li><a href="#">Twitter</a></li>
+                            <li><a href="#">Youtube</a></li>
+                            <li><a href="#">Pinterest</a></li>
+                        </ul>
+                    </div>
+                    <!-- End of .col-sm-3 -->
+
+                </div>
+            </div> <!-- end container -->
+        </div>
+        <div class="footer-bottom">
+            <h5>SIGUENOS EN</h5>
+            <h6><i style="font-size: 33px!important;" class="tf-ion-social-instagram"></i><i style="font-size: 33px!important;" class="tf-ion-social-facebook"></i></h6>
+            <h6>&copy;BAR DE CEJAS 2021</h6>
+        </div>
+    </footer> <!-- end footer -->
+    <!-- end Footer Area
+    ========================================== -->
+    <!--
+    Essential Scripts
+    =====================================-->
+    <!-- Main jQuery -->
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <!-- Google Map -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBu5nZKbeK-WHQ70oqOWo-_4VmwOwKP9YQ"></script>
+    <script src="~/lib/google-map/gmap.js"></script>
+    <!-- Summary -->
+    <script src="https://cdn.ckeditor.com/4.17.1/standard/ckeditor.js"></script>
+    <!-- Form Validation -->
+    <script src="~/lib/form-validation/jquery.form.js"></script>
+    <script src="~/lib/form-validation/jquery.validate.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <!-- Bootstrap4 -->
+    <script src="~/lib/bootstrap/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript" src=" https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src=" https://cdn.datatables.net/buttons/1.2.4/js/dataTables.buttons.min.js"></script>
+
+    <script src="~/lib/bootstrap/js/dataTables.bootstrap4.min.js"></script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"></script>
+
+    <!--Export table buttons-->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.24/build/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.24/build/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.print.min.js"></script>
+
+    <script type="text/javascript" src=" https://cdn.datatables.net/fixedheader/3.2.0/js/dataTables.fixedHeader.min.js"></script>
+    <script type="text/javascript" src=" https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script type="text/javascript" src=" https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap.min.js"></script>
+
+    <!-- Parallax -->
+    <script src="~/lib/parallax/jquery.parallax-1.1.3.js"></script>
+    <!-- lightbox -->
+    <script src="~/lib/lightbox2/dist/js/lightbox.min.js"></script>
+    <!-- Owl Carousel -->
+    <script src="~/lib/slick/slick.min.js"></script>
+    <!-- filter -->
+    <script src="~/lib/filterizr/jquery.filterizr.min.js"></script>
+    <!-- Smooth Scroll js -->
+    <script src="~/lib/smooth-scroll/smooth-scroll.min.js"></script>
+    <!-- fuente icono -->
+    <script defer src="~/lib/fontawesome/js/all.js"></script> <!--load all styles -->
+
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <!-- Custom js -->
+    <script src="~/js/script.js" asp-append-version="true"></script>
+     
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>
+
+    <script src="~/plugins/sweetalert/sweetalert2.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap-select.min.js"></script>
+    <script src="~/lib/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+    <script src="~/lib/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js"></script>
+
+    @*full calendar*@
+    <script src="~/lib/full-calendar/main.js"></script>
+    <script src="~/lib/full-calendar/es.js"></script>
+
+    <script type="text/javascript">
+   //funcion para marcar los item seleccionado en los combos
+        function MultiselectService(idCombo, contentViewBag) {
+            if (idCombo != null && contentViewBag!=null) {
+                var elemenCombo = document.getElementById(idCombo);
+                for (let elemento of contentViewBag)
+                    for (let itemComb of elemenCombo) {
+                        if (itemComb.value == elemento.value) {
+                            itemComb.selected = elemento.selected;
+
+                        }
+                    }
+            }
+
+         }
+
+        function toggleLogin(stringName) {
+            var Login = document.getElementById("login");
+            var Register = document.getElementById("register");
+            if (Login.style.display === "none") {
+                Login.style.display = "block";
+                Register.style.display = "none";
+            } else {
+                Login.style.display = "none";
+                Register.style.display = "block";
+            }
+        }
+
+        $(document).ready(function () {
+
+
+            // To style all selects
+            $(function () {
+                $('.selectpicker').selectpicker();
+
+            });
+
+            $('.date').datepicker({
+                format: "dd/mm/yyyy",
+                language: "es",
+                orientation: "bottom auto",
+                calendarWeeks: true,
+                autoclose: true,
+                todayHighlight: true
+            });
+
+
+            $("#sortable").sortable();
+            jQuery('#navbarDropdownUser').click(function (e) {
+                jQuery('#sidenav').slideToggle('fast');
+                e.stopPropagation();
+            });
+            $(document).click(function (e) {
+                var $info = $('#sidenav');
+                if (!$info.is(e.target) && $info.has(e.target).length === 0 && e.target.id != 'dropdown-btn') {
+
+
+                    $("#sidenav").hide();
+                }
+            });
+            // jQuery(document).click(function() {
+            // 		jQuery('.sidenav').slideUp('fast');
+            // });
+
+            //* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
+            var dropdown = document.getElementsByClassName("dropdown-btn");
+            var i;
+
+            for (i = 0; i < dropdown.length; i++) {
+                dropdown[i].addEventListener("click", function () {
+                    this.classList.toggle("active");
+                    var dropdownContent = this.nextElementSibling;
+                    if (dropdownContent.style.display === "block") {
+                        dropdownContent.style.display = "none";
+                    } else {
+                        dropdownContent.style.display = "block";
+                    }
+                });
+            }
+        });
+
+        //function ModalGeneral(Mensaje, Titulo) {
+        //    $('#Titulo').html(Titulo);
+        //    $('#Mensaje').html(Mensaje);
+        //    $('#Notificacion').modal('show');
+        //}
+        function ModalGeneral(url, Titulo, status) {
+            swal.fire({
+                title: Titulo,
+                confirmButtonText: 'Aceptar',
+                icon: status == true ? 'success' : 'error'
+            }).then((result) => {
+                if (result.value) {
+                    if (url != "") {
+                        window.location.href = url;
+                    }
+                }
+                return false;
+            })
+        }
+
+        function OnFailureAddOrEdit(error) {
+            if (error.responseJSON !== undefined)
+                ModalGeneral('', error.responseJSON.message, error.responseJSON.isCompleted);
+            else
+                ModalGeneral('', 'Ha ocurrido un error interno en el servidor', false);
+        }
+
+        function OnSuccessAddOrEdit(resp) {
+            if (resp.isCompleted) {
+                ModalGeneral('@Url.Action("Index")', resp.message, resp.isCompleted);
+            } else {
+                ModalGeneral('', 'Ha ocurrido un error interno en el servidor', false);
+            }
+        }
+
+        function OnSuccessAddPackageService(resp) {
+            $('.PackagesServicesList').append(resp);
+        }
+
+        function OnFailureAddPackageService(error) {
+            if (error.responseJSON !== undefined)
+                ModalGeneral('', error.responseJSON.message, error.responseJSON.isCompleted);
+            else
+                ModalGeneral('', 'Ha ocurrido un error interno en el servidor', false);
+        }
+
+        function OnDeletePackageService(element) {
+            $(element).closest(".row").remove();
+            OnSumAmounts();
+            return;
+        }
+
+        function OnChangeService(element) {
+            var idCollection = $(element).closest(".row").find("input[type=hidden]").first().val();
+            if (element.value > 0) {
+                $.get('@Url.Action("PriceService", "GestorPackages")', { id: element.value }, function (resp) {
+                    var cant = $("#ServicioPaquete_" + idCollection + "__Cantidad").val();
+                    $(element).closest(".row").find(".price>span").html(resp.promotionalPrice * cant);
+                    $("#ServicioPaquete_" + idCollection + "__IdServicioNavigation_PrecioLista").val(resp.listPrice);
+                    $("#ServicioPaquete_" + idCollection + "__IdServicioNavigation_PrecioPromocioal").val(resp.promotionalPrice);
+                    $("#ServicioPaquete_"+idCollection+"__IdServicioNavigation_Descuento").val(resp.dediscount);
+                    OnSumAmounts();
+                })
+                    .fail(function (error) {
+                        OnFailureAddOrEdit(error);
+                });
+            }
+            else {
+                $(element).closest(".row").find(".price>span").html(0);
+                $("#ServicioPaquete_" + idCollection + "__IdServicioNavigation_PrecioLista").val(0);
+                $("#ServicioPaquete_" + idCollection + "__IdServicioNavigation_PrecioPromocioal").val(0);
+                $("#ServicioPaquete_" + idCollection + "__IdServicioNavigation_Descuento").val(0);
+                OnSumAmounts();
+            }
+        }
+
+        function OnChangeQuantity(element) {
+            var idCollection = $(element).closest(".row").find("input[type=hidden]").first().val();
+            console.log(idCollection);
+            if (element.value > 0) {
+                var price = $("#ServicioPaquete_" + idCollection + "__IdServicioNavigation_PrecioPromocioal").val();
+                var cant = element.value;
+                var total = price * cant;
+                $(element).closest(".row").find(".price > span").html(total);
+                OnSumAmounts();
+            }
+            else {
+                $(element).closest(".row").find(".price > span").html(0);
+                OnSumAmounts();
+            }
+        }
+
+        function OnSumAmounts() {
+            var sum = 0;
+            $(".price > span").each(function (index) {
+                sum = sum + parseFloat($(this).text());
+            });
+
+            $("#FinalPrice").html(sum);
+            $("#TotalPrice").html(sum);
+        }
+
+        function OnLoadTable(tableId) {
+            var table = $(tableId).DataTable(
+                {
+                    dom: 'Bfrtip',
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print'
+                    ],
+                    language: {
+                        "decimal": "",
+                        "emptyTable": "No hay datos",
+                        "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                        "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+                        "infoFiltered": "(Filtro de _MAX_ total registros)",
+                        "infoPostFix": "",
+                        "thousands": ",",
+                        "lengthMenu": "Mostrar _MENU_ registros",
+                        "loadingRecords": "Cargando...",
+                        "processing": "Procesando...",
+                        "search": "Buscar:",
+                        "zeroRecords": "No se encontraron coincidencias",
+                        "paginate": {
+                            "first": "Primero",
+                            "last": "Ultimo",
+                            "next": "Próximo",
+                            "previous": "Anterior"
+                        },
+                        "aria": {
+                            "sortAscending": ": Activar orden de columna ascendente",
+                            "sortDescending": ": Activar orden de columna desendente"
+                        }
+                    },
+                    responsive: true
+                }
+            );
+
+            new $.fn.dataTable.FixedHeader(table);
+        }
+
+        function onChangeGenere(e) {
+            debugger
+            console.log(e.id);
+            if (e.value == @((int)BarCejas.Entities.Enumerations.Genere.Otro)) {
+                document.getElementById("GenereSection").style.display = "block";
+                document.getElementById(e.id == "IdUsuarioNavigation_IdTipoGenero" ?"IdUsuarioNavigation_Genero" :"Genero").value = '';
+            }
+            else {
+                console.log(e.options[e.selectedIndex].text);
+                document.getElementById("GenereSection").style.display = "none";
+                document.getElementById("Genero").value = e.options[e.selectedIndex].text;
+            }
+        }
+    </script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

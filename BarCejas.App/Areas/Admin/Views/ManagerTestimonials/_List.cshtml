@@ -1,0 +1,84 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model IEnumerable<BarCejas.Entities.Testimonios>
+<ul id="sortableTestimonios" class="list-group">
+    @foreach (var item in Model)
+    {
+
+        <li class="list-group-item" data-order="@item.Orden" data-index="@item.Id">
+            <div class="row">
+                <div class="col-md-1 centrar">
+                    <i class="fas fa-expand-arrows-alt"></i>
+                </div>
+                <div class="col-md-8">
+                    <h6 class="mb-0" style="line-height: 30px;">
+                        @item.Testimonio
+                    </h6>
+                </div>
+
+                <div class="col-md-3 text-right">
+                    <a class="btn btn-cir" href="@Url.Action("Create_Edit", new { Id = item.Id })"><i class="fas fa-light fa-pen"></i></a>
+                    <a class="btn btn-cir ml-3" href="javascript:void(0)" onclick="ModalEliminarTestimonio('@Url.Action("Delete", "ManagerTestimonials")', { Id : @item.Id, NrOrden :@item.Orden }, '¿Está seguro que desea eliminar el testimonio?', '')">   
+                    <i class="far fa-trash-alt"></i></a>
+                    <div class="custom-control custom-switch pt-1 ml-4" style="float: right;">
+                        <input type="checkbox" @(item.IndActivo ? "checked" : "") onclick="CambiarEstatusTestimonio(@item.Id, '@(!item.IndActivo)')" id="te_@item.Id" class="custom-control-input">
+                        <label class="custom-control-label" for="te_@item.Id" data-original-title="@(item.IndActivo ? "Activo" : "Inactivo")"></label>
+                    </div>
+
+                </div>
+
+            </div>
+        </li>
+      
+    }
+</ul>
+
+@section script{
+    <script>
+         /* $(document).ready(function () {*/
+            $('#sortableTestimonios').sortable({
+                update: function (event, ui) {
+                    $(this).children().each(function (index) {
+                        if ($(this).attr('data-orden') != (index + 1)) {
+                            $(this).attr('data-orden', (index + 1)).addClass('updated');
+                        }
+                    });
+
+                    guardandoPosiciones();
+                }
+            });
+      //  });
+
+        function guardandoPosiciones() {
+
+            var positions = [];
+            $('.updated').each(function () {
+               // var order = $('#sortable li').sortable('serialize');
+                var p = { Id: parseInt($(this).attr('data-index')), Orden: parseInt($(this).attr('data-order')) };
+                positions.push(p);
+                //var vv = $(this).sortable("toArray").toString();
+                $(this).removeClass('updated');
+
+            });
+
+            $.ajax({
+                url: '@Url.Action("updatePositions", "ManagerTestimonials")',
+                method: 'POST',
+                ContentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: { ptestimonios: positions },
+
+                success: function (response) {
+                    alert(response.mensaje);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                     alert("Error: " + errorThrown);
+                }
+            });
+        }
+    </script>
+
+}
+
+

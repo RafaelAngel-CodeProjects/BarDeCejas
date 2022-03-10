@@ -1,0 +1,21 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+@{
+    ViewData["IsLogin"] = ViewBag.IsLogin;
+}
+
+
+<div id="login">
+    @*@if(ViewBag.User!=null && ViewBag.IsLogin)
+            @await Html.PartialAsync("_LoginForm", (RegistreViewModel)ViewBag.User)
+        else*@
+    @await Html.PartialAsync("_LoginForm")
+</div>
+
+<div id="register" style="display: none;">
+    @if (ViewBag.User != null)
+        @await Html.PartialAsync("_RegistreForm", (RegistreViewModel)ViewBag.User, ViewData)
+        else
+            @await Html.PartialAsync("_RegistreForm")
+
+</div>

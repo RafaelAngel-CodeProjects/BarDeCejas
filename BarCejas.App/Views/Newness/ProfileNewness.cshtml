@@ -1,0 +1,61 @@
+﻿@model BarCejas.Entities.Novedades
+@{
+    ViewData["Title"] = "Detalle de novedad";
+}
+
+<section class="single-page-header single-page-header-site">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb  header-bradcrumb header-bradcrumb-site">
+                    <li class="btn-trans"><a style="color: #000!important;" href="javascript:history.back()"><i class="fas fa-solid fa-angle-left"></i></a></li>
+                    <li class="spa-bag"><a href="@Url.Action("Index", "Home")">Home</a></li>
+                    <li class="spa-bag">-</li>
+                    <li class="active spa-bag">Novedad</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+</section>
+
+
+<!-- Start Services Section
+    ==================================== -->
+<!-- Start Team Skills
+    =========================================== -->
+
+<section class="team-skills section-sm" id="skills">
+    <div class="container">
+        <div class="row">
+
+            <!-- section title -->
+            <div class="col-12">
+                <div class="title text-center">
+                    <h1 style="font-weight: 400;">@Model.Titulo</h1>
+                    <h6 style="font-weight: 400;">De <span style="color: #91733D;"> @(Model.Medio != null && !string.IsNullOrWhiteSpace(Model.Medio) ? Model.Medio : string.Empty)</span></h6>
+
+                </div>
+            </div>
+            <!-- /section title -->
+
+            <div class="col-md-12">
+                <div class="team-skills-content pb-5">
+                    <h6 style="font-weight: 600;">@Model.Copete</h6>
+                    </br>
+                    <p> @Html.Raw(Model.Contenido)</p>
+                    </br>
+                    @if (!string.IsNullOrWhiteSpace(Model.Link))
+                    {
+                        <p><a style="color:#91733D;" href="@Model.Link">Link a nota en sitio web</a></p>
+
+                    }
+                    <img style="max-width: 50%; max-height: 400px; " src="@(Model.RutaImagen!= null ? Model.RutaImagen:"")" asp-append-version="true" alt="">
+
+                </div>
+            </div>
+
+        </div> <!-- End row -->
+
+    </div>
+
+</section> <!-- End section -->

@@ -1,0 +1,78 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@model IEnumerable<BarCejas.Entities.Categoria>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Categorias";
+}
+
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans"><a href="javascript:history.back()"><i class="fas fa-solid fa-angle-left"></i></a></li>
+                    <li class="spa-bag"><a asp-controller="GestorCategory" asp-action="Index">Gestionar categorias</a></li>
+                    <li class="spa-bag">-</li>
+                    <li class="active spa-bag">Gestionar categorías</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+
+    <div class="container title-secon-header">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon">GESTIONAR CATEGORÍAS</h4>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="about-shot-info section-sm">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-7">
+                <p>Crea,edita o elimina categorías.</p>
+            </div>
+            <div class="col-md-5">
+                <a class="btn btn-main-accion" asp-controller="GestorServices" asp-action="Index">GESTIONAR SERVICIOS</a>
+                <a class="btn btn-main-accion float-right" asp-controller="GestorCategory" asp-action="New">CREAR CATEGORÍA</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="company-mission section" style="padding-top: 2%;">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                @await Html.PartialAsync("_CategoriaList", Model)
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts {
+    <script type="text/javascript">
+
+        OnLoadTable('#example');
+
+
+        function ChangeStatus(id, status) {
+            $.post('@Url.Action("ChangeStatus", "GestorCategory")', { id: id }, function(resp) {
+                ModalGeneral('', resp.message, resp.isCompleted);
+            }).fail(function (error) {
+                if (status) {
+                    $('#gca_' + id).attr("checked", !status).attr('onclick', 'ChangeStatus(' + id + ','+ !status +')');
+                } else {
+                    $('#gca_' + id).attr("checked", status).attr('onclick', 'ChangeStatus(' + id + ',' + status +')');
+                }
+                OnFailureAddOrEdit(error);
+            });
+        }
+    </script>
+}

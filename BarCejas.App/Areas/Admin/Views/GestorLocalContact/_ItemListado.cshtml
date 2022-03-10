@@ -1,0 +1,41 @@
+﻿@model BarCejas.Entities.ContactoLocal
+@using HtmlHelpers.BeginCollectionItemCore
+
+@{
+
+    bool EsActivo = Model.EsActivo == null || Model.EsActivo == true? true : false;
+
+}
+
+<li class="list-group-item">
+    @using (Html.BeginCollectionItem("lst"))
+    {
+    @Html.HiddenFor(x => x.Id)
+    @Html.HiddenFor(x => x.Orden)
+    <div class="row">
+        <div class="col-md-1 centrar">
+            <i class="fas fa-expand-arrows-alt"></i>
+        </div>
+        <div class="col-md-3">
+            <h6 class="mb-0" style="line-height: 30px;">
+                @Model.Nombre
+            </h6>
+        </div>
+        <div class="col-md-5">
+            <h6 class="mb-0" style="line-height: 30px;">
+                @Model.Direccion
+            </h6>
+        </div>
+        <div class="col-md-3 text-right">
+            <a class="btn btn-cir" href="@Url.Action("Create_Edit", new { Id = Model.Id })"><i class="fas fa-light fa-pen"></i></a>
+            <a class="btn btn-cir ml-3" href="javascript:void(0)" onclick="ModalEliminarElemento('@Url.Action("Delete", "GestorLocalContact")', { Id: @Model.Id }, '¿Está seguro que desea eliminar el local?', '@Model.Nombre')"><i class="far fa-trash-alt"></i></a>
+            <div class="custom-control custom-switch pt-1 ml-4" style="float: right;">
+
+                <input type="checkbox" @(EsActivo ? "checked" : "") onclick="CambiarEstatusContacto(@Model.Id, '@((!EsActivo).ToString().ToLower())')" id="c_@Model.Id" class="custom-control-input">
+
+                <label class="custom-control-label" for="c_@Model.Id"></label>
+            </div>
+        </div>
+    </div>
+    }
+</li>

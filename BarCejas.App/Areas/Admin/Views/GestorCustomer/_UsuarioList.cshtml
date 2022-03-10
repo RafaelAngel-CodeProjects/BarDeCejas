@@ -1,0 +1,38 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@model IEnumerable<BarCejas.Entities.Usuario>
+
+
+<table id="example" class="table" style="width:100%">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Registro</th>
+            <th>Ver datos</th>
+            <th>Editar</th>
+            <th>Estado</th>
+            <th class="text-center">Cambiar contraseña</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Nombre</td>
+                <td>@item.Apellido</td>
+                <td>@item.Email</td>
+                <td><a class="btn btn-cir" asp-controller="GestorCustomer" asp-action="View" asp-route-id="@item.Id"><i class="fas fa-light fa-eye"></i></a></td>
+                <td><a class="btn btn-cir" asp-controller="GestorCustomer" asp-action="Edit" asp-route-id="@item.Id"><i class="fas fa-light fa-pen"></i></a></td>
+                <td>
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" @((bool)item.EsActivo ? "checked" : string.Empty) onclick="ChangeStatus(@item.Id, '@(!(bool)item.EsActivo)')" id="gcu_@item.Id" class="custom-control-input">
+                        <label class="custom-control-label" for="gcu_@item.Id" data-original-title="@((bool)item.EsActivo ? "Activo" : "Inactivo")"></label>
+                    </div>
+                </td>
+                <td class="text-center"><a class="btn btn-cir" data-toggle="modal" data-target="#ChangePasswordModal" data-ajax="true" data-ajax-success="onSuccessModalChangePassword" data-ajax-failure="onFailureModalChangePassword" data-ajax-mode="replace" data-ajax-update="#ChangePasswordModelCuerpo" data-ajax-method="GET" asp-controller="GestorCustomer" asp-action="ChangePassword" asp-route-id="@item.Id"><i class="fas fa-light fa-key"></i></a></td>
+            </tr>
+        }
+    </tbody>
+</table>

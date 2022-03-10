@@ -1,0 +1,253 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Preguntas frecuentes";
+}
+
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans">
+                        <a href="javascript:history.back()">
+                            <i class="fas fa-solid fa-angle-left"></i>
+                        </a>
+                    </li>
+                    <li class="spa-bag"><a href="@Url.Action("Index")">Gestor</a></li>
+                    <li class="spa-bag">-</li>
+                    <li class="active spa-bag">Gestor de Preguntas Frecuentes</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+
+
+    <div class="container title-secon-header">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon">GESTIONAR PREGUNTAS FRECUENTES</h4>
+
+            </div>
+        </div>
+    </div>
+</section>
+<section class="about-shot-info section-sm">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <p>Crea, edita o elimina las preguntas frecuentes.</p>
+
+            </div>
+
+
+        </div>
+    </div>
+</section>
+<section class="section pt-3 pb-0">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-6">
+                <div class="title" style="padding-bottom:26px!important">
+                    <h6>Preguntas</h6>
+
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="title text-right" style="padding-bottom:26px!important">
+                    <div class="custom-control custom-radio ad">
+                        <input type="radio" id="customPreguntas" @(ViewBag.IndActivo ? "checked" : "") onclick="ObtenerActivos('@(!ViewBag.IndActivo)')" value="@ViewBag.IndActivo" name="customPreguntas" class="custom-control-input">
+                        <label class="custom-control-label" for="customPreguntas">Mostrar sólo preguntas frecuentes</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12" id="ListaPreguntasFrecuentes">
+                <partial name="_List" model="Model" />
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="form-group col-md-12 mb-12">
+
+                <a class="btn btn-main-accion float-right" asp-controller="ManagerFrequentQuestion" asp-action="Create_edit">AGREGAR PREGUNTA</a>
+            </div>
+        </div>
+
+    </div>
+</section>
+@*<section class="section pt-3">
+    <div class="container">
+        <div class="row">
+            <div class="form-group col-md-6 mb-4">
+                <a href="#" class="btn btn-main float-right">DESCARTAR</a>
+            </div>
+            <div class="form-group col-md-6 mb-4">
+                <button type="button" id="saveorder" class="btn btn-main-accion">GUARDAR CAMBIOS</button>
+            </div>
+        </div>
+    </div>
+
+</section>*@
+@section scripts{
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script type="text/javascript">
+
+        function CambiarEstatusPreguntas(Id, IndEstatus) {
+            $.post('@Url.Action("CambiarEstatusPreguntas", "ManagerFrequentQuestion")', { Id: Id, IndEstatus: IndEstatus }, function (Data) {
+            if(!Data.success) {
+            if (IndEstatus == "True") {
+                $('#pr_' + Id).attr("checked", false).attr('onclick', 'CambiarEstatusPreguntas(' + Id+',False)');
+            } else {
+                $('#pr_' + Id).attr("checked", true).attr('onclick', 'CambiarEstatusPreguntas(' + Id + ',True)');
+                }
+             }
+
+            }).done(function (Data) {
+
+               // ModalGeneral("", Data.mensaje, 'success');
+
+            }).fail(function (jqxhr, settings, ex) {
+                ModalGeneral("", "Ha ocurrido un error", false);
+                if (IndEstatus == "True") {
+                    $('#pr_' + Id).attr('onclick', 'CambiarEstatusPreguntas(' + Id + ',True)');
+                    $('#pr_' + Id).prop('checked', false);
+                } else {
+                    $('#pr_' + Id).attr('onclick', 'CambiarEstatusPreguntas(' + Id + ',False)');
+                    $('#pr_' + Id).prop('checked', true);
+                }
+            });
+
+        }
+
+
+
+        $(document).ready(function () {
+            $('#sortablePreguntas').sortable({
+                update: function (event, ui) {
+                    $(this).children().each(function (index) {
+                        if ($(this).attr('data-orden') != (index + 1)) {
+                            $(this).attr('data-orden', (index + 1)).addClass('updated');
+                        }
+                    });
+
+                    guardandoPosiciones();
+                }
+            });
+        });
+
+        function guardandoPosiciones() {
+
+            var positions = [];
+            $('.updated').each(function () {
+               // var order = $('#sortable li').sortable('serialize');
+                var p = { Id: parseInt($(this).attr('data-index')), Orden: parseInt($(this).attr('data-order')) };
+                positions.push(p);
+                //var vv = $(this).sortable("toArray").toString();
+                $(this).removeClass('updated');
+
+            });
+
+
+
+            $.ajax({
+                url: '@Url.Action("updatePositions", "ManagerFrequentQuestion")',
+                method: 'POST',
+                ContentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: { preg: positions },
+
+                success: function (response) {
+                    ModalGeneral("", response.mensaje, response.success);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                     alert("Error: " + errorThrown);
+                }
+            });
+        }
+
+        function OnsuccessDelete(Data) {
+            ModalGeneral('@Url.Action("Index", "ManagerFrequentQuestion")', Data.mensaje, Data.success);
+
+            @*setTimeout(function () {
+                window.location.href = '@Url.Action("Index", "ManagerFrequentQuestion")';
+            }, 4000);*@
+        }
+
+        function OnfailedDelete(xhr) {
+            ModalGeneral('', xhr.responseText, false);
+            //alert("Error " + xhr.responseText);
+        }
+
+         function ObtenerActivos(IndActivo) {
+             $.post('@Url.Action("ListFrequentQuestion", "ManagerFrequentQuestion")', { IndActivo: IndActivo }, function (Data) {
+             }).done(function (Data) {
+                 if (IndActivo == "True") {
+                     $('#customPreguntas').attr("checked", true).attr('onclick', 'ObtenerActivos(' + '"False"' + ')');
+                     $('#customPreguntas').prop('checked', true);
+                 }else {
+                     $('#customPreguntas').attr("checked", false).attr('onclick', 'ObtenerActivos('+'"True"'+')');
+                     $('#customPreguntas').prop('checked', false);
+                 }
+                // alert('ok ');
+                 $("#ListaPreguntasFrecuentes").html(Data);
+                 $('#sortablePreguntas').sortable();
+
+        }).fail(function (jqxhr, settings, ex) {
+            alert('Error ' + ex);
+            if (IndActivo == "True") {
+                $('#customTestimonios').attr('onclick', 'ObtenerActivos(' + '"True"' + ')');
+                $('#customTestimonios' ).prop('checked', false);
+            } else {
+                $('#customTestimonios').attr('onclick', 'ObtenerActivos(' + '"False"' + ')');
+                $('#customTestimonios').prop('checked', true);
+            }
+        });
+        }
+
+
+        function ModalEliminarPregunta(url, obj, msj = "¿Está seguro que desea eliminar el item seleccionado?", NombreItem = "") {
+            $(".swal2-title").removeClass("swal2-title");
+            swal.fire({
+                title: msj,
+                text: NombreItem,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: "Si",
+                cancelButtonText: "Cancelar",
+                customClass: {
+                    title: 'swal2-title-Warning'
+                }
+
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    EliminarItemPregunta(url, obj);
+                }
+                return false;
+            });
+        }
+
+         function EliminarItemPregunta(url, obj) {
+            $.post(url, obj, function (Data) {
+                var urlRedirect = '';
+                if (Data.success) {
+                    urlRedirect = '@Url.Action("Index", "ManagerFrequentQuestion")';
+                } else {
+                    ModalGeneral("", Data.mensaje, Data.success);
+                  
+                }
+                ModalGeneral(urlRedirect, Data.mensaje, Data.success);
+            }).fail(function (error) {
+                ModalGeneral("", "Ha ocurrido un error", false);
+
+            });
+        }
+
+    </script>
+
+}

@@ -1,0 +1,252 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@model BarCejas.App.Areas.Admin.Models.ProfesionalViewModel
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = ViewBag.Title;
+}
+
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans">
+                        <a href="javascript:history.back()">
+                            <i class="fas fa-solid fa-angle-left"></i>
+                        </a>
+                    </li>
+                    <li class="spa-bag"><a asp-controller="GestorProfessional" asp-action="Index">Gestor</a></li>
+                    <li class="spa-bag">-</li>
+                    <li class="active spa-bag">Gestor de profesional</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+
+
+    <div class="container title-secon-header">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon">@(ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit ? "EDITAR" : ViewBag.Action == BarCejas.Entities.Enumerations.Actions.New ? "CREAR": "DATOS DEL") PROFESIONAL</h4>
+            </div>
+        </div>
+    </div>
+</section>
+
+@if (ViewBag.Action == BarCejas.Entities.Enumerations.Actions.View)
+{
+    <section class="company-mission section" style="padding-top: 68px!important;">
+        <div class="container">
+            <div class="row">
+                <div class="form-group col-md-4 mb-4">
+                    <label asp-for="@Model.IdUsuarioNavigation.Nombre">Nombre</label>
+                    <input type="text" class="form-control" asp-for="IdUsuarioNavigation.Nombre" placeholder="Nombre" disabled>
+                </div>
+                <div class="form-group col-md-4 mb-4">
+                    <label asp-for="@Model.IdUsuarioNavigation.Apellido">Apellido</label>
+                    <input type="text" class="form-control" asp-for="IdUsuarioNavigation.Apellido" placeholder="Apellido" disabled>
+                </div>
+                <div class="form-group col-md-4 mb-4">
+                    <label asp-for="@Model.IdUsuarioNavigation.Dni">DNI</label>
+                    <input type="text" class="form-control" asp-for="IdUsuarioNavigation.Dni" placeholder="DNI" disabled>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-4 mb-4">
+                    <label asp-for="@Model.IdUsuarioNavigation.Email">Email</label>
+                    <input type="email" class="form-control" asp-for="IdUsuarioNavigation.Email" placeholder="Email" disabled>
+                </div>
+                <div class="form-group col-md-4 mb-4">
+                    <label asp-for="@Model.IdUsuarioNavigation.Telefono">Teléfono</label>
+                    <input type="text" class="form-control" asp-for="IdUsuarioNavigation.Telefono" placeholder="Teléfono" disabled>
+                </div>
+                <div class="form-group col-md-4 mb-4">
+                    <label asp-for="@Model.IdUsuarioNavigation.FechaNacimiento">Fecha de nacimiento</label>
+                    <div class="md-form md-outline input-with-post-icon">
+                        <input placeholder="DD/MM/AAAA" readonly type="text" value="@(Model.IdUsuarioNavigation.FechaNacimiento!=null ? Convert.ToDateTime(Model.IdUsuarioNavigation.FechaNacimiento).ToShortDateString():"")" asp-for="IdUsuarioNavigation.FechaNacimiento" class="form-control date" disabled>
+                    </div>
+                    <span class="field-validation-error" asp-validation-for="IdUsuarioNavigation.FechaNacimiento"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-4 mb-4">
+                    <label asp-for="@Model.IdUsuarioNavigation.IdTipoGenero">Género</label>
+                    <select class="form-control" asp-for="IdUsuarioNavigation.IdTipoGenero" asp-items="(ViewBag.Generes!=null?ViewBag.Generes:null)" onchange="onChangeGenere(this)" disabled></select>
+                </div>
+                <div class="form-group col-md-4 mb-4" id="GenereSection" @(Model.IdUsuarioNavigation.IdTipoGenero == (int)BarCejas.Entities.Enumerations.Genere.Otro ? "display:block;" : "display:none;")>
+                    <label asp-for="@Model.IdUsuarioNavigation.Genero">Otro género</label>
+                    <input asp-for="IdUsuarioNavigation.Genero" type="text" class="form-control rounded-0"
+                           placeholder="Ingresá tu género" disabled>
+                    <span class="field-validation-error" asp-validation-for="IdUsuarioNavigation.Genero"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="form-group col-md-12 mb-4">
+                            <label asp-for="IdContactoLocal">Sede-local</label>
+                            <select class="form-control" asp-for="IdContactoLocal" asp-items="(ViewBag.ContactoLocales!=null?ViewBag.ContactoLocales:null)"></select>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12 mb-4">
+                            <label asp-for="ServicioProfesional">Servicios que brinda</label>
+                            <select id="ServicioProfesional" class="selectpicker form-control" multiple asp-for="ServicioProfesional" asp-items="(ViewBag.ServicioProfesional!=null?ViewBag.ServicioProfesional:null)"></select>
+                           
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="form-group col-md-12 mb-4">
+                            <label asp-for="Descripcion">Descripción</label>
+                            <textarea class="form-control" asp-for="Descripcion" rows="7"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6 mb-4">
+                    <a asp-controller="GestorProfessional" asp-action="Index" class="btn btn-main float-right">VOLVER</a>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+else
+{
+    <section class="company-mission section" style="padding-top: 68px!important;">
+        <div class="container">
+            <form asp-controller="GestorProfessional" asp-action=@(ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit ? "Update" : "Registre") method="POST" data-ajax="true" data-ajax-method="POST" data-ajax-failure="OnFailureAddOrEdit" data-ajax-success="OnSuccessAddOrEdit">
+                <div class="hide">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="EsActivo" />
+                    <input type="hidden" asp-for="IdUsuario" />
+                    <input type="hidden" asp-for="IdUsuarioNavigation.IdTipoUsuario" />
+                    <input type="hidden" asp-for="IdUsuarioNavigation.EsActivo" />
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-4 mb-4">
+                        <label asp-for="@Model.IdUsuarioNavigation.Nombre">Nombre</label>
+                        <input type="text" class="form-control" asp-for="IdUsuarioNavigation.Nombre" placeholder="Nombre">
+                        <span class="field-validation-error" asp-validation-for="IdUsuarioNavigation.Nombre"></span>
+                    </div>
+                    <div class="form-group col-md-4 mb-4">
+                        <label asp-for="@Model.IdUsuarioNavigation.Apellido">Apellido</label>
+                        <input type="text" class="form-control" asp-for="IdUsuarioNavigation.Apellido" placeholder="Apellido">
+                        <span class="field-validation-error" asp-validation-for="IdUsuarioNavigation.Apellido"></span>
+                    </div>
+                    <div class="form-group col-md-4 mb-4">
+                        <label asp-for="@Model.IdUsuarioNavigation.Dni">DNI</label>
+                        <input type="text" class="form-control" asp-for="IdUsuarioNavigation.Dni" placeholder="DNI">
+                        <span class="field-validation-error" asp-validation-for="IdUsuarioNavigation.Dni"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-4 mb-4">
+                        <label asp-for="@Model.IdUsuarioNavigation.Email">Email</label>
+                        <input  type="email" disabled="@(ViewBag.Action != BarCejas.Entities.Enumerations.Actions.Edit ? null : "disabled")"  class="form-control" asp-for="IdUsuarioNavigation.Email" placeholder="Email">
+                        <span class="field-validation-error" asp-validation-for="IdUsuarioNavigation.Email"></span>
+                    </div>
+                    <div class="form-group col-md-4 mb-4">
+                        <label asp-for="@Model.IdUsuarioNavigation.Telefono">Teléfono</label>
+                        <input type="text" class="form-control" asp-for="IdUsuarioNavigation.Telefono" placeholder="Teléfono">
+                        <span class="field-validation-error" asp-validation-for="IdUsuarioNavigation.Telefono"></span>
+                    </div>
+                    <div class="form-group col-md-4 mb-4">
+                        <label asp-for="@Model.IdUsuarioNavigation.FechaNacimiento">Fecha de nacimiento</label>
+                        <div class="md-form md-outline input-with-post-icon">
+                            <input placeholder="DD/MM/AAAA" required readonly type="text" value="@(Model.IdUsuarioNavigation.FechaNacimiento!=null ? Convert.ToDateTime(Model.IdUsuarioNavigation.FechaNacimiento).ToShortDateString():"")" asp-for="IdUsuarioNavigation.FechaNacimiento" class="form-control date">
+                        </div>
+                        <span class="field-validation-error" asp-validation-for="IdUsuarioNavigation.FechaNacimiento"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-4 mb-4">
+                        <label asp-for="@Model.IdUsuarioNavigation.IdTipoGenero">Género</label>
+                        <select class="form-control" asp-for="IdUsuarioNavigation.IdTipoGenero" asp-items="(ViewBag.Generes!=null?ViewBag.Generes:null)" onchange="onChangeGenere(this)">
+                            <option value="">Seleccione una opción</option>
+                        </select>
+                        <span class="field-validation-error" asp-validation-for="IdUsuarioNavigation.IdTipoGenero"></span>
+                    </div>
+                    <div class="form-group col-md-4 mb-4" id="GenereSection" style="display:none;">
+                        <label asp-for="@Model.IdUsuarioNavigation.Genero">Otro género</label>
+                        <input asp-for="IdUsuarioNavigation.Genero" type="text" class="form-control rounded-0"
+                               placeholder="Ingresá tu género">
+                        <span class="field-validation-error" asp-validation-for="IdUsuarioNavigation.Genero"></span>
+                    </div>
+                    <div class="form-group col-md-4 mb-4">
+                        <label asp-for="Password">Ingrese contraseña</label>
+                        <input type="password" class="form-control" asp-for="Password" placeholder="Ingrese su nueva contraseña">
+                        <span class="field-validation-error" asp-validation-for="Password"></span>
+                    </div>
+                    <div class="form-group col-md-4 mb-4">
+                        <label asp-for="ConfirmarPassword">Confirme contraseña</label>
+                        <input type="password" class="form-control" asp-for="ConfirmarPassword" placeholder="Repita su nueva contraseña">
+                        <span class="field-validation-error" asp-validation-for="ConfirmarPassword"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="row">
+                            <div class="form-group col-md-12 mb-4">
+                                <label asp-for="IdContactoLocal">Sede-local</label>
+                                <select class="form-control" asp-for="IdContactoLocal" asp-items="(ViewBag.ContactoLocales!=null?ViewBag.ContactoLocales:null)">
+                                    <option value="">Seleccione una opción</option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group col-md-12 mb-4">
+                              <label asp-for="ServicioProfesional">Servicios que brinda</label>
+                              <select class="selectpicker form-control"  multiple asp-for="ServicioProfesional" asp-items="(ViewBag.ServicioProfesional!=null?ViewBag.ServicioProfesional:null)">
+                              </select>
+                                <span class="field-validation-error" asp-validation-for="ServicioProfesional"></span>
+                            </div>
+                        </div>
+                        @if (ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit)
+                        {
+                            <div class="row">
+                                <div class="form-group col-md-12 mb-4">
+                                    <a class="btn btn-main-accion" style="width: 100%;" asp-controller="GestorProfessional" asp-action="AttentionHours" asp-route-id="@Model.Id">ASIGNAR HORARIOS</a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="form-group col-md-12 mb-4">
+                                <label asp-for="Descripcion">Descripción</label>
+                                <textarea class="form-control" asp-for="Descripcion" rows="7"></textarea>
+                                <span class="field-validation-error" asp-validation-for="Descripcion"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6 mb-4">
+                        <a asp-controller="GestorProfessional" asp-action="Index" class="btn btn-main float-right">DESCARTAR</a>
+                    </div>
+                    <div class="form-group col-md-6 mb-4">
+                        <button class="btn btn-main-accion" type="submit">@(ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit ? "EDITAR" : "CREAR") PROFESIONAL</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+}
+
+@section scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script type="text/javascript">
+    var contentServicioProfesional =@Html.Raw(Json.Serialize(ViewBag.ServicioProfesional));
+    MultiselectService("ServicioProfesional", contentServicioProfesional);
+</script>
+}

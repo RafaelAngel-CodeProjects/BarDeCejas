@@ -1,0 +1,194 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@model IEnumerable<BarCejas.Entities.OrdenesVigentes>
+
+<table id="tbTurnos" class="table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Servicio</th>
+            <th>Cliente</th>
+            <th>Día</th>
+            <th>Hora</th>
+            <th>Local</th>
+            <th>Profesional</th>
+            <th>Medio pago</th>
+            <th>Estado turno</th>
+            <th>Forma pago</th>
+            <th>Estado pago</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (BarCejas.Entities.OrdenesVigentes item in Model)
+        {
+            <tr>
+                <td>@item.IdOrdenItem </td>
+                <td>@item.Servicio</td>
+                <td>@item.Cliente</td>
+                <td>@item.FechaDeCita.ToString("dd/MM/yyyy")</td>
+                <td>@item.Hora</td>
+                <td>@item.Sede</td>
+                <td>@item.Profesional</td>
+                <td>
+                    @{
+                        if (item.IdModalidadPago == (int)BarCejas.Entities.Enumerations.MedioDePago.Adelantado)
+                        {
+                            <p>Adelantado</p>
+                        }
+                        if (item.IdModalidadPago == (int)BarCejas.Entities.Enumerations.MedioDePago.Adelanto_50_porc)
+                        {
+                            <p>50% Adelanto</p>
+                        }
+                        if (item.IdModalidadPago == (int)BarCejas.Entities.Enumerations.MedioDePago.En_el_local)
+                        {
+                            <p>En el Local</p>
+                        }
+
+                    }
+                </td>
+                <td>
+                    @{
+
+                        if (item.IdEstatus == (int)BarCejas.Entities.Enumerations.EstatusOrden.pendiente || item.IdEstatus == (int)BarCejas.Entities.Enumerations.EstatusOrden.preOrden)
+                        {
+                            <p style="color: #34A853;">Pendiente</p>
+                        }
+                        if (item.IdEstatus == (int)BarCejas.Entities.Enumerations.EstatusOrden.procesando)
+                        {
+                            <p style="color: #34A853;">En proceso</p>
+                        }
+                        if (item.IdEstatus == (int)BarCejas.Entities.Enumerations.EstatusOrden.completada)
+                        {
+                            <p style="color: #34A853;">Completada</p>
+                        }
+                        if (item.IdEstatus == (int)BarCejas.Entities.Enumerations.EstatusOrden.Anulada)
+                        {
+                            <p style="color: red;">Anulada</p>
+                        }
+                    }
+                </td>
+                <td>
+                    @{
+                        if (item.IdFormaPago == (int)BarCejas.Entities.Enumerations.FormaDePago.En_local || item.IdFormaPago == (int)BarCejas.Entities.Enumerations.FormaDePago.Efectivo)
+                        {
+                            <p>Efectivo</p>
+                        }
+                        if (item.IdFormaPago == (int)BarCejas.Entities.Enumerations.FormaDePago.Mercado_Pago)
+                        {
+                            <p>Mercado pago</p>
+                        }
+                        if (item.IdFormaPago == (int)BarCejas.Entities.Enumerations.FormaDePago.Transferencia)
+                        {
+                            <p>Transferencia</p>
+                        }
+
+                    }
+                </td>
+                <td>
+                    @{
+                        if (item.IdEstatusPago == (int)BarCejas.Entities.Enumerations.EstatusPago.pendiente)
+                        {
+                            <p style="color: #34A853;">Pendiente</p>
+                        }
+                        if (item.IdEstatusPago == (int)BarCejas.Entities.Enumerations.EstatusPago.Pagado)
+                        {
+                            <p style="color: #34A853;">Pagado</p>
+                        }
+                        if (item.IdEstatusPago == (int)BarCejas.Entities.Enumerations.EstatusPago.Anulado)
+                        {
+                            <p style="color: red;">Anulado</p>
+                        }
+                        if (item.IdEstatusPago == (int)BarCejas.Entities.Enumerations.EstatusPago.Devuelto)
+                        {
+                            <p style="color: #34A853;">Devuelto</p>
+                        }
+                    }
+                </td>
+
+
+                <td>
+                    @if (item.IdEstatus != (int)BarCejas.Entities.Enumerations.EstatusOrden.Anulada)
+                    {
+                        <div class="dropdown">
+                            <a class="btn btn-cir" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                @if (item.IdEstatus == (int)BarCejas.Entities.Enumerations.EstatusOrden.pendiente)
+                                {
+                                    <a class="dropdown-item"
+                                       asp-controller="GestorShifts"
+                                       asp-action="PrintFormService"
+                                       asp-route-id="@item.IdServicio">Imprimir formulario</a>
+
+                                    if (ViewData["IsAdmin"] != null && (bool)ViewData["IsAdmin"])
+                                    {
+                                        <a class="dropdown-item"
+                                           data-toggle="modal"
+                                           data-target="#TurnoModal"
+                                           data-ajax="true"
+                                           data-ajax-begin="onBeginTurno"
+                                           data-ajax-fail="onFailureTurno"
+                                           data-ajax-method="GET"
+                                           data-ajax-mode="replace"
+                                           data-ajax-update="#TurnoModalBody"
+                                           asp-controller="GestorShifts"
+                                           asp-action="Edit"
+                                           asp-route-id="@item.IdOrdenItem">Asignar nuevo profesional</a>
+                                    }
+                                }
+                                @if (item.IdEstatus != (int)BarCejas.Entities.Enumerations.EstatusOrden.completada)
+                                {
+                                    <a class="dropdown-item"
+                                       data-toggle="modal"
+                                       data-target="#TurnoModal"
+                                       data-ajax="true"
+                                       data-ajax-begin="onBeginTurno"
+                                       data-ajax-fail="onFailureTurno"
+                                       data-ajax-method="GET"
+                                       data-ajax-mode="replace"
+                                       data-ajax-update="#TurnoModalBody"
+                                       asp-controller="GestorShifts"
+                                       asp-action="CancelShift"
+                                       asp-route-id="@item.IdOrdenItem">Cancelar turno</a>
+                                }
+                                @if (ViewData["IsAdmin"] != null && (bool)ViewData["IsAdmin"] && item.IdEstatusPago != (int)BarCejas.Entities.Enumerations.EstatusPago.Pagado)
+                                {
+                                    <a class="dropdown-item"
+                                       data-toggle="modal"
+                                       data-target="#TurnoModal"
+                                       data-ajax="true"
+                                       data-ajax-begin="onBeginTurno"
+                                       data-ajax-fail="onFailureTurno"
+                                       data-ajax-method="GET"
+                                       data-ajax-mode="replace"
+                                       data-ajax-update="#TurnoModalBody"
+                                       asp-controller="GestorShifts"
+                                       asp-action="RecordPayment"
+                                       asp-route-id="@item.IdOrden">Registrar pago</a>
+                                }
+                                @if (item.IdEstatusPago == (int)BarCejas.Entities.Enumerations.EstatusPago.Pagado && (item.IdFormaPago != (int)BarCejas.Entities.Enumerations.FormaDePago.Efectivo || item.IdFormaPago != (int)BarCejas.Entities.Enumerations.FormaDePago.En_local))
+                                {
+                                    <a class="dropdown-item"
+                                       data-toggle="modal"
+                                       data-target="#TurnoModal"
+                                       data-ajax="true"
+                                       data-ajax-begin="onBeginTurno"
+                                       data-ajax-fail="onFailureTurno"
+                                       data-ajax-method="GET"
+                                       data-ajax-mode="replace"
+                                       data-ajax-update="#TurnoModalBody"
+                                       asp-controller="GestorShifts"
+                                       asp-action="Voucher"
+                                       asp-route-id="@item.IdOrden">Ver comprobante de pago</a>
+                                }
+                            </div>
+                        </div>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

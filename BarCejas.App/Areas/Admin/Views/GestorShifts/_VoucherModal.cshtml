@@ -1,0 +1,18 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@model BarCejas.Entities.Orden
+
+<div class="row centrar">
+    <h4 class="text-center">COMPROBANTE DE PAGO</h4>
+    <div class="form-group col-md-12 mb-12">
+        @if (!String.IsNullOrEmpty(Model.ComprobantePago))
+        {
+            <img class="img-fluid course_img_center" src="@(!String.IsNullOrEmpty(Model.ComprobantePago) ?  Url.Content(Model.ComprobantePago):Url.Content("~/images/sinImagen.png"))" asp-append-version="true" alt="" />
+        }
+        else
+        {
+            <p>No existe un comprobante asociado</p>
+        }
+    </div>
+</div>

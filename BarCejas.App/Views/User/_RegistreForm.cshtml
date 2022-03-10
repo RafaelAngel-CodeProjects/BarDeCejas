@@ -1,0 +1,227 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@model RegistreViewModel
+@{
+    bool IsLogin = false;
+    
+    if (ViewData["IsLogin"] != null)
+        IsLogin = (bool)ViewData["IsLogin"];
+
+}
+
+<div class="modal-body">
+    <div class="container-fluid">
+        <form asp-controller="User" asp-action="Registre" method="POST" data-ajax="true" data-ajax-method="POST" data-ajax-failure="OnFailureLoginRegistre" data-ajax-success="OnSuccessRegistre">
+            <div class="row mb-4">
+                <div class="col">
+                </div>
+                <div class="col-6 enterLoginText FontText">
+                    REGISTRATE
+                </div>
+                <div class="col">
+                </div>
+            </div>
+            <div class="hide">
+                @*<input type="hidden" asp-for="Registro" value="@(BarCejas.Entities.Enumerations.RegistreType.Email.ToString())" />*@
+                <input type="hidden" asp-for="Apellido">
+                <input type="hidden" asp-for="Nombre">
+                <input type="hidden" asp-for="Avatar">
+                <input type="hidden" asp-for="LoginOrRegistre">
+                <input type="hidden" asp-for="Registro" value="@(Model!=null && Model.Registro!=null ? Model.Registro:BarCejas.Entities.Enumerations.RegistreType.Email.ToString())" />
+            </div>
+            <div class="row">
+                <div class="col"></div>
+                <div class="col-8">
+                    <div class="form-group">
+                        <label asp-for="Email">Email</label>
+                        <input asp-for="Email" type="email" class="form-control rounded-0"
+                               aria-describedby="emailHelp"
+                               placeholder="Ingresá tu email">
+                        <span class="field-validation-error" asp-validation-for="Email"></span>
+                    </div>
+                </div>
+                <div class="col"></div>
+            </div>
+            @if (!IsLogin && Model != null)
+            {
+
+                <div class="row">
+                    <div class="col"></div>
+                    <div class="col-8">
+                        <div class="form-group">
+                            <label style="margin-bottom: 0px;" asp-for="Password">Contraseña</label>
+                            <small style="margin-top: 0px;" id="passwordlHelp" class="form-text text-muted">Mínimo 8 caracteres, debe incluir números y letras</small>
+                            <input asp-for="Password" type="password" class="form-control rounded-0"
+                                   placeholder="Ingresá tu contraseña">
+                            <span class="field-validation-error" asp-validation-for="Password"></span>
+                        </div>
+                    </div>
+                    <div class="col"></div>
+                </div>
+                <div class="row">
+                    <div class="col"></div>
+                    <div class="col-8">
+                        <div class="form-group">
+                            <label asp-for="ConfirmarPassword">Confirmar contraseña</label>
+                            <input asp-for="ConfirmarPassword" type="password" class="form-control rounded-0"
+                                   placeholder="Repetí tu contraseña">
+                            <span class="field-validation-error" asp-validation-for="ConfirmarPassword"></span>
+                        </div>
+                    </div>
+                    <div class="col"></div>
+                </div>
+
+            }
+            else
+            {
+
+
+                if (Model == null)
+                {
+                    <div class="row">
+                        <div class="col"></div>
+                        <div class="col-8">
+                            <div class="form-group">
+                                <label style="margin-bottom: 0px;" asp-for="Password">Contraseña</label>
+                                <small style="margin-top: 0px;" id="passwordlHelp" class="form-text text-muted">Mínimo 8 caracteres, debe incluir números y letras</small>
+                                <input asp-for="Password" type="password" class="form-control rounded-0"
+                                       placeholder="Ingresá tu contraseña">
+                                <span class="field-validation-error" asp-validation-for="Password"></span>
+                            </div>
+                        </div>
+                        <div class="col"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col"></div>
+                        <div class="col-8">
+                            <div class="form-group">
+                                <label asp-for="ConfirmarPassword">Confirmar contraseña</label>
+                                <input asp-for="ConfirmarPassword" type="password" class="form-control rounded-0"
+                                       placeholder="Repetí tu contraseña">
+                                <span class="field-validation-error" asp-validation-for="ConfirmarPassword"></span>
+                            </div>
+                        </div>
+                        <div class="col"></div>
+                    </div>
+
+                }
+
+            }
+
+            <div class="row">
+                <div class="col"></div>
+                <div class="col-8">
+                    <div class="form-group">
+                        <label asp-for="Telefono">Número de teléfono</label>
+                        <input asp-for="Telefono" type="text" class="form-control rounded-0"
+                               placeholder="Ingresá tu número de teléfono">
+                        <span class="field-validation-error" asp-validation-for="Telefono"></span>
+                    </div>
+                </div>
+                <div class="col"></div>
+            </div>
+            <div class="row">
+                <div class="col"></div>
+                <div class="col-8">
+                    <div class="form-group">
+                        <label asp-for="IdTipoGenero">Género</label>
+                        <select class="form-control" asp-for="IdTipoGenero" asp-items="(ViewBag.Generes!=null?ViewBag.Generes:null)" onchange="onChangeGenere(this)">
+                            <option value="">Seleccione una opción</option>
+                        </select>
+                        <span class="field-validation-error" asp-validation-for="IdTipoGenero"></span>
+                    </div>
+                </div>
+                <div class="col"></div>
+            </div>
+            <div class="row mb-4" id="GenereSection" style="display:none;">
+                <div class="col"></div>
+                <div class="col-8">
+                    <div class="form-group">
+                        <label asp-for="Genero">Otro género</label>
+                        <input asp-for="Genero" type="text" class="form-control rounded-0"
+                               placeholder="Ingresá tu género">
+                        <span class="field-validation-error" asp-validation-for="Genero"></span>
+                    </div>
+                </div>
+                <div class="col"></div>
+            </div>
+            @if (IsLogin && Model != null)
+            {
+              <div class="row">
+               <div class="col"></div>
+                <div class="col-8">
+                   <div class="form-group">
+                    <label asp-for="FechaNacimiento">Fecha de nacimiento</label>
+                      <div class="md-form md-outline input-with-post-icon">
+                       <input placeholder="DD/MM/AAAA" type="text" value="@(Model.FechaNacimiento!=null ? Convert.ToDateTime(Model.FechaNacimiento).ToShortDateString():DateTime.Now.ToShortDateString())" asp-for="FechaNacimiento" class="form-control date">
+                     </div>
+                      <span class="field-validation-error" asp-validation-for="FechaNacimiento"></span>
+                  </div>
+              </div>
+               <div class="col"></div>
+           </div>
+           }
+                    <div class="row mb-5">
+                        <div class="col"></div>
+                        <div class="col-8">
+                            <button type="submit"
+                                    class="btn btn-lg btn-block ButtonLogin rounded-0 FontText">
+                                GUARDAR
+                            </button>
+                        </div>
+                        <div class="col"></div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col"></div>
+                        <div class="col-8 justify-content-center centerText">
+                            <div class="Line"></div>
+                        </div>
+                        <div class="col"></div>
+                    </div>
+                    @if (Model == null)
+                    {
+                        <div class="row mb-3">
+                            <div class="col"></div>
+                            <div class="col-8">
+                                @*<button type="button"
+                                    class="btn btn-lg btn-block ButtonSocial rounded-0 FontText">
+                                <i class="mr-2 p-2 iconSocial rounded-circle tf-ion-social-facebook"></i>Ingresar
+                                Con Facebook
+                            </button>*@
+                                <a href="@Url.Action("FacebookLogin", "User", new { pLogin =false })" class="btn btn-lg btn-block ButtonSocial rounded-0 FontText">
+                                    <i class="mr-2 p-2 iconSocial rounded-circle tf-ion-social-facebook"></i>Ingresar Con Facebook
+                                </a>
+                            </div>
+                            <div class="col"></div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col"></div>
+                            <div class="col-8">
+                                @*<button type="button"
+                                    class="btn btn-lg btn-block ButtonSocial rounded-0 FontText">
+                                <i class="mr-2 p-2 iconSocial rounded-circle tf-ion-social-google"></i>Ingresar
+                                Con Gmail
+                            </button>*@
+                                <a href="@Url.Action("GoogleLogin", "User", new { pLogin =false })" class="btn btn-lg btn-block ButtonSocial rounded-0 FontText">
+                                    <i class="mr-2 p-2 iconSocial rounded-circle tf-ion-social-google"></i>Ingresar Con Gmail
+                                </a>
+                            </div>
+                            <div class="col"></div>
+                        </div>
+                    }
+
+            </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col-8 justify-content-center centerText">
+                ya tengo usuario, <u onclick="toggleLogin()">ingresar</u>
+            </div>
+            <div class="col"></div>
+        </div>
+    </div>
+</div>

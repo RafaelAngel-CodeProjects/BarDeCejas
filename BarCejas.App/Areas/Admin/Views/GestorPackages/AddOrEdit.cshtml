@@ -1,0 +1,173 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@model BarCejas.App.Areas.Admin.Models.PaqueteViewModel
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = ViewBag.Title;
+}
+
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans">
+                        <a href="javascript:history.back()">
+                            <i class="fas fa-solid fa-angle-left"></i>
+                        </a>
+                    </li>
+                    <li class="spa-bag"><a asp-controller="GestorPackages" asp-action="Index">Gestor</a></li>
+                    <li class="spa-bag">-</li>
+                    <li class="active spa-bag">Gestor de paquetes</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+    <div class="container title-secon-header">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon">CREAR PAQUETE</h4>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="company-mission section" style="padding-top: 68px!important;">
+    <div class="container">
+
+        <form enctype="multipart/form-data" id="PaquetesForm" method="post">
+            <div class="hide">
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="EsActivo" />
+                <input type="hidden" asp-for="RutaImagenHome" />
+                <input type="hidden" asp-for="RutaImagenTarjeta" />
+            </div>
+            <div class="row">
+                <div class="form-group col-md-12 mb-4">
+                    <label asp-for="Nombre">Nombre del Paquete</label>
+                    <input type="text" class="form-control" asp-for="Nombre" placeholder="Nombre del paquete">
+                    <span class="field-validation-error" asp-validation-for="Nombre"></span>
+                </div>
+            </div>
+            <div class="row" style="border-bottom: 1px solid #eee!important;">
+                <div class="form-group col-md-4 mb-4">
+                    <label asp-for="DescripcionCorta">Descripción corta <span data-toggle="tooltip" title="se muestra en las tarjetas del home"><i style="color: #fadce6!important;" class="far fa-question-circle"></i></span> </label>
+                    <textarea class="form-control" asp-for="DescripcionCorta" rows="7" placeholder="Descripción breve del paquete"></textarea>
+                    <span class="field-validation-error" asp-validation-for="DescripcionCorta"></span>
+                </div>
+                <div class="form-group col-md-8 mb-4">
+                    <label asp-for="DescripcionLarga">Descripción larga  <span data-toggle="tooltip" title="se muestra en las tarjetas del home"><i style="color: #fadce6!important;" class="far fa-question-circle"></i></span></label>
+                    <textarea class="form-control" asp-for="DescripcionLarga" rows="7" placeholder="Descripción detallada del paquete"></textarea>
+                    <span class="field-validation-error" asp-validation-for="DescripcionLarga"></span>
+                </div>
+                <div class="form-group col-md-12 mb-4 text-right">
+                    <span class="text-right">Máximo 500 caracteres</span>
+                </div>
+            </div>
+            <div class="PackagesServicesList">
+                @await Html.PartialAsync("_ServiciosPaqueteList", Model.ServicioPaquete)
+            </div>
+
+            <div class="row" id="buttonAddPackageService">
+                <div class="form-group col-md-12 mb-4 text-right">
+                    <a class="btn btn-main float-right" asp-controller="GestorPackages" asp-action="AddPackageServices" data-ajax="true" data-ajax-method="GET" data-ajax-failure="OnFailureAddPackageService" data-ajax-success="OnSuccessAddPackageService">AGREGAR SERVICIO</a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-4 mb-4">
+                    <label asp-for="Descuento">Descuento del paquete</label>
+                    <input type="text" class="form-control" asp-for="Descuento" placeholder="Descuento del paquete">
+                    <span class="field-validation-error" asp-validation-for="Descuento"></span>
+                </div>
+                <div class="form-group col-md-4 mb-4">
+                    <label asp-for="FechaVigenciaInicio">Fecha de vigencia desde <span class="span-op">-opcional</span></label>
+                    <div class="md-form md-outline input-with-post-icon">
+                        <input placeholder="DD/MM/AAAA" type="text" value="@(Model.FechaVigenciaInicio!=null ? Convert.ToDateTime(Model.FechaVigenciaInicio).ToShortDateString():DateTime.Now.ToShortDateString())" asp-for="FechaVigenciaInicio" class="form-control date">
+                    </div>
+                </div>
+                <div class="form-group col-md-4 mb-4">
+                    <label asp-for="FechaVigenciaFin">Fecha de vigencia hasta <span class="span-op">-opcional</span> <span data-toggle="tooltip" title="se muestra en las tarjetas del home"><i style="color: #fadce6!important;" class="far fa-question-circle"></i></span></label>
+                    <div class="md-form md-outline input-with-post-icon">
+                        <input placeholder="DD/MM/AAAA" type="text" value="@(Model.FechaVigenciaFin!=null ? Convert.ToDateTime(Model.FechaVigenciaFin).ToShortDateString():DateTime.Now.ToShortDateString())" asp-for="FechaVigenciaFin" class="form-control date">
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="form-group col-md-4 mb-4">
+                    <label asp-for="ArchivoImagenTarjeta">Imagen de tarjeta <span class="span-op">-opcional</span></label>
+                    <div id="imagenPrevisualizacion" class="form-control-file customInputFile mx-auto p-5" style="background-image: url(@Url.Content(Model!= null && Model.RutaImagenTarjeta != null ? Model.RutaImagenTarjeta : string.Empty))">
+                        <span> </span>
+                        <input type="file" accept="image/jpg, image/png, image/jpeg" asp-for="ArchivoImagenTarjeta" id="seleccionArchivos">
+                    </div>
+
+
+                </div>
+                <div class="form-group col-md-8 mb-4">
+                    <label asp-for="ArchivoImagenHome">Imagen home <span class="span-op">-opcional</span> <span data-toggle="tooltip" title="se muestra en las tarjetas del home"><i style="color: #fadce6!important;" class="far fa-question-circle"></i></span></label>
+                    <div id="imagenPrevisualizacionSecon" class="form-control-file customInputFile mx-auto p-5" style="background-image: url(@Url.Content(Model!= null && Model.RutaImagenHome != null ? Model.RutaImagenHome: string.Empty))">
+                        <span> </span>
+                        <input type="file" accept="image/jpg, image/png, image/jpeg" asp-for="ArchivoImagenHome" id="seleccionArchivosSecon">
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6 mb-4">
+                    <a asp-controller="GestorPackages" asp-action="Index" class="btn btn-main float-right">DESCARTAR</a>
+                </div>
+                <div class="form-group col-md-6 mb-4">
+                    <button class="btn btn-main-accion" type="submit">@(ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit ? "EDITAR" : "CREAR") PAQUETE</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<section class="counter-wrapper section-sm ms-confir">
+    <div class="container">
+        <div class="row centrar">
+            <div class="col-md-12 pb-4">
+                <span class="pl-2" style="float: right;color: #927441; font-weight: 600;font-size: 24px;" id="FinalPrice">  @Model.PrecioFinal</span>
+                <span class="pt-2" style="float: right;color: #958389;text-decoration:line-through;" id="TotalPrice">@Model.PrecioFinal </span>
+                <span class="pr-2" style="float: right;color: #000;font-weight: 600;padding-top: 7px;padding-right: 2px;">Total </span>
+            </div>
+        </div> 		<!-- end row -->
+    </div>   	<!-- end container -->
+</section>   <!-- end section -->
+
+@section scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+        $(function () {
+            $("#PaquetesForm").submit(function (e) {
+                e.preventDefault();
+                var form = $(this);
+                var formData = new FormData($('#PaquetesForm')[0]);
+
+                if (form.valid()) {
+                    $.ajax({
+                        type: 'post',
+                        url: '@Url.Action(ViewBag.Action == BarCejas.Entities.Enumerations.Actions.Edit ? "Update" : "Registre", "GestorPackages")',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (resp) {
+                            OnSuccessAddOrEdit(resp);
+                        },
+                        error: function (error) {
+                            OnFailureAddOrEdit(error);
+                        }
+                    });
+                } else {
+                    return false;
+                }
+
+            });
+        });
+    </script>
+}

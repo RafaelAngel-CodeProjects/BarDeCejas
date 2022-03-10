@@ -1,0 +1,91 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@{
+    ViewData["Title"] = "Pago online";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="single-page-header">
+    <diV class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb header-bradcrumb">
+                    <li class="btn-trans"><a href="javascript:history.back()"><i class="fas fa-solid fa-angle-left"></i></a></li>
+                    <li class="spa-bag"><a asp-controller="OnlinePayment" asp-action="Inderx">Home</a></li>
+                    <li class="spa-bag"></li>
+                    <li class="active spa-bag">Pago Online</li>
+                </ol>
+            </div>
+        </div>
+    </diV>
+
+
+    <div class="container  title-secon-header">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="title-secon">¿CÓMO QUERÉS PAGAR?</h4>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="company-mission section" style="padding-top: 68px!important;">
+    <div class="container">
+
+        <form>
+            <div class="row">
+                <div class="form-group col-md-6 mb-4">
+                    <label class="mayusculas" for="inputEmail4">Seleccionar modalidad de pago</label>
+                    <select class="form-control" id="exampleFormControlSelect1">
+                        <option selected>Pago adelantado</option>
+                        <option>Profesional 1</option>
+                        <option>otro</option>
+                    </select>
+                </div>
+            </div>
+            <div class="divisor"></div>
+            <div class="row">
+                <div class="form-group col-md-12 mb-4">
+                    <label class="mayusculas" for="inputEmail4">Seleccionar medio de pago</label>
+
+                </div>
+                <div class="col-md-6 ">
+                    <div class="row shadow ml-0 mr-0">
+                        <div class="col-md-12" style="border-bottom: 1px solid #DFDFDF;padding-top: 5%; padding-bottom: 2%;padding-left: 5%;">
+                            <h4 style="padding-bottom: 3%;" class="text-center">TRANSFERENCIA BANCARIA</h4>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Egestas penatibus et eu purus bibendum sit. Vitae mattis aliquam.</p>
+                        </div>
+
+                        <div class="col-md-12" style="background-color: #fadce6;    padding-top: 3%; padding-bottom: 1.9rem">
+                            <a href="/BarDeCejasFront/Presentation/Views/DatosTransferencia.html" class="btn btn-main mt-20" style="width: 100%!important;">PAGAR POR TRANSFERENCIA</a>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-6 ">
+                    <div class="row shadow ml-0 mr-0">
+                        <div class="col-md-12" style="border-bottom: 1px solid #DFDFDF;padding-top: 5%; padding-bottom: 2%;padding-left: 5%;">
+                            <h4 style="padding-bottom: 3%;" class="text-center">
+                                <img src="/BarDeCejasFront/wwwroot/images/mercadoPagoLogo.png" alt="">
+
+                            </h4>
+                            <p>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Egestas penatibus et eu purus bibendum sit. Vitae mattis aliquam.
+
+                            </p>
+                        </div>
+
+                        <div class="col-md-12" style="background-color: #fadce6;    padding-top: 3%; padding-bottom: 1.9rem">
+                            <a href="/BarDeCejasFront/Presentation/Views/orden.html" class="btn btn-main mt-20" style="width: 100%!important;">PAGAR CON MERCADOPAGO</a>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+         </form>
+
+
+    </div>
+</section>
+

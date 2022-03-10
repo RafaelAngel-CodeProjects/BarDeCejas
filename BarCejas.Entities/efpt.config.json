@@ -1,0 +1,199 @@
+﻿{
+   "CodeGenerationMode": 1,
+   "ContextClassName": "BardecejasContext",
+   "ContextNamespace": null,
+   "DefaultDacpacSchema": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": false,
+   "ModelNamespace": null,
+   "OutputContextPath": null,
+   "OutputPath": null,
+   "ProjectRootNamespace": "BarCejas.Entities",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 0,
+   "SelectedToBeGenerated": 2,
+   "Tables": [
+      {
+         "Name": "[dbo].[Banner]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Categoria]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ContactoLocal]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[CredencialMercadoPago]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Dia]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[FormaPago]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[FormaPagoServicio]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HistoricoIngresos]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HorarioAtencionLocal]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HorarioAtencionProfesional]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HorarioBloqueado]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[MediosContactoEmpresa]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[MensajeMasivo]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ModalidadPago]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ModalidadPagoServicio]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Novedades]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Orden]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[OrdenItem]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Paquete]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[PreguntasFrecuentes]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Profesional]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[RolTipoUsuario_MensajeMasivo]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Servicio]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ServicioContactoLocal]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ServicioPaquete]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ServicioProfesional]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Testimonios]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[TipoRegistro]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[TipoUsuario]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Usuario]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[spDeletePreguntasFrecuentes]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[spDeleteTestimonio]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[spGetReportePaquete]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[spGetReporteProfesional]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[spGetReporteServicio]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[spUpdateEstatusNovedades]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[spUpdateEstatusPreguntasFrecuentes]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[spUpdateEstatusTestimonios]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[spUpdateIndHomeNovedades]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[spUpdateOrdenPreguntas]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[spUpdateOrdenTestimonio]",
+         "ObjectType": 1
+      }
+   ],
+   "UiHint": "S184-168-147-58\\AMEDIASERVER.BarDeCejas",
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": false,
+   "UseDbContextSplitting": false,
+   "UseFluentApiOnly": false,
+   "UseHandleBars": false,
+   "UseHierarchyId": false,
+   "UseInflector": false,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoConstructor": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoNavigations": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UseSchemaFolders": false,
+   "UseSpatial": false
+}

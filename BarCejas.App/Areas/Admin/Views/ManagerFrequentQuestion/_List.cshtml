@@ -1,0 +1,48 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model IEnumerable<BarCejas.Entities.PreguntasFrecuentes>
+<ul id="sortablePreguntas" class="list-group">
+    @foreach (var item in Model)
+    {
+    
+        <li class="list-group-item" data-order="@item.Orden" data-index="@item.Id">
+            <div class="row">
+                <div class="col-md-1 centrar">
+                    <i class="fas fa-expand-arrows-alt"></i>
+                </div>
+                <div class="col-md-8">
+                    <h6 class="mb-0" style="line-height: 30px;">
+                        @item.Pregunta
+                    </h6>
+                </div>
+
+                <div class="col-md-3 text-right">
+                    <a class="btn btn-cir" href="@Url.Action("Create_Edit", new { Id = item.Id })"><i class="fas fa-light fa-pen"></i></a>
+                 
+                <a class="btn btn-cir ml-3" href="javascript:void(0)" onclick="ModalEliminarPregunta('@Url.Action("Delete", "ManagerFrequentQuestion")', { Id : @item.Id, NrOrden :@item.Orden }, '¿Está seguro que desea eliminar la pregunta?', '')">
+                    <i class="far fa-trash-alt"></i></a>
+                    <div class="custom-control custom-switch pt-1 ml-4" style="float: right;">
+                        <input type="checkbox" @(item.IndEstatus ? "checked" : "") onclick="CambiarEstatusPreguntas(@item.Id, '@(!item.IndEstatus)')" id="pr_@item.Id" class="custom-control-input">
+                        <label class="custom-control-label" for="pr_@item.Id" data-original-title="@(item.IndEstatus ? "Activo" : "Inactivo")"></label>
+                    </div>
+
+                </div>
+
+            </div>
+        </li>
+
+        @*@Html.HiddenFor(model => item.Id)
+        @Html.HiddenFor(model => item.Orden, new { @id = "item" + item.Id })*@
+    }
+</ul>
+
+@section script{
+    <script>
+       
+    </script>
+
+
+ }
+
+

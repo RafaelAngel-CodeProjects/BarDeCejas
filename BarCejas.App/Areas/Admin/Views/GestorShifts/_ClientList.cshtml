@@ -1,0 +1,36 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@model IEnumerable<BarCejas.Entities.Usuario>
+
+<table id="example" class="table">
+    <thead>
+        <tr>
+            <th>DNI</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model is null)
+        {
+            <tr>
+                <td>No existen elementos</td>
+            </tr>
+        }
+        else
+        {
+
+            foreach (BarCejas.Entities.Usuario item in Model)
+            {
+                <tr>
+                    <td>@item.Dni</td>
+                    <td>@($"{item.Nombre} {item.Apellido}")</td>
+                    <td>@item.Email</td>
+                    <td><button class="btn btn-main" id="client_@item.Id" onclick="onClientSelect(@($"{item.Id}"),'@($"{item.Nombre} {item.Apellido}")')">Seleccionar</button></td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
